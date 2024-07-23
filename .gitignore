@@ -1,0 +1,20 @@
+# Ignore output directories
+assets/
+bin/
+dist/
+
+# Ignore C objects
+*.o
+
+# Ignore RGBDS objects
+*.obj
+*.2bpp
+*.1bpp
+*.rle
+
+# Ignore ROM objects
+*.gb
+*.gbc
+*.sav
+*.map
+*.sym
