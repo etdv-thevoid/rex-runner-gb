@@ -28,9 +28,9 @@ DEF NUMBER_OF_STATES    RB 0
 **                                                                            **
 *******************************************************************************/
 
-DEF INITIAL_SCROLL_SPEED    EQU 1
+DEF INITIAL_SCROLL_SPEED    EQU 10
 
-DEF PARALLAX_BIT_SHIFTS_INITIAL     EQU 1
+DEF PARALLAX_BIT_SHIFTS_INITIAL     EQU 3
 DEF PARALLAX_BIT_SHIFTS_PER_SECTION EQU 2
 
 DEF LYC_HUD_START_LINE              EQU 0
