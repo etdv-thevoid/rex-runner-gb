@@ -2,20 +2,20 @@
 # You can override variables set in the Makefile here.
 
 # ROM name
-ROMNAME := gbc-engine-core
-ROMEXT  := gbc
+ROMNAME := rex-runner
+ROMEXT  := gb
 
 # Value that the ROM will be filled with.
 PADVALUE := 0xFF
 
 # Game title, up to 11 ASCII chars.
-TITLE := GBC-ENGINE-
+TITLE := Rex Runner
 
 # 4-ASCII letter game ID.
-GAMEID := CORE
+GAMEID := RXRN
 
 # ROM version (typically starting at 0 and incremented for each published version).
-VERSION := 0
+VERSION := 0x00
 
 # New licensee, 2 ASCII chars.
 # Homebrew games FTW!.
@@ -46,7 +46,7 @@ SRAMSIZE := 0x02
 # ASFLAGS += -E
 
 # Game Boy Color compatible.
-FIXFLAGS += -c
+# FIXFLAGS += -c
 # Game Boy Color required.
 # FIXFLAGS += -C
 

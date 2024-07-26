@@ -2,21 +2,65 @@ INCLUDE "includes/constants.inc"
 INCLUDE "includes/macros.inc"
 INCLUDE "includes/charmap.inc"
 
-SECTION "Program Main Example", ROM0
+SECTION "Main", ROM0
 
-; The main program loop.
-;
-; `gbc-engine-core` hands off code execution to a function labeled `_Main` when done with initial setup.
-;
-;The function can assume the following:
-; - All ram areas are cleared
-; - LCD is off
-; - Interrupts are disabled
 _Main::
-    ; Your code goes here!
+    call _LoadHighScore
 
+    call _LoadGraphics
 
-    ; returning out of _Main will cause a crash!
+.loop:
+    di
+
+    call _ScreenOff
+
+    ld hl, _StateJumpTable
+    ld a, [wCurrentState]
+    cp a, NUMBER_OF_STATES
+    jr c, .jump
+    ld a, NUMBER_OF_STATES
+.jump:
+    call _JumpTable
+    jr .loop
+
+_StateJumpTable:
+    DW _Init
+    DW _Menu
+    DW _Credits
+    DW _Game
+    DW _Pause
+    DW _Dead
+    DW _NULL
+
+_GetStateCurrent::
+    ld a, [wCurrentState]
     ret
+
+_GetStatePrevious::
+    ld a, [wPreviousState]
+    ret
+
+_SwitchStateToPrevious::
+    ld a, [wPreviousState]
+    ;fallthrough
+
+_SwitchStateToNew::
+    push af
+    ld a, [wCurrentState]
+    ld [wPreviousState], a
+    pop af
+    ld [wCurrentState], a
+    ret
+
+ENDSECTION
+
+
+SECTION "Main Variables", WRAM0
+
+wCurrentState:
+    DB
+
+wPreviousState:
+    DB
 
 ENDSECTION
