@@ -1,3 +1,5 @@
-# Game Boy (Color) Engine
+# Rex Runner GB
 
-A quick and dirty Game Boy (Color) engine template for homebrew games
+A clone of Google Chrome's popular game built for the Game Boy
+
+Still a work in progress!
