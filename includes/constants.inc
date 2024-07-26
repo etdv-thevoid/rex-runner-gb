@@ -6,7 +6,7 @@ DEF TRUE    EQU 1
 
 /*******************************************************************************
 **                                                                            **
-**      STATE CONSTANTS                                                       **
+**      GAME CONSTANTS                                                        **
 **                                                                            **
 *******************************************************************************/
 
@@ -21,14 +21,17 @@ DEF STATE_DEAD          RB 1
 
 DEF NUMBER_OF_STATES    RB 0
 
+DEF INITIAL_SPEED           EQU 10
+
+DEF SCORE_BYTES             EQU 3
+DEF SCORE_DIGITS            EQU SCORE_BYTES * 2
+DEF SCORE_INCREMENT_MASK    EQU %00000001
 
 /*******************************************************************************
 **                                                                            **
 **      BACKGROUND & WINDOW CONSTANTS                                         **
 **                                                                            **
 *******************************************************************************/
-
-DEF INITIAL_SCROLL_SPEED    EQU 10
 
 DEF PARALLAX_BIT_SHIFTS_INITIAL     EQU 3
 DEF PARALLAX_BIT_SHIFTS_PER_SECTION EQU 2
@@ -47,18 +50,6 @@ DEF DEFAULT_PALETTE  EQU %11100100
 
 /*******************************************************************************
 **                                                                            **
-**      HUD & SCORE CONSTANTS                                                 **
-**                                                                            **
-*******************************************************************************/
-
-DEF SCORE_BYTES     EQU 3
-DEF SCORE_DIGITS    EQU SCORE_BYTES * 2
-
-DEF SCORE_INCREMENT_MASK    EQU %00000001
-
-
-/*******************************************************************************
-**                                                                            **
 **      REX CONSTANTS                                                         **
 **                                                                            **
 *******************************************************************************/
@@ -66,11 +57,11 @@ DEF SCORE_INCREMENT_MASK    EQU %00000001
 DEF REX_INIT_Y_POS          EQU 120 + OAM_Y_OFS
 DEF REX_INIT_X_POS          EQU 16 + OAM_X_OFS
 
-DEF MAX_JUMP_HEIGHT         EQU 54 + OAM_Y_OFS
-DEF MAX_SHORT_JUMP_HEIGHT   EQU 90 + OAM_Y_OFS
+DEF REX_MAX_JUMP_HEIGHT         EQU 54 + OAM_Y_OFS
+DEF REX_MAX_SHORT_JUMP_HEIGHT   EQU 90 + OAM_Y_OFS
 
-DEF JUMP_VELOCITY           EQU 3
-DEF FAST_FALL_VELOCITY      EQU 6
+DEF REX_JUMP_VELOCITY           EQU 3
+DEF REX_FAST_FALL_VELOCITY      EQU 6
 
 
 /*******************************************************************************
@@ -93,9 +84,9 @@ DEF REX_ANIM_DEAD               RB 1 ; $08
 
 DEF NUMBER_OF_REX_ANIMATIONS    RB 0 ; $09
 
-DEF BLINK_FRAMES_MASK           EQU %00000111
-DEF RUNNING_FRAMES_MASK         EQU %00000111
-DEF LONG_JUMP_FRAMES_MASK       EQU %00000011
+DEF REX_BLINK_FRAMES_MASK       EQU %00000111
+DEF REX_RUNNING_FRAMES_MASK     EQU %00000111
+DEF REX_JUMP_FRAMES_MASK        EQU %00000011
 
 
 /*******************************************************************************
@@ -185,3 +176,85 @@ DEF REX_DEAD_SPRITE_4       EQU $1B
 DEF REX_DEAD_SPRITE_5       EQU $1C
 DEF REX_DEAD_SPRITE_6       EQU $2A
 DEF REX_DEAD_SPRITE_7       EQU $2B
+
+
+/*******************************************************************************
+**                                                                            **
+**      PTERO CONSTANTS                                                       **
+**                                                                            **
+*******************************************************************************/
+
+DEF PTERO_INIT_Y_POS_1      EQU 54 + OAM_Y_OFS
+DEF PTERO_INIT_Y_POS_2      EQU 80 + OAM_Y_OFS
+DEF PTERO_INIT_Y_POS_3      EQU 104 + OAM_Y_OFS
+
+DEF PTERO_INIT_X_POS        EQU 160 + OAM_X_OFS
+
+DEF PTERO_1_SPAWN_MASK      EQU %00000011
+DEF PTERO_2_SPAWN_MASK      EQU %11000000
+
+
+/*******************************************************************************
+**                                                                            **
+**      PTERO ANIMATION CONSTANTS                                             **
+**                                                                            **
+*******************************************************************************/
+
+RSRESET
+
+DEF PTERO_ANIM_FRAME_1          RB 1 ; $00
+DEF PTERO_ANIM_FRAME_2          RB 1 ; $01
+
+DEF NUMBER_OF_PTERO_ANIMATIONS  RB 0 ; $02
+
+DEF PTERO_FRAMES_MASK           EQU %00000111
+
+
+/*******************************************************************************
+**                                                                            **
+**      PTERO SPRITE CONSTANTS                                                **
+**                                                                            **
+*******************************************************************************/
+
+DEF PTERO_1_SPRITE_0            EQUS "wShadowOAM.8"
+DEF PTERO_1_SPRITE_1            EQUS "wShadowOAM.9"
+DEF PTERO_1_SPRITE_2            EQUS "wShadowOAM.10"
+DEF PTERO_1_SPRITE_3            EQUS "wShadowOAM.11"
+DEF PTERO_1_SPRITE_4            EQUS "wShadowOAM.12"
+DEF PTERO_1_SPRITE_5            EQUS "wShadowOAM.13"
+
+DEF PTERO_2_SPRITE_0            EQUS "wShadowOAM.14"
+DEF PTERO_2_SPRITE_1            EQUS "wShadowOAM.15"
+DEF PTERO_2_SPRITE_2            EQUS "wShadowOAM.16"
+DEF PTERO_2_SPRITE_3            EQUS "wShadowOAM.17"
+DEF PTERO_2_SPRITE_4            EQUS "wShadowOAM.18"
+DEF PTERO_2_SPRITE_5            EQUS "wShadowOAM.19"
+
+DEF PTERO_SPRITE_ROW_0_Y      EQU 0
+DEF PTERO_SPRITE_ROW_1_Y      EQU 8
+
+DEF PTERO_SPRITE_COL_0_X      EQU 0
+DEF PTERO_SPRITE_COL_1_X      EQU 8
+DEF PTERO_SPRITE_COL_2_X      EQU 16
+
+/* Frame 1
+    0   1   2
+    3   4   5
+*/
+DEF PTERO_FRAME_1_SPRITE_0   EQU $40
+DEF PTERO_FRAME_1_SPRITE_1   EQU $41
+DEF PTERO_FRAME_1_SPRITE_2   EQU $42
+DEF PTERO_FRAME_1_SPRITE_3   EQU $50
+DEF PTERO_FRAME_1_SPRITE_4   EQU $51
+DEF PTERO_FRAME_1_SPRITE_5   EQU $52
+
+/* Frame 2
+    0   1   2
+    3   4   5
+*/
+DEF PTERO_FRAME_2_SPRITE_0    EQU $60
+DEF PTERO_FRAME_2_SPRITE_1    EQU $61
+DEF PTERO_FRAME_2_SPRITE_2    EQU $62
+DEF PTERO_FRAME_2_SPRITE_3    EQU $70
+DEF PTERO_FRAME_2_SPRITE_4    EQU $71
+DEF PTERO_FRAME_2_SPRITE_5    EQU $72

@@ -21,6 +21,10 @@ _Game::
     call _WaitForVBLInterrupt
 
     call _RexAnimate
+    call _PteroAnimate
+
+    call _PteroTrySpawn
+    
     call _DrawCurrentScore
 
 .checkKeys:
@@ -46,6 +50,12 @@ _Game::
     and a, PADF_A
     jr z, :+
     call _RexShortJump
+
+:
+    ldh a, [hKeysPressed]
+    and a, PADF_B
+    jr z, :+
+    call _PteroTrySpawn
 
 :
     ldh a, [hKeysPressed]

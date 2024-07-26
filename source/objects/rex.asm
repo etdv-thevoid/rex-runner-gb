@@ -2,7 +2,7 @@ INCLUDE "includes/constants.inc"
 INCLUDE "includes/macros.inc"
 INCLUDE "includes/charmap.inc"
 
-SECTION "Rex", ROM0
+SECTION "Rex Functions", ROM0
 
 ; Initializes Rex object
 _InitRex::
@@ -21,7 +21,7 @@ _InitRex::
 ; Randomizes the frame delay for blinking
 _RexRandomBlinkDelay:
     call _GetRandomByte
-    and a, BLINK_FRAMES_MASK
+    and a, REX_BLINK_FRAMES_MASK
     rla 
     swap a
     ld [wRexBlinkAnimationRandomDelay], a
@@ -105,7 +105,7 @@ _RexFullJump::
 
     ld a, [wRexJumpFrameCounter]
     inc a
-    and a, LONG_JUMP_FRAMES_MASK
+    and a, REX_JUMP_FRAMES_MASK
     ld [wRexJumpFrameCounter], a
     ret nz
 
@@ -616,7 +616,7 @@ _RexAnimateStanding:
 ; Animate blinking Rex
 _RexAnimateBlinking:
     ld a, [wRexAnimationFrameCounter]
-    and a, BLINK_FRAMES_MASK
+    and a, REX_BLINK_FRAMES_MASK
     ld [wRexAnimationFrameCounter], a
     ret nz
 
@@ -625,7 +625,7 @@ _RexAnimateBlinking:
 ; Animate runing Rex
 _RexAnimateRunning:
     ld a, [wRexAnimationFrameCounter]
-    and a, RUNNING_FRAMES_MASK
+    and a, REX_RUNNING_FRAMES_MASK
     ld [wRexAnimationFrameCounter], a
     ret nz
 
@@ -651,7 +651,7 @@ _RexAnimateRunning:
 ; Animate ducking Rex
 _RexAnimateDucking:
     ld a, [wRexAnimationFrameCounter]
-    and a, RUNNING_FRAMES_MASK
+    and a, REX_RUNNING_FRAMES_MASK
     ld [wRexAnimationFrameCounter], a
     ret nz
 
@@ -678,40 +678,40 @@ _RexAnimateDucking:
 _RexAnimateJumping:
     ld hl, {REX_SPRITE_0} ; wShadowOAM.0
     ld a, [hl]
-    sub a, JUMP_VELOCITY
+    sub a, REX_JUMP_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_1} ; wShadowOAM.1
     ld a, [hl]
-    sub a, JUMP_VELOCITY
+    sub a, REX_JUMP_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_2} ; wShadowOAM.2
     ld a, [hl]
-    sub a, JUMP_VELOCITY
+    sub a, REX_JUMP_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_3} ; wShadowOAM.3
     ld a, [hl]
-    sub a, JUMP_VELOCITY
+    sub a, REX_JUMP_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_4} ; wShadowOAM.4
     ld a, [hl]
-    sub a, JUMP_VELOCITY
+    sub a, REX_JUMP_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_5} ; wShadowOAM.5
     ld a, [hl]
-    sub a, JUMP_VELOCITY
+    sub a, REX_JUMP_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_6} ; wShadowOAM.6
     ld a, [hl]
-    sub a, JUMP_VELOCITY
+    sub a, REX_JUMP_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_7} ; wShadowOAM.7
     ld a, [hl]
-    sub a, JUMP_VELOCITY
+    sub a, REX_JUMP_VELOCITY
     ld [hl], a
 
     ld hl, {REX_SPRITE_4} ; wShadowOAM.4
     ld a, [hl]
-    cp a, MAX_JUMP_HEIGHT
+    cp a, REX_MAX_JUMP_HEIGHT
     ret nc
 
     ld a, REX_ANIM_FALLING
@@ -724,40 +724,40 @@ _RexAnimateJumping:
 _RexAnimateShortJumping:
     ld hl, {REX_SPRITE_0} ; wShadowOAM.0
     ld a, [hl]
-    sub a, JUMP_VELOCITY
+    sub a, REX_JUMP_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_1} ; wShadowOAM.1
     ld a, [hl]
-    sub a, JUMP_VELOCITY
+    sub a, REX_JUMP_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_2} ; wShadowOAM.2
     ld a, [hl]
-    sub a, JUMP_VELOCITY
+    sub a, REX_JUMP_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_3} ; wShadowOAM.3
     ld a, [hl]
-    sub a, JUMP_VELOCITY
+    sub a, REX_JUMP_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_4} ; wShadowOAM.4
     ld a, [hl]
-    sub a, JUMP_VELOCITY
+    sub a, REX_JUMP_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_5} ; wShadowOAM.5
     ld a, [hl]
-    sub a, JUMP_VELOCITY
+    sub a, REX_JUMP_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_6} ; wShadowOAM.6
     ld a, [hl]
-    sub a, JUMP_VELOCITY
+    sub a, REX_JUMP_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_7} ; wShadowOAM.7
     ld a, [hl]
-    sub a, JUMP_VELOCITY
+    sub a, REX_JUMP_VELOCITY
     ld [hl], a
 
     ld hl, {REX_SPRITE_4} ; wShadowOAM.4
     ld a, [hl]
-    cp a, MAX_SHORT_JUMP_HEIGHT
+    cp a, REX_MAX_SHORT_JUMP_HEIGHT
     ret nc
 
     ld a, REX_ANIM_FALLING
@@ -770,35 +770,35 @@ _RexAnimateShortJumping:
 _RexAnimateFalling:
     ld hl, {REX_SPRITE_0} ; wShadowOAM.0
     ld a, [hl]
-    add a, JUMP_VELOCITY
+    add a, REX_JUMP_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_1} ; wShadowOAM.1
     ld a, [hl]
-    add a, JUMP_VELOCITY
+    add a, REX_JUMP_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_2} ; wShadowOAM.2
     ld a, [hl]
-    add a, JUMP_VELOCITY
+    add a, REX_JUMP_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_3} ; wShadowOAM.3
     ld a, [hl]
-    add a, JUMP_VELOCITY
+    add a, REX_JUMP_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_4} ; wShadowOAM.4
     ld a, [hl]
-    add a, JUMP_VELOCITY
+    add a, REX_JUMP_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_5} ; wShadowOAM.5
     ld a, [hl]
-    add a, JUMP_VELOCITY
+    add a, REX_JUMP_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_6} ; wShadowOAM.6
     ld a, [hl]
-    add a, JUMP_VELOCITY
+    add a, REX_JUMP_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_7} ; wShadowOAM.7
     ld a, [hl]
-    add a, JUMP_VELOCITY
+    add a, REX_JUMP_VELOCITY
     ld [hl], a
 
     ld hl, {REX_SPRITE_4} ; wShadowOAM.4
@@ -813,35 +813,35 @@ _RexAnimateFalling:
 _RexAnimateFastFalling:
     ld hl, {REX_SPRITE_0} ; wShadowOAM.0
     ld a, [hl]
-    add a, FAST_FALL_VELOCITY
+    add a, REX_FAST_FALL_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_1} ; wShadowOAM.1
     ld a, [hl]
-    add a, FAST_FALL_VELOCITY
+    add a, REX_FAST_FALL_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_2} ; wShadowOAM.2
     ld a, [hl]
-    add a, FAST_FALL_VELOCITY
+    add a, REX_FAST_FALL_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_3} ; wShadowOAM.3
     ld a, [hl]
-    add a, FAST_FALL_VELOCITY
+    add a, REX_FAST_FALL_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_4} ; wShadowOAM.4
     ld a, [hl]
-    add a, FAST_FALL_VELOCITY
+    add a, REX_FAST_FALL_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_5} ; wShadowOAM.5
     ld a, [hl]
-    add a, FAST_FALL_VELOCITY
+    add a, REX_FAST_FALL_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_6} ; wShadowOAM.6
     ld a, [hl]
-    add a, FAST_FALL_VELOCITY
+    add a, REX_FAST_FALL_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_7} ; wShadowOAM.7
     ld a, [hl]
-    add a, FAST_FALL_VELOCITY
+    add a, REX_FAST_FALL_VELOCITY
     ld [hl], a
 
     ld hl, {REX_SPRITE_4} ; wShadowOAM.4

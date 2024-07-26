@@ -88,9 +88,6 @@ _InitGraphics::
     ld [wBackgroundParallaxBottom], a
     ld [wBackgroundParallaxGround], a
 
-    ld a, INITIAL_SCROLL_SPEED
-    ld [wBackgroundScrollSpeed], a
-
     ld a, DEFAULT_PALETTE
     ld [wBackgroundPalette], a
     call _SetDMGPalettes
@@ -122,14 +119,8 @@ _InitGraphics::
 **                                                                            **
 *******************************************************************************/
 
-_BackgroundIncScrollSpeed::
-    ld a, [wBackgroundScrollSpeed]
-    inc a
-    ld [wBackgroundScrollSpeed], a
-    ret
-
 _BackgroundIncScroll::
-    ld a, [wBackgroundScrollSpeed]
+    call _GetDifficultySpeed
     ld b, a
 
     scf
@@ -274,9 +265,6 @@ ENDSECTION
 SECTION "Graphics Variables", WRAM0
 
 wBackgroundPalette:
-    DB
-
-wBackgroundScrollSpeed:
     DB
 
 wBackgroundScrollPosition:

@@ -38,12 +38,14 @@ _VBlankHandler:
     cp a, STATE_GAME
     ret nz
 
+    call _PteroIncFrameCounter
+
     call _BackgroundIncScroll
 
     call _IncrementScore
     ret nc
 
-    call _BackgroundIncScrollSpeed
+    call _DifficultyIncrementSpeed
 
     jp _BackgroundInvertPalette
 
