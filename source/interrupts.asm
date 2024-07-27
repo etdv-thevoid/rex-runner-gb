@@ -46,6 +46,7 @@ _VBlankHandler:
     ret nc
 
     call _DifficultyIncrementSpeed
+    call _PteroIncSpawnChance
 
     jp _BackgroundInvertPalette
 
