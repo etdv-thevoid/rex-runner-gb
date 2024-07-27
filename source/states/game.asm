@@ -22,6 +22,10 @@ _GameLoop:
     
     call _WaitForVBLInterrupt
 
+    call _RexCheckCollision
+    ld a, STATE_DEAD
+    jp c, _SwitchStateToNew
+
     call _RexAnimate
     call _PteroAnimate
 

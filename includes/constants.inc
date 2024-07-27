@@ -26,8 +26,9 @@ DEF NUMBER_OF_MENU_OPTS RB 0 ; $02
 
 DEF MENU_OPT_START_TILE EQUS "vSCRN0.y8x5"
 
-
 DEF INITIAL_SPEED           EQU 10
+
+DEF COLLISION_PIXEL_OVERLAP EQU 2
 
 DEF SCORE_BYTES             EQU 3
 DEF SCORE_DIGITS            EQU SCORE_BYTES * 2
@@ -98,6 +99,8 @@ DEF REX_JUMP_FRAMES_MASK        EQU %00000011
 **      REX SPRITE CONSTANTS                                                  **
 **                                                                            **
 *******************************************************************************/
+
+DEF NUMBER_OF_REX_SPRITES   EQU 8
 
 DEF REX_SPRITE_0            EQUS "wShadowOAM.0"
 DEF REX_SPRITE_1            EQUS "wShadowOAM.1"

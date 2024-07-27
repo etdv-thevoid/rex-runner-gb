@@ -809,7 +809,7 @@ _RexAnimateFalling:
 
     jp _RexRun
 
-; animate fast falling Rex
+; Animate fast falling Rex
 _RexAnimateFastFalling:
     ld hl, {REX_SPRITE_0} ; wShadowOAM.0
     ld a, [hl]
@@ -855,6 +855,71 @@ _RexAnimateFastFalling:
 ; Animate dead Rex
 _RexAnimateDead:
     rst _Crash
+
+/*******************************************************************************
+**                                                                            **
+**      REX COLLISION FUNCTIONS                                               **
+**                                                                            **
+*******************************************************************************/
+
+; Checks for collisions with any other oam objects.
+; Uses Rex sprite 2, which is always in the top right,
+; and sprite 6, which is always in the bottom left.
+; Regardless of Rex's current animation.
+;
+; b = top y
+; c = right x
+; d = bottom y
+; e = left y
+;
+; Returns:
+; - carry = collision
+; - no carry = no collision
+_RexCheckCollision::
+    ld hl, {REX_SPRITE_2}
+    ld a, [hl+]
+    sub a, COLLISION_PIXEL_OVERLAP
+    ld b, a
+
+    ld a, [hl+]
+    sub a, COLLISION_PIXEL_OVERLAP
+    ld c, a
+
+    ld hl, {REX_SPRITE_6}
+    ld a, [hl+]
+    add a, COLLISION_PIXEL_OVERLAP
+    ld d, a
+    ld a, [hl+]
+    add a, COLLISION_PIXEL_OVERLAP
+    ld e, a
+
+    ld hl, {REX_SPRITE_7} + sizeof_OAM_ATTRS
+REPT (OAM_COUNT - NUMBER_OF_REX_SPRITES)
+    ld a, [hl+]
+    cp a, b
+    jr c, :+
+    cp a, d
+    jr nc, :+
+
+    ld a, [hl+]
+    cp a, e
+    jr c, :+
+    cp a, c
+    jr nc, :+
+
+    jp .collsion
+:
+    inc hl
+    inc hl
+ENDR
+
+    scf
+    ccf
+    ret
+
+.collsion:
+    scf
+    ret
 
 ENDSECTION
 
