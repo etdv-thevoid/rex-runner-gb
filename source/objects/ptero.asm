@@ -112,7 +112,7 @@ _InitPtero2:
 _PteroIncSpawnChance::
     ld a, [wPtero1SpawnChance]
     cp a, $FF
-    jr z, ptero2
+    jr z, .ptero2
     inc a
     ld [wPtero1SpawnChance], a
     
