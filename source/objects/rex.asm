@@ -213,33 +213,33 @@ _RexDead::
 ; Set Sprites to standing (also jumping)
 _RexSetSpriteStanding:
     ld hl, {REX_SPRITE_0} ; wShadowOAM.0
-    ld a, REX_INIT_Y_POS + REX_SPRITE_ROW_0_Y
+    ld a, GROUND_LEVEL_Y_POS + META_SPRITE_ROW_0_Y
     ld [hl+], a
-    ld a, REX_INIT_X_POS + REX_SPRITE_COL_0_X
+    ld a, REX_INIT_X_POS + META_SPRITE_COL_0_X
     ld [hl+], a
     ld a, REX_DEFAULT_SPRITE_0
     ld [hl], a
 
     ld hl, {REX_SPRITE_1} ; wShadowOAM.1
-    ld a, REX_INIT_Y_POS + REX_SPRITE_ROW_0_Y
+    ld a, GROUND_LEVEL_Y_POS + META_SPRITE_ROW_0_Y
     ld [hl+], a
-    ld a, REX_INIT_X_POS + REX_SPRITE_COL_1_X
+    ld a, REX_INIT_X_POS + META_SPRITE_COL_1_X
     ld [hl+], a
     ld a, REX_DEFAULT_SPRITE_1
     ld [hl], a
 
     ld hl, {REX_SPRITE_2} ; wShadowOAM.2
-    ld a, REX_INIT_Y_POS + REX_SPRITE_ROW_2_Y
+    ld a, GROUND_LEVEL_Y_POS + META_SPRITE_ROW_2_Y
     ld [hl+], a
-    ld a, REX_INIT_X_POS + REX_SPRITE_COL_1_X
+    ld a, REX_INIT_X_POS + META_SPRITE_COL_1_X
     ld [hl+], a
     ld a, REX_DEFAULT_SPRITE_2
     ld [hl], a
     
     ld hl, {REX_SPRITE_3} ; wShadowOAM.3
-    ld a, REX_INIT_Y_POS + REX_SPRITE_ROW_1_Y
+    ld a, GROUND_LEVEL_Y_POS + META_SPRITE_ROW_1_Y
     ld [hl+], a
-    ld a, REX_INIT_X_POS + REX_SPRITE_COL_2_X
+    ld a, REX_INIT_X_POS + META_SPRITE_COL_2_X
     ld [hl+], a
     ld a, REX_DEFAULT_SPRITE_3
     ld [hl], a
@@ -249,33 +249,33 @@ _RexSetSpriteStanding:
 ; Set Sprites to blinking
 _RexSetSpriteBlinking:
     ld hl, {REX_SPRITE_0} ; wShadowOAM.0
-    ld a, REX_INIT_Y_POS + REX_SPRITE_ROW_0_Y
+    ld a, GROUND_LEVEL_Y_POS + META_SPRITE_ROW_0_Y
     ld [hl+], a
-    ld a, REX_INIT_X_POS + REX_SPRITE_COL_0_X
+    ld a, REX_INIT_X_POS + META_SPRITE_COL_0_X
     ld [hl+], a
     ld a, REX_DEFAULT_SPRITE_0
     ld [hl], a
 
     ld hl, {REX_SPRITE_1} ; wShadowOAM.1
-    ld a, REX_INIT_Y_POS + REX_SPRITE_ROW_0_Y
+    ld a, GROUND_LEVEL_Y_POS + META_SPRITE_ROW_0_Y
     ld [hl+], a
-    ld a, REX_INIT_X_POS + REX_SPRITE_COL_1_X
+    ld a, REX_INIT_X_POS + META_SPRITE_COL_1_X
     ld [hl+], a
     ld a, REX_DEFAULT_SPRITE_1
     ld [hl], a
 
     ld hl, {REX_SPRITE_2} ; wShadowOAM.2
-    ld a, REX_INIT_Y_POS + REX_SPRITE_ROW_2_Y
+    ld a, GROUND_LEVEL_Y_POS + META_SPRITE_ROW_2_Y
     ld [hl+], a
-    ld a, REX_INIT_X_POS + REX_SPRITE_COL_1_X
+    ld a, REX_INIT_X_POS + META_SPRITE_COL_1_X
     ld [hl+], a
     ld a, REX_BLINKING_SPRITE_2
     ld [hl], a
     
     ld hl, {REX_SPRITE_3} ; wShadowOAM.3
-    ld a, REX_INIT_Y_POS + REX_SPRITE_ROW_1_Y
+    ld a, GROUND_LEVEL_Y_POS + META_SPRITE_ROW_1_Y
     ld [hl+], a
-    ld a, REX_INIT_X_POS + REX_SPRITE_COL_2_X
+    ld a, REX_INIT_X_POS + META_SPRITE_COL_2_X
     ld [hl+], a
     ld a, REX_DEFAULT_SPRITE_3
     ld [hl], a
@@ -284,33 +284,33 @@ _RexSetSpriteBlinking:
 ; Set Sprites to running
 _RexSetSpriteRunning:
     ld hl, {REX_SPRITE_0} ; wShadowOAM.0
-    ld a, REX_INIT_Y_POS + REX_SPRITE_ROW_0_Y
+    ld a, GROUND_LEVEL_Y_POS + META_SPRITE_ROW_0_Y
     ld [hl+], a
-    ld a, REX_INIT_X_POS + REX_SPRITE_COL_0_X
+    ld a, REX_INIT_X_POS + META_SPRITE_COL_0_X
     ld [hl+], a
     ld a, REX_RUNNING_SPRITE_0
     ld [hl], a
 
     ld hl, {REX_SPRITE_1} ; wShadowOAM.1
-    ld a, REX_INIT_Y_POS + REX_SPRITE_ROW_0_Y
+    ld a, GROUND_LEVEL_Y_POS + META_SPRITE_ROW_0_Y
     ld [hl+], a
-    ld a, REX_INIT_X_POS + REX_SPRITE_COL_1_X
+    ld a, REX_INIT_X_POS + META_SPRITE_COL_1_X
     ld [hl+], a
     ld a, REX_RUNNING_SPRITE_1
     ld [hl], a
 
     ld hl, {REX_SPRITE_2} ; wShadowOAM.2
-    ld a, REX_INIT_Y_POS + REX_SPRITE_ROW_2_Y
+    ld a, GROUND_LEVEL_Y_POS + META_SPRITE_ROW_2_Y
     ld [hl+], a
-    ld a, REX_INIT_X_POS + REX_SPRITE_COL_1_X
+    ld a, REX_INIT_X_POS + META_SPRITE_COL_1_X
     ld [hl+], a
     ld a, REX_DEFAULT_SPRITE_2
     ld [hl], a
     
     ld hl, {REX_SPRITE_3} ; wShadowOAM.3
-    ld a, REX_INIT_Y_POS + REX_SPRITE_ROW_1_Y
+    ld a, GROUND_LEVEL_Y_POS + META_SPRITE_ROW_1_Y
     ld [hl+], a
-    ld a, REX_INIT_X_POS + REX_SPRITE_COL_2_X
+    ld a, REX_INIT_X_POS + META_SPRITE_COL_2_X
     ld [hl+], a
     ld a, REX_DEFAULT_SPRITE_3
     ld [hl], a
@@ -320,33 +320,33 @@ _RexSetSpriteRunning:
 ; Set Sprites to ducking
 _RexSetSpriteDucking:
     ld hl, {REX_SPRITE_0} ; wShadowOAM.0
-    ld a, REX_INIT_Y_POS + REX_SPRITE_ROW_0_Y
+    ld a, GROUND_LEVEL_Y_POS + META_SPRITE_ROW_0_Y
     ld [hl+], a
-    ld a, REX_INIT_X_POS + REX_SPRITE_COL_0_X
+    ld a, REX_INIT_X_POS + META_SPRITE_COL_0_X
     ld [hl+], a
     ld a, REX_DUCKING_SPRITE_0
     ld [hl], a
 
     ld hl, {REX_SPRITE_1} ; wShadowOAM.1
-    ld a, REX_INIT_Y_POS + REX_SPRITE_ROW_0_Y
+    ld a, GROUND_LEVEL_Y_POS + META_SPRITE_ROW_0_Y
     ld [hl+], a
-    ld a, REX_INIT_X_POS + REX_SPRITE_COL_1_X
+    ld a, REX_INIT_X_POS + META_SPRITE_COL_1_X
     ld [hl+], a
     ld a, REX_DUCKING_SPRITE_1
     ld [hl], a
 
     ld hl, {REX_SPRITE_2} ; wShadowOAM.2
-    ld a, REX_INIT_Y_POS + REX_SPRITE_ROW_0_Y
+    ld a, GROUND_LEVEL_Y_POS + META_SPRITE_ROW_0_Y
     ld [hl+], a
-    ld a, REX_INIT_X_POS + REX_SPRITE_COL_2_X
+    ld a, REX_INIT_X_POS + META_SPRITE_COL_2_X
     ld [hl+], a
     ld a, REX_DUCKING_SPRITE_2
     ld [hl], a
     
     ld hl, {REX_SPRITE_3} ; wShadowOAM.3
-    ld a, REX_INIT_Y_POS + REX_SPRITE_ROW_0_Y
+    ld a, GROUND_LEVEL_Y_POS + META_SPRITE_ROW_0_Y
     ld [hl+], a
-    ld a, REX_INIT_X_POS + REX_SPRITE_COL_3_X
+    ld a, REX_INIT_X_POS + META_SPRITE_COL_3_X
     ld [hl+], a
     ld a, REX_DUCKING_SPRITE_3
     ld [hl], a
@@ -365,30 +365,30 @@ _RexSetSpriteDead:
 
     ld hl, {REX_SPRITE_1} ; wShadowOAM.1
     ld a, b
-    add a, REX_SPRITE_ROW_0_Y
+    add a, META_SPRITE_ROW_0_Y
     ld [hl+], a
     ld a, c
-    add a, REX_SPRITE_COL_1_X
+    add a, META_SPRITE_COL_1_X
     ld [hl+], a
     ld a, REX_DEFAULT_SPRITE_1
     ld [hl], a
 
     ld hl, {REX_SPRITE_2} ; wShadowOAM.2
     ld a, b
-    add a, REX_SPRITE_ROW_2_Y
+    add a, META_SPRITE_ROW_2_Y
     ld [hl+], a
     ld a, c
-    add a, REX_SPRITE_COL_1_X
+    add a, META_SPRITE_COL_1_X
     ld [hl+], a
     ld a, REX_DEAD_SPRITE_2
     ld [hl], a
     
     ld hl, {REX_SPRITE_3} ; wShadowOAM.3
     ld a, b
-    add a, REX_SPRITE_ROW_1_Y
+    add a, META_SPRITE_ROW_1_Y
     ld [hl+], a
     ld a, c
-    add a, REX_SPRITE_COL_2_X
+    add a, META_SPRITE_COL_2_X
     ld [hl+], a
     ld a, REX_DEAD_SPRITE_3
     ld [hl], a
@@ -517,7 +517,7 @@ _RexAnimateJumping:
 
     ld hl, {REX_SPRITE_0} ; wShadowOAM.0
     ld a, [hl]
-    cp a, REX_MAX_JUMP_HEIGHT
+    cp a, REX_JUMP_HEIGHT
     ret nc
 
     ld a, REX_ANIM_FALLING
@@ -547,7 +547,7 @@ _RexAnimateShortJumping:
 
     ld hl, {REX_SPRITE_0} ; wShadowOAM.0
     ld a, [hl]
-    cp a, REX_MAX_SHORT_JUMP_HEIGHT
+    cp a, REX_SHORT_JUMP_HEIGHT
     ret nc
 
     ld a, REX_ANIM_FALLING
@@ -577,7 +577,7 @@ _RexAnimateFalling:
 
     ld hl, {REX_SPRITE_0} ; wShadowOAM.0
     ld a, [hl]
-    cp a, REX_INIT_Y_POS
+    cp a, GROUND_LEVEL_Y_POS
     ret c
     ret z
 
@@ -604,7 +604,7 @@ _RexAnimateFastFalling:
 
     ld hl, {REX_SPRITE_0} ; wShadowOAM.0
     ld a, [hl]
-    cp a, REX_INIT_Y_POS
+    cp a, GROUND_LEVEL_Y_POS
     ret c
     ret z
 
@@ -613,77 +613,6 @@ _RexAnimateFastFalling:
 ; Animate dead Rex
 _RexAnimateDead:
     rst _Crash
-
-/*******************************************************************************
-**                                                                            **
-**      REX COLLISION FUNCTIONS                                               **
-**                                                                            **
-*******************************************************************************/
-
-; Checks for collisions with any other oam objects.
-; Uses Rex sprite 3, which is always in the top right,
-; and sprite 0, which is always in the bottom left.
-; Regardless of Rex's current animation.
-;
-; b = top y
-; c = right x
-; d = bottom y
-; e = left x
-;
-; Returns:
-; - carry = collision
-; - no carry = no collision
-_RexCheckCollision::
-    ld hl, {REX_SPRITE_3}
-    ld a, [hl+]
-    sub a, (OAM_Y_OFS - COLLISION_PIXEL_OVERLAP)
-    ld b, a
-
-    ld a, [hl+]
-    sub a, COLLISION_PIXEL_OVERLAP
-    ld c, a
-
-    ld hl, {REX_SPRITE_0}
-    ld a, [hl+]
-    sub a, COLLISION_PIXEL_OVERLAP
-    ld d, a
-    ld a, [hl+]
-    sub a, (OAM_X_OFS - COLLISION_PIXEL_OVERLAP)
-    ld e, a
-
-    ld hl, {REX_SPRITE_3} + sizeof_OAM_ATTRS
-REPT (OAM_COUNT - NUMBER_OF_REX_SPRITES)
-    ld a, [hl]
-    sub a, COLLISION_PIXEL_OVERLAP
-    cp a, b
-    jr c, :+
-    ld a, [hl+]
-    sub a, (OAM_Y_OFS - COLLISION_PIXEL_OVERLAP)
-    cp a, d
-    jr nc, :+
-
-    ld a, [hl]
-    sub a, COLLISION_PIXEL_OVERLAP
-    cp a, c
-    jr nc, :+
-    ld a, [hl+]
-    sub a, (OAM_X_OFS - COLLISION_PIXEL_OVERLAP)
-    cp a, e
-    jr c, :+
-
-    jp .collsion
-:
-    inc hl
-    inc hl
-ENDR
-
-    scf
-    ccf
-    ret
-
-.collsion:
-    scf
-    ret
 
 ENDSECTION
 

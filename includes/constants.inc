@@ -6,7 +6,7 @@ DEF TRUE    EQU 1
 
 /*******************************************************************************
 **                                                                            **
-**      GAME CONSTANTS                                                        **
+**      MAIN CONSTANTS                                                        **
 **                                                                            **
 *******************************************************************************/
 
@@ -17,22 +17,54 @@ DEF STATE_CREDITS       RB 1 ; $02
 DEF STATE_GAME          RB 1 ; $03
 DEF STATE_PAUSE         RB 1 ; $04
 DEF STATE_DEAD          RB 1 ; $05
+
 DEF NUMBER_OF_STATES    RB 0 ; $06
+
+
+/*******************************************************************************
+**                                                                            **
+**      MAIN CONSTANTS                                                        **
+**                                                                            **
+*******************************************************************************/
+
+DEF MENU_OPT_START_TILE EQUS "vSCRN0.y8x5"
 
 RSRESET
 DEF MENU_OPT_START      RB 1 ; $00
 DEF MENU_OPT_CREDITS    RB 1 ; $01
+
 DEF NUMBER_OF_MENU_OPTS RB 0 ; $02
 
-DEF MENU_OPT_START_TILE EQUS "vSCRN0.y8x5"
+
+/*******************************************************************************
+**                                                                            **
+**      ENGINE CONSTANTS                                                      **
+**                                                                            **
+*******************************************************************************/
 
 DEF INITIAL_SPEED           EQU 10
 
-DEF COLLISION_PIXEL_OVERLAP EQU 2
+DEF COLLISION_PIXEL_OVERLAP EQU 4
 
 DEF SCORE_BYTES             EQU 3
 DEF SCORE_DIGITS            EQU SCORE_BYTES * 2
 DEF SCORE_INCREMENT_MASK    EQU %00000001
+
+DEF SPAWN_FRAME_MASK        EQU %11111111
+
+DEF PTERO_1_INIT_SPAWN_CHANCE EQU 5
+DEF PTERO_2_INIT_SPAWN_CHANCE EQU $FF - PTERO_1_INIT_SPAWN_CHANCE
+
+DEF CACTUS_SMALL_1_INIT_SPAWN_CHANCE    EQU 5
+DEF CACTUS_SMALL_2_INIT_SPAWN_CHANCE    EQU $FF - CACTUS_SMALL_1_INIT_SPAWN_CHANCE
+
+RSRESET
+DEF OBJECT_SMALL_CACTUS_1   RB 1 ; $00
+DEF OBJECT_PTERO_1          RB 1 ; $01
+DEF OBJECT_SMALL_CACTUS_2   RB 1 ; $02
+DEF OBJECT_PTERO_2          RB 1 ; $03
+
+DEF NUMBER_OF_OBJECTS       RB 0 ; $04
 
 /*******************************************************************************
 **                                                                            **
@@ -57,25 +89,46 @@ DEF DEFAULT_PALETTE  EQU %11100100
 
 /*******************************************************************************
 **                                                                            **
-**      REX CONSTANTS                                                         **
+**      SPRITE POSITION CONSTANTS                                             **
 **                                                                            **
 *******************************************************************************/
 
-DEF REX_INIT_Y_POS          EQU 120 + OAM_Y_OFS
+DEF OFFSCREEN_SPRITE_Y_POS  EQU SCRN_Y + OAM_Y_OFS
+DEF OFFSCREEN_SPRITE_X_POS  EQU SCRN_X + OAM_X_OFS
+
+DEF META_SPRITE_ROW_0_Y     EQU 0
+DEF META_SPRITE_ROW_1_Y     EQU -8
+DEF META_SPRITE_ROW_2_Y     EQU -16
+
+DEF META_SPRITE_COL_0_X     EQU 0
+DEF META_SPRITE_COL_1_X     EQU 8
+DEF META_SPRITE_COL_2_X     EQU 16
+DEF META_SPRITE_COL_3_X     EQU 24
+
+DEF GROUND_LEVEL_Y_POS      EQU 120 + OAM_Y_OFS
+
 DEF REX_INIT_X_POS          EQU 8 + OAM_X_OFS
 
-DEF REX_MAX_JUMP_HEIGHT         EQU 54 + OAM_Y_OFS
-DEF REX_MAX_SHORT_JUMP_HEIGHT   EQU 90 + OAM_Y_OFS
+DEF REX_JUMP_HEIGHT         EQU 54 + OAM_Y_OFS
+DEF REX_SHORT_JUMP_HEIGHT   EQU 90 + OAM_Y_OFS
 
-DEF REX_JUMP_VELOCITY           EQU 3
-DEF REX_FAST_FALL_VELOCITY      EQU 6
-
+DEF PTERO_1_INIT_Y_POS_0    EQU 54 + OAM_Y_OFS
+DEF PTERO_1_INIT_Y_POS_1    EQU 86 + OAM_Y_OFS
+DEF PTERO_2_INIT_Y_POS_0    EQU 70 + OAM_Y_OFS
+DEF PTERO_2_INIT_Y_POS_1    EQU 102 + OAM_Y_OFS
 
 /*******************************************************************************
 **                                                                            **
 **      REX ANIMATION CONSTANTS                                               **
 **                                                                            **
 *******************************************************************************/
+
+DEF REX_JUMP_VELOCITY           EQU 2
+DEF REX_FAST_FALL_VELOCITY      EQU 3
+
+DEF REX_BLINK_FRAMES_MASK       EQU %00000111
+DEF REX_RUNNING_FRAMES_MASK     EQU %00000111
+DEF REX_JUMP_FRAMES_MASK        EQU %00000011
 
 RSRESET
 DEF REX_ANIM_STANDING           RB 1 ; $00
@@ -87,11 +140,8 @@ DEF REX_ANIM_SHORT_JUMPING      RB 1 ; $05
 DEF REX_ANIM_FALLING            RB 1 ; $06
 DEF REX_ANIM_FAST_FALLING       RB 1 ; $07
 DEF REX_ANIM_DEAD               RB 1 ; $08
-DEF NUMBER_OF_REX_ANIMATIONS    RB 0 ; $09
 
-DEF REX_BLINK_FRAMES_MASK       EQU %00000111
-DEF REX_RUNNING_FRAMES_MASK     EQU %00000111
-DEF REX_JUMP_FRAMES_MASK        EQU %00000011
+DEF NUMBER_OF_REX_ANIMATIONS    RB 0 ; $09
 
 
 /*******************************************************************************
@@ -107,20 +157,11 @@ DEF REX_SPRITE_1            EQUS "wShadowOAM.1"
 DEF REX_SPRITE_2            EQUS "wShadowOAM.2"
 DEF REX_SPRITE_3            EQUS "wShadowOAM.3"
 
-DEF REX_SPRITE_ROW_0_Y      EQU 0
-DEF REX_SPRITE_ROW_1_Y      EQU -8
-DEF REX_SPRITE_ROW_2_Y      EQU -16
-
-DEF REX_SPRITE_COL_0_X      EQU 0
-DEF REX_SPRITE_COL_1_X      EQU 8
-DEF REX_SPRITE_COL_2_X      EQU 16
-DEF REX_SPRITE_COL_3_X      EQU 24
-
 /* Default Sprite
         2   
         2   3
     0   1   3
-    0   1
+____0___1________
 */
 DEF REX_DEFAULT_SPRITE_0    EQU $00
 DEF REX_DEFAULT_SPRITE_1    EQU $02
@@ -141,7 +182,7 @@ DEF REX_DEAD_SPRITE_3       EQU $26
 /* Ducking Sprite
 
     0   1   2   3
-    0   1   2   3
+____0___1___2___3____
 */
 DEF REX_DUCKING_SPRITE_0    EQU $08
 DEF REX_DUCKING_SPRITE_1    EQU $0A
@@ -154,33 +195,17 @@ DEF REX_DUCKING_SPRITE_1_R  EQU $1A
 
 /*******************************************************************************
 **                                                                            **
-**      PTERO CONSTANTS                                                       **
-**                                                                            **
-*******************************************************************************/
-
-DEF PTERO_1_INIT_Y_POS_0    EQU 54 + OAM_Y_OFS
-DEF PTERO_1_INIT_Y_POS_1    EQU 86 + OAM_Y_OFS
-DEF PTERO_2_INIT_Y_POS_0    EQU 70 + OAM_Y_OFS
-DEF PTERO_2_INIT_Y_POS_1    EQU 102 + OAM_Y_OFS
-
-DEF PTERO_INIT_X_POS        EQU 160 + OAM_X_OFS
-
-DEF PTERO_1_INIT_SPAWN_CHANCE EQU 10
-DEF PTERO_2_INIT_SPAWN_CHANCE EQU $FF - PTERO_1_INIT_SPAWN_CHANCE
-
-
-/*******************************************************************************
-**                                                                            **
 **      PTERO ANIMATION CONSTANTS                                             **
 **                                                                            **
 *******************************************************************************/
 
+DEF PTERO_FRAMES_MASK           EQU %00000111
+
 RSRESET
 DEF PTERO_ANIM_FRAME_1          RB 1 ; $00
 DEF PTERO_ANIM_FRAME_2          RB 1 ; $01
-DEF NUMBER_OF_PTERO_ANIMATIONS  RB 0 ; $02
 
-DEF PTERO_FRAMES_MASK           EQU %00000111
+DEF NUMBER_OF_PTERO_ANIMATIONS  RB 0 ; $02
 
 
 /*******************************************************************************
@@ -197,24 +222,67 @@ DEF PTERO_2_SPRITE_0            EQUS "wShadowOAM.7"
 DEF PTERO_2_SPRITE_1            EQUS "wShadowOAM.8"
 DEF PTERO_2_SPRITE_2            EQUS "wShadowOAM.9"
 
-DEF PTERO_SPRITE_ROW_0_Y      EQU 0
-
-DEF PTERO_SPRITE_COL_0_X      EQU 0
-DEF PTERO_SPRITE_COL_1_X      EQU 8
-DEF PTERO_SPRITE_COL_2_X      EQU 16
-
 /* Frame 1
     0   1   2
     0   1   2
 */
-DEF PTERO_FRAME_1_SPRITE_0   EQU $60
-DEF PTERO_FRAME_1_SPRITE_1   EQU $62
-DEF PTERO_FRAME_1_SPRITE_2   EQU $64
+DEF PTERO_FRAME_1_SPRITE_0   EQU $64
+DEF PTERO_FRAME_1_SPRITE_1   EQU $66
+DEF PTERO_FRAME_1_SPRITE_2   EQU $68
 
 /* Frame 2
     0   1   2
     0   1   2
 */
-DEF PTERO_FRAME_2_SPRITE_0    EQU $70
-DEF PTERO_FRAME_2_SPRITE_1    EQU $72
-DEF PTERO_FRAME_2_SPRITE_2    EQU $74
+DEF PTERO_FRAME_2_SPRITE_0    EQU $6A
+DEF PTERO_FRAME_2_SPRITE_1    EQU $6C
+DEF PTERO_FRAME_2_SPRITE_2    EQU $6E
+
+
+/*******************************************************************************
+**                                                                            **
+**      SMALL CACTUS TYPE CONSTANTS                                           **
+**                                                                            **
+*******************************************************************************/
+
+RSRESET
+DEF CACTUS_SMALL_TYPE_1             RB 1 ; $00
+DEF CACTUS_SMALL_TYPE_2             RB 1 ; $01
+DEF CACTUS_SMALL_TYPE_3             RB 1 ; $02
+
+DEF NUMBER_OF_SMALL_CACTUS_TYPES    RB 0 ; $03
+
+/*******************************************************************************
+**                                                                            **
+**      SMALL CACTUS SPRITE CONSTANTS                                         **
+**                                                                            **
+*******************************************************************************/
+
+DEF CACTUS_SMALL_1_SPRITE_0     EQUS "wShadowOAM.10"
+DEF CACTUS_SMALL_1_SPRITE_1     EQUS "wShadowOAM.11"
+DEF CACTUS_SMALL_1_SPRITE_2     EQUS "wShadowOAM.12"
+
+DEF CACTUS_SMALL_2_SPRITE_0     EQUS "wShadowOAM.13"
+DEF CACTUS_SMALL_2_SPRITE_1     EQUS "wShadowOAM.14"
+DEF CACTUS_SMALL_2_SPRITE_2     EQUS "wShadowOAM.15"
+
+/* Version 1
+    0
+____0____
+*/
+DEF CACTUS_SMALL_TYPE_1_SPRITE_0   EQU $30
+
+/* Version 2
+    0   1
+____0___1____
+*/
+DEF CACTUS_SMALL_TYPE_2_SPRITE_0   EQU $32
+DEF CACTUS_SMALL_TYPE_2_SPRITE_1   EQU $34
+
+/* Version 3
+    0   1   2
+____0___1___2____
+*/
+DEF CACTUS_SMALL_TYPE_3_SPRITE_0   EQU $36
+DEF CACTUS_SMALL_TYPE_3_SPRITE_1   EQU $38
+DEF CACTUS_SMALL_TYPE_3_SPRITE_2   EQU $3A

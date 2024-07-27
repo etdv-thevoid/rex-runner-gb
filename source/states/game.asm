@@ -7,8 +7,7 @@ SECTION "Game", ROM0
 _Game::
     call _LoadTilemapBackground
 
-    call _DrawHighScoreString
-    call _DrawHighScore
+    call _DrawHUD
 
     call _RexFullJump
 
@@ -22,16 +21,15 @@ _GameLoop:
     
     call _WaitForVBLInterrupt
 
-    call _RexCheckCollision
+    call _EngineCheckCollision
     ld a, STATE_DEAD
     jp c, _SwitchStateToNew
 
-    call _RexAnimate
-    call _PteroAnimate
+    call _EngineAnimate
 
-    call _PteroTrySpawn
+    call _EngineTrySpawn
     
-    call _DrawCurrentScore
+    call _UpdateHUD
 
 .checkKeys:
     ldh a, [hKeysHeld]
@@ -53,17 +51,6 @@ _GameLoop:
     and a, PADF_A
     jr z, :+
     call _RexShortJump
-:
-    ldh a, [hKeysPressed]
-    and a, PADF_B
-    jr z, :+
-    call _PteroTrySpawn
-:
-    ldh a, [hKeysPressed]
-    and a, PADF_SELECT
-    jr z, :+
-    ld a, STATE_DEAD
-    jp _SwitchStateToNew
 :
     ldh a, [hKeysPressed]
     and a, PADF_START

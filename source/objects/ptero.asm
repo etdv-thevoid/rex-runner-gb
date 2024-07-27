@@ -26,17 +26,17 @@ _InitPtero1:
     jr z, .getYPos1
 
 .getYPos0:
-    ld b, PTERO_1_INIT_Y_POS_0 + PTERO_SPRITE_ROW_0_Y
+    ld b, PTERO_1_INIT_Y_POS_0 + META_SPRITE_ROW_0_Y
     jr .gotYPos
 
 .getYPos1:
-    ld b, PTERO_1_INIT_Y_POS_1 + PTERO_SPRITE_ROW_0_Y
+    ld b, PTERO_1_INIT_Y_POS_1 + META_SPRITE_ROW_0_Y
 
 .gotYPos:
     ld hl, {PTERO_1_SPRITE_0}
     ld a, b
     ld [hl+], a
-    ld a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_0_X
+    ld a, OFFSCREEN_SPRITE_X_POS + META_SPRITE_COL_0_X
     ld [hl+], a
     ld a, PTERO_FRAME_1_SPRITE_0
     ld [hl], a
@@ -44,7 +44,7 @@ _InitPtero1:
     ld hl, {PTERO_1_SPRITE_1}
     ld a, b
     ld [hl+], a
-    ld a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_1_X
+    ld a, OFFSCREEN_SPRITE_X_POS + META_SPRITE_COL_1_X
     ld [hl+], a
     ld a, PTERO_FRAME_1_SPRITE_1
     ld [hl], a
@@ -52,7 +52,7 @@ _InitPtero1:
     ld hl, {PTERO_1_SPRITE_2}
     ld a, b
     ld [hl+], a
-    ld a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_2_X
+    ld a, OFFSCREEN_SPRITE_X_POS + META_SPRITE_COL_2_X
     ld [hl+], a
     ld a, PTERO_FRAME_1_SPRITE_2
     ld [hl], a
@@ -70,45 +70,46 @@ _InitPtero2:
     jr z, .getYPos1
 
 .getYPos0:
-    ld b, PTERO_2_INIT_Y_POS_0 + PTERO_SPRITE_ROW_0_Y
+    ld b, PTERO_2_INIT_Y_POS_0 + META_SPRITE_ROW_0_Y
     jr .gotYPos
 
 .getYPos1:
-    ld b, PTERO_2_INIT_Y_POS_1 + PTERO_SPRITE_ROW_0_Y
+    ld b, PTERO_2_INIT_Y_POS_1 + META_SPRITE_ROW_0_Y
 
 .gotYPos:
     ld hl, {PTERO_2_SPRITE_0}
     ld a, b
     ld [hl+], a
-    ld a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_0_X
+    ld a, OFFSCREEN_SPRITE_X_POS + META_SPRITE_COL_0_X
     ld [hl+], a
-    ld a, PTERO_FRAME_1_SPRITE_0
+    ld a, PTERO_FRAME_2_SPRITE_0
     ld [hl], a
     
     ld hl, {PTERO_2_SPRITE_1}
     ld a, b
     ld [hl+], a
-    ld a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_1_X
+    ld a, OFFSCREEN_SPRITE_X_POS + META_SPRITE_COL_1_X
     ld [hl+], a
-    ld a, PTERO_FRAME_1_SPRITE_1
+    ld a, PTERO_FRAME_2_SPRITE_1
     ld [hl], a
     
     ld hl, {PTERO_2_SPRITE_2}
     ld a, b
     ld [hl+], a
-    ld a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_2_X
+    ld a, OFFSCREEN_SPRITE_X_POS + META_SPRITE_COL_2_X
     ld [hl+], a
-    ld a, PTERO_FRAME_1_SPRITE_2
+    ld a, PTERO_FRAME_2_SPRITE_2
     ld [hl], a
 
     ret
 
 /*******************************************************************************
 **                                                                            **
-**      PTERO INC SPAWN CHANCE FUNCTION                                       **
+**      PTERO SPAWN FUNCTIONS                                                  **
 **                                                                            **
 *******************************************************************************/
 
+; Increments Ptero spawn chance variables
 _PteroIncSpawnChance::
     ld a, [wPtero1SpawnChance]
     cp a, $FF
@@ -126,33 +127,29 @@ _PteroIncSpawnChance::
 .done:
     ret
 
-/*******************************************************************************
-**                                                                            **
-**      PTERO SPAWN FUNCTION                                                  **
-**                                                                            **
-*******************************************************************************/
-
-; Increments both Ptero's internal animation frame counters
-_PteroTrySpawn::
+; Attempts to spawn Ptero 1
+_Ptero1TrySpawn::
     call _GetRandom
 
     ld a, [wPtero1IsSpawned]
     and a
-    jr nz, .ptero2
+    jr nz, .done
 
     ld a, [wPtero1SpawnChance]
     cp a, b
-    jr nc, .ptero2
+    jr nc, .done
     cp a, c
-    jr nc, .ptero2
+    jr nc, .done
 
     ld a, [wPtero1IsSpawned]
     ld a, TRUE
     ld [wPtero1IsSpawned], a
 
-    jr .done
+.done:
+    ret
 
-.ptero2:
+; Attempts to spawn Ptero 2
+_Ptero2TrySpawn::
     call _GetRandom
 
     ld a, [wPtero2IsSpawned]
@@ -174,7 +171,7 @@ _PteroTrySpawn::
 
 /*******************************************************************************
 **                                                                            **
-**      PTERO FRAME COUNTER FUNCTION                                          **
+**      PTERO ANIMATION FUNCTIONS                                             **
 **                                                                            **
 *******************************************************************************/
 
@@ -200,19 +197,9 @@ _PteroIncFrameCounter::
 .done:
     ret
 
-/*******************************************************************************
-**                                                                            **
-**      PTERO ANIMATION FUNCTIONS                                             **
-**                                                                            **
-*******************************************************************************/
-
 ; Animate both Pteros
 _PteroAnimate::
-    call _GetDifficultySpeed
-
-REPT PARALLAX_BIT_SHIFTS_INITIAL
-    srl a
-ENDR
+    call _GetBackgroundScrolllDifferential
     ld b, a
 
     ld a, [wPtero1IsSpawned]
@@ -327,12 +314,12 @@ ENDR
 .done:
     ld hl, {PTERO_1_SPRITE_2} + OAMA_X
     ld a, [hl]
-    cp a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_2_X + 1
+    cp a, OFFSCREEN_SPRITE_X_POS + META_SPRITE_COL_2_X + 1
     call nc, _InitPtero1
     
     ld hl, {PTERO_2_SPRITE_2} + OAMA_X
     ld a, [hl]
-    cp a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_2_X + 1
+    cp a, OFFSCREEN_SPRITE_X_POS + META_SPRITE_COL_2_X + 1
     call nc, _InitPtero2
     ret
 

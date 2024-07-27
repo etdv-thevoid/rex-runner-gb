@@ -21,12 +21,6 @@ _MenuLoop:
     
 .checkKeys:
     ldh a, [hKeysPressed]
-    and a, PADF_SELECT
-    jr z, :+
-    ld a, $FF
-    jp _SwitchStateToNew
-:
-    ldh a, [hKeysPressed]
     and a, PADF_UP
     jr z, :+
     jr _MainMoveCursorUp
