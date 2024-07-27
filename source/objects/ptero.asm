@@ -10,7 +10,7 @@ _InitPtero::
     ld [wPtero1SpawnChance], a
     
     ld a, PTERO_2_INIT_SPAWN_CHANCE
-    ld [wPtero1SpawnChance], a
+    ld [wPtero2SpawnChance], a
 
     call _InitPtero1
     jp _InitPtero2
