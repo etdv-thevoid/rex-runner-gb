@@ -228,7 +228,7 @@ ENDSECTION
 SECTION "Graphics Assets", ROM0
 
 _SpriteTiles:
-    INCBIN "assets/sprites.2bpp"
+    INCBIN "assets/sprites_8x16.2bpp"
 .end:
 
 _BackgroundTiles:

@@ -27,12 +27,10 @@ _InitPtero1:
 
 .getYPos0:
     ld b, PTERO_1_INIT_Y_POS_0 + PTERO_SPRITE_ROW_0_Y
-    ld c, PTERO_1_INIT_Y_POS_0 + PTERO_SPRITE_ROW_1_Y
     jr .gotYPos
 
 .getYPos1:
     ld b, PTERO_1_INIT_Y_POS_1 + PTERO_SPRITE_ROW_0_Y
-    ld c, PTERO_1_INIT_Y_POS_1 + PTERO_SPRITE_ROW_1_Y
 
 .gotYPos:
     ld hl, {PTERO_1_SPRITE_0}
@@ -58,30 +56,6 @@ _InitPtero1:
     ld [hl+], a
     ld a, PTERO_FRAME_1_SPRITE_2
     ld [hl], a
-    
-    ld hl, {PTERO_1_SPRITE_3}
-    ld a, c
-    ld [hl+], a
-    ld a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_0_X
-    ld [hl+], a
-    ld a, PTERO_FRAME_1_SPRITE_3
-    ld [hl], a
-    
-    ld hl, {PTERO_1_SPRITE_4}
-    ld a, c
-    ld [hl+], a
-    ld a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_1_X
-    ld [hl+], a
-    ld a, PTERO_FRAME_1_SPRITE_4
-    ld [hl], a
-    
-    ld hl, {PTERO_1_SPRITE_5}
-    ld a, c
-    ld [hl+], a
-    ld a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_2_X
-    ld [hl+], a
-    ld a, PTERO_FRAME_1_SPRITE_5
-    ld [hl], a
 
     ret
 
@@ -97,12 +71,10 @@ _InitPtero2:
 
 .getYPos0:
     ld b, PTERO_2_INIT_Y_POS_0 + PTERO_SPRITE_ROW_0_Y
-    ld c, PTERO_2_INIT_Y_POS_0 + PTERO_SPRITE_ROW_1_Y
     jr .gotYPos
 
 .getYPos1:
     ld b, PTERO_2_INIT_Y_POS_1 + PTERO_SPRITE_ROW_0_Y
-    ld c, PTERO_2_INIT_Y_POS_1 + PTERO_SPRITE_ROW_1_Y
 
 .gotYPos:
     ld hl, {PTERO_2_SPRITE_0}
@@ -127,30 +99,6 @@ _InitPtero2:
     ld a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_2_X
     ld [hl+], a
     ld a, PTERO_FRAME_1_SPRITE_2
-    ld [hl], a
-    
-    ld hl, {PTERO_2_SPRITE_3}
-    ld a, c
-    ld [hl+], a
-    ld a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_0_X
-    ld [hl+], a
-    ld a, PTERO_FRAME_1_SPRITE_3
-    ld [hl], a
-    
-    ld hl, {PTERO_2_SPRITE_4}
-    ld a, c
-    ld [hl+], a
-    ld a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_1_X
-    ld [hl+], a
-    ld a, PTERO_FRAME_1_SPRITE_4
-    ld [hl], a
-    
-    ld hl, {PTERO_2_SPRITE_5}
-    ld a, c
-    ld [hl+], a
-    ld a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_2_X
-    ld [hl+], a
-    ld a, PTERO_FRAME_1_SPRITE_5
     ld [hl], a
 
     ret
@@ -279,21 +227,6 @@ ENDR
     ld a, [hl]
     sub a, b
     ld [hl], a
-    
-    ld hl, {PTERO_1_SPRITE_3} + OAMA_X
-    ld a, [hl]
-    sub a, b
-    ld [hl], a
-    
-    ld hl, {PTERO_1_SPRITE_4} + OAMA_X
-    ld a, [hl]
-    sub a, b
-    ld [hl], a
-    
-    ld hl, {PTERO_1_SPRITE_5} + OAMA_X
-    ld a, [hl]
-    sub a, b
-    ld [hl], a
 
     ld a, [wPtero1AnimationFrameCounter]
     and a, PTERO_FRAMES_MASK
@@ -315,18 +248,6 @@ ENDR
     ld hl, {PTERO_1_SPRITE_2} + OAMA_TILEID
     ld a, PTERO_FRAME_1_SPRITE_2
     ld [hl], a
-    
-    ld hl, {PTERO_1_SPRITE_3} + OAMA_TILEID
-    ld a, PTERO_FRAME_1_SPRITE_3
-    ld [hl], a
-    
-    ld hl, {PTERO_1_SPRITE_4} + OAMA_TILEID
-    ld a, PTERO_FRAME_1_SPRITE_4
-    ld [hl], a
-    
-    ld hl, {PTERO_1_SPRITE_5} + OAMA_TILEID
-    ld a, PTERO_FRAME_1_SPRITE_5
-    ld [hl], a
 
     jr .ptero2
 
@@ -340,18 +261,6 @@ ENDR
     
     ld hl, {PTERO_1_SPRITE_2} + OAMA_TILEID
     ld a, PTERO_FRAME_2_SPRITE_2
-    ld [hl], a
-    
-    ld hl, {PTERO_1_SPRITE_3} + OAMA_TILEID
-    ld a, PTERO_FRAME_2_SPRITE_3
-    ld [hl], a
-    
-    ld hl, {PTERO_1_SPRITE_4} + OAMA_TILEID
-    ld a, PTERO_FRAME_2_SPRITE_4
-    ld [hl], a
-    
-    ld hl, {PTERO_1_SPRITE_5} + OAMA_TILEID
-    ld a, PTERO_FRAME_2_SPRITE_5
     ld [hl], a
 
 .ptero2:
@@ -370,21 +279,6 @@ ENDR
     ld [hl], a
     
     ld hl, {PTERO_2_SPRITE_2} + OAMA_X
-    ld a, [hl]
-    sub a, b
-    ld [hl], a
-    
-    ld hl, {PTERO_2_SPRITE_3} + OAMA_X
-    ld a, [hl]
-    sub a, b
-    ld [hl], a
-    
-    ld hl, {PTERO_2_SPRITE_4} + OAMA_X
-    ld a, [hl]
-    sub a, b
-    ld [hl], a
-    
-    ld hl, {PTERO_2_SPRITE_5} + OAMA_X
     ld a, [hl]
     sub a, b
     ld [hl], a
@@ -409,18 +303,6 @@ ENDR
     ld hl, {PTERO_2_SPRITE_2} + OAMA_TILEID
     ld a, PTERO_FRAME_1_SPRITE_2
     ld [hl], a
-    
-    ld hl, {PTERO_2_SPRITE_3} + OAMA_TILEID
-    ld a, PTERO_FRAME_1_SPRITE_3
-    ld [hl], a
-    
-    ld hl, {PTERO_2_SPRITE_4} + OAMA_TILEID
-    ld a, PTERO_FRAME_1_SPRITE_4
-    ld [hl], a
-    
-    ld hl, {PTERO_2_SPRITE_5} + OAMA_TILEID
-    ld a, PTERO_FRAME_1_SPRITE_5
-    ld [hl], a
 
     jr .done
 
@@ -435,26 +317,14 @@ ENDR
     ld hl, {PTERO_2_SPRITE_2} + OAMA_TILEID
     ld a, PTERO_FRAME_2_SPRITE_2
     ld [hl], a
-    
-    ld hl, {PTERO_2_SPRITE_3} + OAMA_TILEID
-    ld a, PTERO_FRAME_2_SPRITE_3
-    ld [hl], a
-    
-    ld hl, {PTERO_2_SPRITE_4} + OAMA_TILEID
-    ld a, PTERO_FRAME_2_SPRITE_4
-    ld [hl], a
-    
-    ld hl, {PTERO_2_SPRITE_5} + OAMA_TILEID
-    ld a, PTERO_FRAME_2_SPRITE_5
-    ld [hl], a
 
 .done:
-    ld hl, {PTERO_1_SPRITE_5} + OAMA_X
+    ld hl, {PTERO_1_SPRITE_2} + OAMA_X
     ld a, [hl]
     cp a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_2_X + 1
     call nc, _InitPtero1
     
-    ld hl, {PTERO_2_SPRITE_5} + OAMA_X
+    ld hl, {PTERO_2_SPRITE_2} + OAMA_X
     ld a, [hl]
     cp a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_2_X + 1
     call nc, _InitPtero2
