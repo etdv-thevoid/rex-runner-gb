@@ -110,14 +110,20 @@ _InitPtero2:
 *******************************************************************************/
 
 _PteroIncSpawnChance::
-    ld a, [wPtero1AnimationFrameCounter]
+    ld a, [wPtero1SpawnChance]
+    cp a, $FF
+    jr z, ptero2
     inc a
-    ld [wPtero1AnimationFrameCounter], a
-
-    ld a, [wPtero2AnimationFrameCounter]
+    ld [wPtero1SpawnChance], a
+    
+.ptero2:
+    ld a, [wPtero2SpawnChance]
+    cp a, $00
+    jr z, .done
     dec a
-    ld [wPtero2AnimationFrameCounter], a
+    ld [wPtero2SpawnChance], a
 
+.done:
     ret
 
 /*******************************************************************************
