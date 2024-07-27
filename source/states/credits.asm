@@ -10,7 +10,7 @@ _Credits::
     ld a, WINDOW_OFF
     call _ScreenOn
     
-.loop:
+_CreditsLoop:
     ei
     
     call _WaitForVBLInterrupt
@@ -20,7 +20,7 @@ _Credits::
 .checkKeys:
     ldh a, [hKeysPressed]
     and a, PADF_START | PADF_SELECT | PADF_B | PADF_A
-    jr z, .loop
+    jr z, _CreditsLoop
     jp _SwitchStateToPrevious
 
 ENDSECTION

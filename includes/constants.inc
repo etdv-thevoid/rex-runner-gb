@@ -11,15 +11,21 @@ DEF TRUE    EQU 1
 *******************************************************************************/
 
 RSRESET
+DEF STATE_INIT          RB 1 ; $00
+DEF STATE_MENU          RB 1 ; $01
+DEF STATE_CREDITS       RB 1 ; $02
+DEF STATE_GAME          RB 1 ; $03
+DEF STATE_PAUSE         RB 1 ; $04
+DEF STATE_DEAD          RB 1 ; $05
+DEF NUMBER_OF_STATES    RB 0 ; $06
 
-DEF STATE_INIT          RB 1
-DEF STATE_MENU          RB 1
-DEF STATE_CREDITS       RB 1
-DEF STATE_GAME          RB 1
-DEF STATE_PAUSE         RB 1
-DEF STATE_DEAD          RB 1
+RSRESET
+DEF MENU_OPT_START      RB 1 ; $00
+DEF MENU_OPT_CREDITS    RB 1 ; $01
+DEF NUMBER_OF_MENU_OPTS RB 0 ; $02
 
-DEF NUMBER_OF_STATES    RB 0
+DEF MENU_OPT_START_TILE EQUS "vSCRN0.y8x5"
+
 
 DEF INITIAL_SPEED           EQU 10
 
@@ -71,7 +77,6 @@ DEF REX_FAST_FALL_VELOCITY      EQU 6
 *******************************************************************************/
 
 RSRESET
-
 DEF REX_ANIM_STANDING           RB 1 ; $00
 DEF REX_ANIM_BLINKING           RB 1 ; $01
 DEF REX_ANIM_RUNNING            RB 1 ; $02
@@ -81,7 +86,6 @@ DEF REX_ANIM_SHORT_JUMPING      RB 1 ; $05
 DEF REX_ANIM_FALLING            RB 1 ; $06
 DEF REX_ANIM_FAST_FALLING       RB 1 ; $07
 DEF REX_ANIM_DEAD               RB 1 ; $08
-
 DEF NUMBER_OF_REX_ANIMATIONS    RB 0 ; $09
 
 DEF REX_BLINK_FRAMES_MASK       EQU %00000111
@@ -184,14 +188,14 @@ DEF REX_DEAD_SPRITE_7       EQU $2B
 **                                                                            **
 *******************************************************************************/
 
-DEF PTERO_INIT_Y_POS_1      EQU 54 + OAM_Y_OFS
-DEF PTERO_INIT_Y_POS_2      EQU 80 + OAM_Y_OFS
-DEF PTERO_INIT_Y_POS_3      EQU 104 + OAM_Y_OFS
+DEF PTERO_1_INIT_Y_POS_0    EQU 54 + OAM_Y_OFS
+DEF PTERO_1_INIT_Y_POS_1    EQU 86 + OAM_Y_OFS
+DEF PTERO_2_INIT_Y_POS_0    EQU 70 + OAM_Y_OFS
+DEF PTERO_2_INIT_Y_POS_1    EQU 102 + OAM_Y_OFS
 
 DEF PTERO_INIT_X_POS        EQU 160 + OAM_X_OFS
 
-DEF PTERO_1_SPAWN_MASK      EQU %00000011
-DEF PTERO_2_SPAWN_MASK      EQU %11000000
+DEF PTERO_INIT_SPAWN_CHANCE EQU 1
 
 
 /*******************************************************************************
@@ -201,10 +205,8 @@ DEF PTERO_2_SPAWN_MASK      EQU %11000000
 *******************************************************************************/
 
 RSRESET
-
 DEF PTERO_ANIM_FRAME_1          RB 1 ; $00
 DEF PTERO_ANIM_FRAME_2          RB 1 ; $01
-
 DEF NUMBER_OF_PTERO_ANIMATIONS  RB 0 ; $02
 
 DEF PTERO_FRAMES_MASK           EQU %00000111

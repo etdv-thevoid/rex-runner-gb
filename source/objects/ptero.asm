@@ -10,8 +10,22 @@ _InitPtero1::
     ld [wPtero1IsSpawned], a
     ld [wPtero1AnimationFrameCounter], a
 
+    call _GetRandomByte
+    and a, %00000001
+    jr z, .getYPos1
+
+.getYPos0:
+    ld b, PTERO_1_INIT_Y_POS_0 + PTERO_SPRITE_ROW_0_Y
+    ld c, PTERO_1_INIT_Y_POS_0 + PTERO_SPRITE_ROW_1_Y
+    jr .gotYPos
+
+.getYPos1:
+    ld b, PTERO_1_INIT_Y_POS_1 + PTERO_SPRITE_ROW_0_Y
+    ld c, PTERO_1_INIT_Y_POS_1 + PTERO_SPRITE_ROW_1_Y
+
+.gotYPos:
     ld hl, {PTERO_1_SPRITE_0}
-    ld a, PTERO_INIT_Y_POS_1 + PTERO_SPRITE_ROW_0_Y
+    ld a, b
     ld [hl+], a
     ld a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_0_X
     ld [hl+], a
@@ -19,7 +33,7 @@ _InitPtero1::
     ld [hl], a
     
     ld hl, {PTERO_1_SPRITE_1}
-    ld a, PTERO_INIT_Y_POS_1 + PTERO_SPRITE_ROW_0_Y
+    ld a, b
     ld [hl+], a
     ld a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_1_X
     ld [hl+], a
@@ -27,7 +41,7 @@ _InitPtero1::
     ld [hl], a
     
     ld hl, {PTERO_1_SPRITE_2}
-    ld a, PTERO_INIT_Y_POS_1 + PTERO_SPRITE_ROW_0_Y
+    ld a, b
     ld [hl+], a
     ld a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_2_X
     ld [hl+], a
@@ -35,7 +49,7 @@ _InitPtero1::
     ld [hl], a
     
     ld hl, {PTERO_1_SPRITE_3}
-    ld a, PTERO_INIT_Y_POS_1 + PTERO_SPRITE_ROW_1_Y
+    ld a, c
     ld [hl+], a
     ld a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_0_X
     ld [hl+], a
@@ -43,7 +57,7 @@ _InitPtero1::
     ld [hl], a
     
     ld hl, {PTERO_1_SPRITE_4}
-    ld a, PTERO_INIT_Y_POS_1 + PTERO_SPRITE_ROW_1_Y
+    ld a, c
     ld [hl+], a
     ld a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_1_X
     ld [hl+], a
@@ -51,7 +65,7 @@ _InitPtero1::
     ld [hl], a
     
     ld hl, {PTERO_1_SPRITE_5}
-    ld a, PTERO_INIT_Y_POS_1 + PTERO_SPRITE_ROW_1_Y
+    ld a, c
     ld [hl+], a
     ld a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_2_X
     ld [hl+], a
@@ -66,8 +80,22 @@ _InitPtero2::
     ld [wPtero2IsSpawned], a
     ld [wPtero2AnimationFrameCounter], a
 
+    call _GetRandomByte
+    and a, %00000001
+    jr z, .getYPos1
+
+.getYPos0:
+    ld b, PTERO_2_INIT_Y_POS_0 + PTERO_SPRITE_ROW_0_Y
+    ld c, PTERO_2_INIT_Y_POS_0 + PTERO_SPRITE_ROW_1_Y
+    jr .gotYPos
+
+.getYPos1:
+    ld b, PTERO_2_INIT_Y_POS_1 + PTERO_SPRITE_ROW_0_Y
+    ld c, PTERO_2_INIT_Y_POS_1 + PTERO_SPRITE_ROW_1_Y
+
+.gotYPos:
     ld hl, {PTERO_2_SPRITE_0}
-    ld a, PTERO_INIT_Y_POS_2 + PTERO_SPRITE_ROW_0_Y
+    ld a, b
     ld [hl+], a
     ld a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_0_X
     ld [hl+], a
@@ -75,7 +103,7 @@ _InitPtero2::
     ld [hl], a
     
     ld hl, {PTERO_2_SPRITE_1}
-    ld a, PTERO_INIT_Y_POS_2 + PTERO_SPRITE_ROW_0_Y
+    ld a, b
     ld [hl+], a
     ld a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_1_X
     ld [hl+], a
@@ -83,7 +111,7 @@ _InitPtero2::
     ld [hl], a
     
     ld hl, {PTERO_2_SPRITE_2}
-    ld a, PTERO_INIT_Y_POS_2 + PTERO_SPRITE_ROW_0_Y
+    ld a, b
     ld [hl+], a
     ld a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_2_X
     ld [hl+], a
@@ -91,7 +119,7 @@ _InitPtero2::
     ld [hl], a
     
     ld hl, {PTERO_2_SPRITE_3}
-    ld a, PTERO_INIT_Y_POS_2 + PTERO_SPRITE_ROW_1_Y
+    ld a, c
     ld [hl+], a
     ld a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_0_X
     ld [hl+], a
@@ -99,7 +127,7 @@ _InitPtero2::
     ld [hl], a
     
     ld hl, {PTERO_2_SPRITE_4}
-    ld a, PTERO_INIT_Y_POS_2 + PTERO_SPRITE_ROW_1_Y
+    ld a, c
     ld [hl+], a
     ld a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_1_X
     ld [hl+], a
@@ -107,7 +135,7 @@ _InitPtero2::
     ld [hl], a
     
     ld hl, {PTERO_2_SPRITE_5}
-    ld a, PTERO_INIT_Y_POS_2 + PTERO_SPRITE_ROW_1_Y
+    ld a, c
     ld [hl+], a
     ld a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_2_X
     ld [hl+], a
@@ -127,26 +155,31 @@ _PteroTrySpawn::
     call _GetRandomByte
     ld b, a
 
+    call _GetRandomByte
+    ld c, a
+
     ld a, [wPtero1IsSpawned]
     and a
     jr nz, .ptero2
 
     ld a, b
-    and a, PTERO_1_SPAWN_MASK
-    jr nz, .ptero2
+    cp a, PTERO_INIT_SPAWN_CHANCE
+    jr nc, .ptero2
 
     ld a, [wPtero1IsSpawned]
     ld a, TRUE
     ld [wPtero1IsSpawned], a
+
+    jr .done
 
 .ptero2:
     ld a, [wPtero2IsSpawned]
     and a
     jr nz, .done
 
-    ld a, b
-    and a, PTERO_2_SPAWN_MASK
-    jr nz, .done
+    ld a, c
+    cp a, PTERO_INIT_SPAWN_CHANCE
+    jr nc, .done
 
     ld a, [wPtero2IsSpawned]
     ld a, TRUE
@@ -386,6 +419,15 @@ ENDR
     ld [hl], a
 
 .done:
+    ld hl, {PTERO_1_SPRITE_5} + OAMA_X
+    ld a, [hl]
+    cp a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_2_X + 1
+    call nc, _InitPtero1
+    
+    ld hl, {PTERO_2_SPRITE_5} + OAMA_X
+    ld a, [hl]
+    cp a, PTERO_INIT_X_POS + PTERO_SPRITE_COL_2_X + 1
+    call nc, _InitPtero2
     ret
 
 ENDSECTION

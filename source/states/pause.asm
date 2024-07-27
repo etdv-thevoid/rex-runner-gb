@@ -9,8 +9,10 @@ _Pause::
 
     ld a, WINDOW_OFF
     call _ScreenOn
+
+    ; fallthrough
     
-.loop:
+_PauseLoop:
     ei
     
     call _WaitForVBLInterrupt
@@ -18,7 +20,7 @@ _Pause::
 .checkKeys:
     ldh a, [hKeysPressed]
     and a, PADF_START
-    jr z, .loop
+    jr z, _PauseLoop
     jp _SwitchStateToPrevious
 
 ENDSECTION

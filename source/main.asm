@@ -9,7 +9,9 @@ _Main::
 
     call _LoadGraphics
 
-.loop:
+    ; fallthrough
+
+_MainLoop:
     di
 
     call _ScreenOff
@@ -21,7 +23,7 @@ _Main::
     ld a, NUMBER_OF_STATES
 .jump:
     call _JumpTable
-    jr .loop
+    jr _MainLoop
 
 _StateJumpTable:
     DW _Init

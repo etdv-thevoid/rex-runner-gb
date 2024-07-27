@@ -10,7 +10,9 @@ _Dead::
     ld a, WINDOW_OFF
     call _ScreenOn
     
-.loop:
+    ; fallthrough
+    
+_DeadLoop:
     ei
     
     call _WaitForVBLInterrupt
@@ -18,7 +20,7 @@ _Dead::
 .checkKeys:
     ldh a, [hKeysPressed]
     and a, PADF_START | PADF_SELECT | PADF_B | PADF_A
-    jr z, .loop
+    jr z, _DeadLoop
     call _SaveHighScore
     ld a, STATE_INIT
     jp _SwitchStateToNew
