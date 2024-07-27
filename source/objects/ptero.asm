@@ -4,8 +4,19 @@ INCLUDE "includes/charmap.inc"
 
 SECTION "Ptero Functions", ROM0
 
+; Initializes both Pteros
+_InitPtero::
+    ld a, PTERO_1_INIT_SPAWN_CHANCE
+    ld [wPtero1SpawnChance], a
+    
+    ld a, PTERO_2_INIT_SPAWN_CHANCE
+    ld [wPtero1SpawnChance], a
+
+    call _InitPtero1
+    jp _InitPtero2
+
 ; Initializes Ptero 1
-_InitPtero1::
+_InitPtero1:
     xor a
     ld [wPtero1IsSpawned], a
     ld [wPtero1AnimationFrameCounter], a
@@ -75,7 +86,7 @@ _InitPtero1::
     ret
 
 ; Initializes Ptero 2
-_InitPtero2::
+_InitPtero2:
     xor a
     ld [wPtero2IsSpawned], a
     ld [wPtero2AnimationFrameCounter], a
@@ -146,24 +157,39 @@ _InitPtero2::
 
 /*******************************************************************************
 **                                                                            **
-**      PTERO FRAME COUNTER FUNCTION                                          **
+**      PTERO INC SPAWN CHANCE FUNCTION                                       **
+**                                                                            **
+*******************************************************************************/
+
+_PteroIncSpawnChance::
+    ld a, [wPtero1AnimationFrameCounter]
+    inc a
+    ld [wPtero1AnimationFrameCounter], a
+
+    ld a, [wPtero2AnimationFrameCounter]
+    dec a
+    ld [wPtero2AnimationFrameCounter], a
+
+    ret
+
+/*******************************************************************************
+**                                                                            **
+**      PTERO SPAWN FUNCTION                                                  **
 **                                                                            **
 *******************************************************************************/
 
 ; Increments both Ptero's internal animation frame counters
 _PteroTrySpawn::
-    call _GetRandomByte
-    ld b, a
-
-    call _GetRandomByte
-    ld c, a
+    call _GetRandom
 
     ld a, [wPtero1IsSpawned]
     and a
     jr nz, .ptero2
 
-    ld a, b
-    cp a, PTERO_INIT_SPAWN_CHANCE
+    ld a, [wPtero1SpawnChance]
+    cp a, b
+    jr nc, .ptero2
+    cp a, c
     jr nc, .ptero2
 
     ld a, [wPtero1IsSpawned]
@@ -173,13 +199,17 @@ _PteroTrySpawn::
     jr .done
 
 .ptero2:
+    call _GetRandom
+
     ld a, [wPtero2IsSpawned]
     and a
     jr nz, .done
 
-    ld a, c
-    cp a, PTERO_INIT_SPAWN_CHANCE
-    jr nc, .done
+    ld a, [wPtero2SpawnChance]
+    cp a, b
+    jr c, .done
+    cp a, c
+    jr c, .done
 
     ld a, [wPtero2IsSpawned]
     ld a, TRUE
@@ -434,6 +464,12 @@ ENDSECTION
 
 
 SECTION "Ptero Variables", WRAM0
+
+wPtero1SpawnChance:
+    DB
+
+wPtero2SpawnChance:
+    DB
 
 wPtero1IsSpawned:
     DB

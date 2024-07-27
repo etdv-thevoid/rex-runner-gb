@@ -12,8 +12,7 @@ _Init::
 
     call _InitRex
     call _InitCactus
-    call _InitPtero1
-    call _InitPtero2
+    call _InitPtero
     call _InitMeteor
 
     ld a, STATE_MENU
