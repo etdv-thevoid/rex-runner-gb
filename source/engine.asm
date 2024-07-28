@@ -147,8 +147,8 @@ _EngineAnimate::
 
 /*
 Checks for Rex collisions with any other oam objects, ignoring Rex's tail.
-Uses Rex Sprite 1, which is always in the bottom middle,
-and Rex Sprite 3, which is always in the top right;
+Uses Rex Sprite 3, which is always in the top right,
+and Rex Sprite 1, which is always in the bottom middle;
 Regardless of Rex's current animation.
 
 Returns:
@@ -156,56 +156,59 @@ Returns:
 - no carry = no collision
 */
 _EngineCheckCollision::
-    ld hl, {REX_SPRITE_1}
-    ld a, [hl+]
-    sub a, COLLISION_PIXEL_OVERLAP
-    ld d, a
-    ld a, [hl]
-    sub a, (OAM_X_OFS - COLLISION_PIXEL_OVERLAP)
-    ld e, a
-
-    ld hl, {REX_SPRITE_3}
-    ld a, [hl+]
-    sub a, (OAM_Y_OFS - COLLISION_PIXEL_OVERLAP)
-    ld b, a
-    ld a, [hl]
-    sub a, COLLISION_PIXEL_OVERLAP
-    ld c, a
-
 /*
 - b = Rex top y
 - c = Rex right x
-- d = Rex bottom y
-- e = Rex left x - tail
 */
+    ld hl, {REX_SPRITE_3}
+    ld a, [hl+]
+    sub a, (OAM_Y_OFS - COLLISION_PIXEL_OVERLAP_TOP)
+    ld b, a
+    ld a, [hl]
+    sub a, COLLISION_PIXEL_OVERLAP_RIGHT
+    ld c, a
+
+/*
+- d = Rex bottom y
+- e = Rex left x
+*/
+    ld hl, {REX_SPRITE_1}
+    ld a, [hl+]
+    sub a, COLLISION_PIXEL_OVERLAP_BOTTOM
+    ld d, a
+    ld a, [hl]
+    sub a, (OAM_X_OFS - COLLISION_PIXEL_OVERLAP_LEFT)
+    ld e, a
+
 FOR SPRITE, NUMBER_OF_REX_SPRITES, OAM_COUNT
     ld hl, wShadowOAM + (SPRITE * sizeof_OAM_ATTRS) + OAMA_Y
     ld a, [hl]
-    sub a, COLLISION_PIXEL_OVERLAP
+    sub a, COLLISION_PIXEL_OVERLAP_OBJ
     cp a, b
     jr c, :+
     ld a, [hl]
-    sub a, (OAM_Y_OFS - COLLISION_PIXEL_OVERLAP)
+    sub a, (OAM_Y_OFS - COLLISION_PIXEL_OVERLAP_OBJ)
     cp a, d
     jr nc, :+
     inc hl
     ld a, [hl]
-    sub a, COLLISION_PIXEL_OVERLAP
+    sub a, (OAM_X_OFS - COLLISION_PIXEL_OVERLAP_OBJ)
     cp a, c
     jr nc, :+
     ld a, [hl]
-    sub a, (OAM_X_OFS - COLLISION_PIXEL_OVERLAP)
+    sub a, COLLISION_PIXEL_OVERLAP_OBJ
     cp a, e
     jr c, :+
-
-    scf
-    ret
+    jp .collision
 :
 ENDR
     scf
     ccf
     ret
 
+.collision:
+    scf
+    ret
 
 /*******************************************************************************
 **                                                                            **
