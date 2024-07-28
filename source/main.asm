@@ -12,6 +12,8 @@ SECTION "Main", ROM0
 *******************************************************************************/
 
 _Main::
+    call _EnableSoftReset
+    
     call _LoadGraphics
 
     ; fallthrough
