@@ -5,11 +5,15 @@ INCLUDE "includes/charmap.inc"
 SECTION "Game", ROM0
 
 _Game::
+    call _GetStatePrevious
+    cp a, STATE_PAUSE
+    jr z, .skip
+    
     call _LoadTilemapBackground
-
-    call _DrawHUD
-
     call _RexFullJump
+
+.skip:
+    call _DrawHUD
 
     ld a, WINDOW_OFF
     call _ScreenOn

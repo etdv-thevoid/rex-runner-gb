@@ -20,7 +20,7 @@ _InitRex::
 
 ; Randomizes the frame delay for blinking
 _RexRandomBlinkDelay:
-    call _GetRandomByte
+    call _GetRandom
     and a, REX_BLINK_FRAMES_MASK
     rla 
     swap a

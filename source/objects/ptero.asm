@@ -21,7 +21,7 @@ _InitPtero1:
     ld [wPtero1IsSpawned], a
     ld [wPtero1AnimationFrameCounter], a
 
-    call _GetRandomByte
+    call _GetRandom
     and a, %00000001
     jr z, .getYPos1
 
@@ -65,7 +65,7 @@ _InitPtero2:
     ld [wPtero2IsSpawned], a
     ld [wPtero2AnimationFrameCounter], a
 
-    call _GetRandomByte
+    call _GetRandom
     and a, %00000001
     jr z, .getYPos1
 
@@ -112,61 +112,66 @@ _InitPtero2:
 ; Increments Ptero spawn chance variables
 _PteroIncSpawnChance::
     ld a, [wPtero1SpawnChance]
-    cp a, $FF
-    jr z, .ptero2
-    inc a
+    add a, SPAWN_CHANCE_INCREMENT
+    ld [wPtero1SpawnChance], a
+    jr nc, .ptero2
+    ld a, $FF
     ld [wPtero1SpawnChance], a
     
 .ptero2:
     ld a, [wPtero2SpawnChance]
-    cp a, $00
-    jr z, .done
-    dec a
+    add a, SPAWN_CHANCE_INCREMENT
+    ld [wPtero2SpawnChance], a
+    jr nc, .done
+    ld a, $FF
     ld [wPtero2SpawnChance], a
 
 .done:
     ret
 
-; Attempts to spawn Ptero 1
-_Ptero1TrySpawn::
+; Attempts to spawn a Ptero 
+_PteroTrySpawn::
+    call _GetRandom
+    and %00000001
+    and a
+    jr nz, .ptero2
+
+.ptero1:
     call _GetRandom
 
     ld a, [wPtero1IsSpawned]
     and a
-    jr nz, .done
+    ret nz
 
     ld a, [wPtero1SpawnChance]
     cp a, b
-    jr nc, .done
+    ret nc
     cp a, c
-    jr nc, .done
+    ret nc
 
     ld a, [wPtero1IsSpawned]
     ld a, TRUE
     ld [wPtero1IsSpawned], a
-
-.done:
+    
     ret
 
-; Attempts to spawn Ptero 2
-_Ptero2TrySpawn::
+.ptero2:
     call _GetRandom
 
     ld a, [wPtero2IsSpawned]
     and a
-    jr nz, .done
+    ret nz
 
     ld a, [wPtero2SpawnChance]
     cp a, b
-    jr c, .done
+    ret nc
     cp a, c
-    jr c, .done
+    ret nc
 
     ld a, [wPtero2IsSpawned]
     ld a, TRUE
     ld [wPtero2IsSpawned], a
 
-.done:
     ret
 
 /*******************************************************************************
@@ -199,12 +204,12 @@ _PteroIncFrameCounter::
 
 ; Animate both Pteros
 _PteroAnimate::
-    call _GetBackgroundScrolllDifferential
-    ld b, a
-
     ld a, [wPtero1IsSpawned]
     and a
     jr z, .ptero2
+
+    call _GetBackgroundScrolllDifferential
+    ld b, a
 
     ld hl, {PTERO_1_SPRITE_0} + OAMA_X
     ld a, [hl]
@@ -224,13 +229,14 @@ _PteroAnimate::
     ld a, [wPtero1AnimationFrameCounter]
     and a, PTERO_FRAMES_MASK
     ld [wPtero1AnimationFrameCounter], a
-    jr nz, .ptero2
+    jr nz, .ptero1Reset
 
     ld hl, {PTERO_1_SPRITE_0} + OAMA_TILEID
     ld a, [hl]
     cp a, PTERO_FRAME_1_SPRITE_0
-    jr z, .loadPtero1Frame2
+    jr z, .ptero1Frame2
     
+.ptero1Frame1:
     ld a, PTERO_FRAME_1_SPRITE_0
     ld [hl], a
     
@@ -242,9 +248,9 @@ _PteroAnimate::
     ld a, PTERO_FRAME_1_SPRITE_2
     ld [hl], a
 
-    jr .ptero2
+    jr .ptero1Reset
 
-.loadPtero1Frame2:
+.ptero1Frame2:
     ld a, PTERO_FRAME_2_SPRITE_0
     ld [hl], a
     
@@ -256,10 +262,21 @@ _PteroAnimate::
     ld a, PTERO_FRAME_2_SPRITE_2
     ld [hl], a
 
+.ptero1Reset:
+    ld hl, {PTERO_1_SPRITE_0} + OAMA_X
+    ld a, [hl]
+    cp a, OFFSCREEN_SPRITE_X_POS + META_SPRITE_COL_0_X + 1
+    jr c, .ptero2
+    cp a, OFFSCREEN_SPRITE_X_POS + META_SPRITE_COL_4_X + 1
+    call c, _InitPtero1
+
 .ptero2:
     ld a, [wPtero2IsSpawned]
     and a
     jr z, .done
+
+    call _GetBackgroundScrolllDifferential
+    ld b, a
 
     ld hl, {PTERO_2_SPRITE_0} + OAMA_X
     ld a, [hl]
@@ -279,13 +296,14 @@ _PteroAnimate::
     ld a, [wPtero2AnimationFrameCounter]
     and a, PTERO_FRAMES_MASK
     ld [wPtero2AnimationFrameCounter], a
-    jr nz, .done
+    jr nz, .ptero2Reset
 
     ld hl, {PTERO_2_SPRITE_0} + OAMA_TILEID
     ld a, [hl]
     cp a, PTERO_FRAME_1_SPRITE_0
-    jr z, .loadPtero2Frame2
+    jr z, .ptero2Frame2
     
+.ptero2Frame1:
     ld a, PTERO_FRAME_1_SPRITE_0
     ld [hl], a
     
@@ -297,9 +315,9 @@ _PteroAnimate::
     ld a, PTERO_FRAME_1_SPRITE_2
     ld [hl], a
 
-    jr .done
+    jr .ptero2Reset
 
-.loadPtero2Frame2:
+.ptero2Frame2:
     ld a, PTERO_FRAME_2_SPRITE_0
     ld [hl], a
     
@@ -311,16 +329,15 @@ _PteroAnimate::
     ld a, PTERO_FRAME_2_SPRITE_2
     ld [hl], a
 
+.ptero2Reset:
+    ld hl, {PTERO_2_SPRITE_0} + OAMA_X
+    ld a, [hl]
+    cp a, OFFSCREEN_SPRITE_X_POS + META_SPRITE_COL_0_X + 1
+    jr c, .done
+    cp a, OFFSCREEN_SPRITE_X_POS + META_SPRITE_COL_4_X + 1
+    call c, _InitPtero2
+
 .done:
-    ld hl, {PTERO_1_SPRITE_2} + OAMA_X
-    ld a, [hl]
-    cp a, OFFSCREEN_SPRITE_X_POS + META_SPRITE_COL_2_X + 1
-    call nc, _InitPtero1
-    
-    ld hl, {PTERO_2_SPRITE_2} + OAMA_X
-    ld a, [hl]
-    cp a, OFFSCREEN_SPRITE_X_POS + META_SPRITE_COL_2_X + 1
-    call nc, _InitPtero2
     ret
 
 ENDSECTION
@@ -331,16 +348,16 @@ SECTION "Ptero Variables", WRAM0
 wPtero1SpawnChance:
     DB
 
-wPtero2SpawnChance:
-    DB
-
 wPtero1IsSpawned:
     DB
 
-wPtero2IsSpawned:
+wPtero1AnimationFrameCounter:
     DB
 
-wPtero1AnimationFrameCounter:
+wPtero2SpawnChance:
+    DB
+
+wPtero2IsSpawned:
     DB
 
 wPtero2AnimationFrameCounter:

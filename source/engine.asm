@@ -52,7 +52,7 @@ _InitEngine::
     ld [wBackgroundPalette], a
     call _SetDMGPalettes
 
-    call _InitCactusSmall
+    call _InitCactus
     call _InitPtero
     call _InitMeteor
     call _InitRex
@@ -85,7 +85,7 @@ _EngineIncrementDifficulty::
     inc a
     ld [wDifficultySpeed], a
 
-    call _CactusSmallIncSpawnChance
+    call _CactusIncSpawnChance
     jp _PteroIncSpawnChance
 
 ; Increment all frame counters
@@ -122,15 +122,14 @@ _EngineTrySpawn::
 
 ; Spawn Rotation Jump Table
 _EngineSpawnJumpTable:
-    DW _CactusSmall1TrySpawn
-    DW _Ptero1TrySpawn
-    DW _CactusSmall2TrySpawn
-    DW _Ptero1TrySpawn
+    DW _CactusTrySpawn
+    DW _PteroTrySpawn
+    ;DW _MeteorTrySpawn
     DW _NULL
 
 ; Animate all objects
 _EngineAnimate::
-    call _CactusSmallAnimate
+    call _CactusAnimate
     call _PteroAnimate
 
     jp _RexAnimate
