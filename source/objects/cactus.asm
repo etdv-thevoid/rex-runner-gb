@@ -366,13 +366,13 @@ _CactusType1Spawn:
 
     ld a, [wCactus1IsSpawned]
     and a
-    ret nz
+    jp nz, _CactusType2Spawn
 
     ld a, [wCactus1SpawnChance]
     cp a, b
-    ret nc
+    jp nc, _CactusType2Spawn
     cp a, c
-    ret nc
+    jp nc, _CactusType2Spawn
 
     ld a, [wCactus1IsSpawned]
     ld a, TRUE
@@ -390,13 +390,13 @@ _CactusType2Spawn:
 
     ld a, [wCactus2IsSpawned]
     and a
-    jp nz, _CactusType1Spawn
+    jp nz, _CactusType3Spawn
 
     ld a, [wCactus2SpawnChance]
     cp a, b
-    jp nc, _CactusType1Spawn
+    jp nc, _CactusType3Spawn
     cp a, c
-    jp nc, _CactusType1Spawn
+    jp nc, _CactusType3Spawn
 
     ld a, [wCactus2IsSpawned]
     ld a, TRUE
@@ -419,13 +419,13 @@ _CactusType3Spawn:
 
     ld a, [wCactus3IsSpawned]
     and a
-    jp nz, _CactusType2Spawn
+    jp nz, _CactusType4Spawn
 
     ld a, [wCactus3SpawnChance]
     cp a, b
-    jp nc, _CactusType2Spawn
+    jp nc, _CactusType4Spawn
     cp a, c
-    jp nc, _CactusType2Spawn
+    jp nc, _CactusType4Spawn
 
     ld a, [wCactus3IsSpawned]
     ld a, TRUE
@@ -453,13 +453,13 @@ _CactusType4Spawn:
 
     ld a, [wCactus4IsSpawned]
     and a
-    jp nz, _CactusType3Spawn
+    jp nz, _CactusType5Spawn
 
     ld a, [wCactus4SpawnChance]
     cp a, b
-    jp nc, _CactusType3Spawn
+    jp nc, _CactusType5Spawn
     cp a, c
-    jp nc, _CactusType3Spawn
+    jp nc, _CactusType5Spawn
 
     ld a, [wCactus4IsSpawned]
     ld a, TRUE
@@ -492,13 +492,13 @@ _CactusType5Spawn:
 
     ld a, [wCactus5IsSpawned]
     and a
-    jp nz, _CactusType4Spawn
+    jp nz, _CactusType5Spawn
 
     ld a, [wCactus5SpawnChance]
     cp a, b
-    jp nc, _CactusType4Spawn
+    jp nc, _CactusType5Spawn
     cp a, c
-    jp nc, _CactusType4Spawn
+    jp nc, _CactusType5Spawn
 
     ld a, [wCactus5IsSpawned]
     ld a, TRUE
@@ -541,13 +541,13 @@ _CactusType6Spawn:
 
     ld a, [wCactus6IsSpawned]
     and a
-    jp nz, _CactusType5Spawn
+    ret nz
 
     ld a, [wCactus6SpawnChance]
     cp a, b
-    jp nc, _CactusType5Spawn
+    ret nc
     cp a, c
-    jp nc, _CactusType5Spawn
+    ret nc
 
     ld a, [wCactus6IsSpawned]
     ld a, TRUE

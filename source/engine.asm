@@ -55,7 +55,7 @@ _InitEngine::
 
     call _LoadHighScore
 
-    ld a, INITIAL_SPEED
+    ld a, INITIAL_DIFFICULTY_SPEED
     ld [wDifficultySpeed], a
 
     ld a, DEFAULT_PALETTE
@@ -160,7 +160,7 @@ _EngineCheckCollision::
     ld a, [hl+]
     sub a, COLLISION_PIXEL_OVERLAP
     ld d, a
-    ld a, [hl+]
+    ld a, [hl]
     sub a, (OAM_X_OFS - COLLISION_PIXEL_OVERLAP)
     ld e, a
 
@@ -168,7 +168,7 @@ _EngineCheckCollision::
     ld a, [hl+]
     sub a, (OAM_Y_OFS - COLLISION_PIXEL_OVERLAP)
     ld b, a
-    ld a, [hl+]
+    ld a, [hl]
     sub a, COLLISION_PIXEL_OVERLAP
     ld c, a
 
@@ -188,8 +188,7 @@ FOR SPRITE, NUMBER_OF_REX_SPRITES, OAM_COUNT
     sub a, (OAM_Y_OFS - COLLISION_PIXEL_OVERLAP)
     cp a, d
     jr nc, :+
-
-    ld hl, wShadowOAM + (SPRITE * sizeof_OAM_ATTRS) + OAMA_X
+    inc hl
     ld a, [hl]
     sub a, COLLISION_PIXEL_OVERLAP
     cp a, c
@@ -204,7 +203,7 @@ FOR SPRITE, NUMBER_OF_REX_SPRITES, OAM_COUNT
 :
 ENDR
     scf
-    ccf 
+    ccf
     ret
 
 
