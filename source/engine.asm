@@ -5,6 +5,13 @@ INCLUDE "includes/charmap.inc"
 
 SECTION "Engine Functions", ROM0
 
+
+/*******************************************************************************
+**                                                                            **
+**      CORE ENGINE FUNCTIONS                                                 **
+**                                                                            **
+*******************************************************************************/
+
 ; Initialize all core engine variables
 _InitEngine::
     xor a
@@ -38,7 +45,6 @@ _InitEngine::
     ld d, $00
     call _MemSet
     call _RefreshOAM
-
     
     ld hl, STARTOF("Engine Variables")
     ld bc, SIZEOF("Engine Variables")
@@ -72,7 +78,8 @@ _InitEngine::
     ld a, IEF_VBLANK | IEF_LCDC
     ldh [rIE], a
 
-    ret
+    ld a, STATE_MENU
+    jp _SwitchStateToNew
 
 ; Get per frame ground level scroll differential
 _GetBackgroundScrolllDifferential::
@@ -342,7 +349,6 @@ REPT SCORE_BYTES
     jr nz, .greaterThan ; exit if high > current
                         ; else compare next byte
 ENDR
-
 .greaterThan:           ; exit with no carry if high >= current
     scf
     ccf

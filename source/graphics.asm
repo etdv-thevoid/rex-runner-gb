@@ -2,7 +2,14 @@ INCLUDE "includes/constants.inc"
 INCLUDE "includes/macros.inc"
 INCLUDE "includes/charmap.inc"
 
+
 SECTION "Graphics", ROM0
+
+/*******************************************************************************
+**                                                                            **
+**      LOAD GRAPHICS FUNCTION                                                **
+**                                                                            **
+*******************************************************************************/
 
 _LoadGraphics::
     xor a
@@ -28,6 +35,13 @@ _LoadGraphics::
     ld bc, (_FontTiles.end - _FontTiles)
     ld de, vBLK21.32
     jp _VideoMemCopyMonochrome
+
+
+/*******************************************************************************
+**                                                                            **
+**      LOAD TILEMAP FUNCTIONS                                                **
+**                                                                            **
+*******************************************************************************/
 
 _LoadTilemapMenu::
     xor a
@@ -57,6 +71,13 @@ _LoadTilemapBackgroundNight::
     ld de, vSCRN0
     jp _VideoMemCopy
 
+
+/*******************************************************************************
+**                                                                            **
+**      TILE GRAPHICS                                                         **
+**                                                                            **
+*******************************************************************************/
+
 _SpriteTiles:
     INCBIN "assets/sprites.2bpp"
 .end:
@@ -72,6 +93,13 @@ _HUDTiles:
 _FontTiles::
     INCBIN "assets/font.1bpp"
 .end:: 
+
+
+/*******************************************************************************
+**                                                                            **
+**      TILEMAPS                                                              **
+**                                                                            **
+*******************************************************************************/
 
 _MenuTilemap:
     INCBIN "tilemaps/menu.tilemap"

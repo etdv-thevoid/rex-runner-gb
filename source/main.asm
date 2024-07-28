@@ -2,11 +2,16 @@ INCLUDE "includes/constants.inc"
 INCLUDE "includes/macros.inc"
 INCLUDE "includes/charmap.inc"
 
+
 SECTION "Main", ROM0
 
-_Main::
-    call _LoadHighScore
+/*******************************************************************************
+**                                                                            **
+**      MAIN LOOP                                                             **
+**                                                                            **
+*******************************************************************************/
 
+_Main::
     call _LoadGraphics
 
     ; fallthrough
@@ -26,13 +31,20 @@ _MainLoop:
     jr _MainLoop
 
 _StateJumpTable:
-    DW _Init
+    DW _InitEngine
     DW _Menu
     DW _Credits
     DW _Game
     DW _Pause
     DW _Dead
     DW _NULL
+
+
+/*******************************************************************************
+**                                                                            **
+**      MAIN STATE FUNCTIONS                                                  **
+**                                                                            **
+*******************************************************************************/
 
 _GetStateCurrent::
     ld a, [wCurrentState]

@@ -21,6 +21,7 @@ _DeadLoop:
     ldh a, [hKeysPressed]
     and a, PADF_START | PADF_SELECT | PADF_B | PADF_A
     jr z, _DeadLoop
+    
     call _SaveHighScore
     ld a, STATE_INIT
     jp _SwitchStateToNew
