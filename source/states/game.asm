@@ -8,16 +8,18 @@ _Game::
     call _GetStatePrevious
     cp a, STATE_PAUSE
     jr z, .skip
+
+    call _ScreenOff
     
     call _LoadTilemapBackground
     call _RexFullJump
 
-.skip:
     call _DrawHUD
 
-    ld a, WINDOW_OFF
+    ld a, WINDOW_ON
     call _ScreenOn
 
+.skip:
     ; fallthrough
 
 _GameLoop:

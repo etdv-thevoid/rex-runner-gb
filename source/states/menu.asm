@@ -5,8 +5,9 @@ INCLUDE "includes/charmap.inc"
 SECTION "Menu", ROM0
 
 _Menu::
-    call _LoadTilemapMenu
+    call _ScreenOff
 
+    call _LoadTilemapMenu
     call _MenuDrawCursor
 
     ld a, WINDOW_OFF
@@ -16,11 +17,9 @@ _Menu::
     
 _MenuLoop:
     ei
-
     call _WaitForVBLInterrupt
-
-    call _MenuDrawCursor
     
+    call _MenuDrawCursor
     call _RexAnimate
     
 .checkKeys:

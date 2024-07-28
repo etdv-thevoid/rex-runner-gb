@@ -7,9 +7,6 @@ SECTION "Pause", ROM0
 _Pause::
 
 
-    ld a, WINDOW_OFF
-    call _ScreenOn
-
     ; fallthrough
     
 _PauseLoop:
@@ -21,6 +18,7 @@ _PauseLoop:
     ldh a, [hKeysPressed]
     and a, PADF_START
     jr z, _PauseLoop
+    
     jp _SwitchStateToPrevious
 
 ENDSECTION

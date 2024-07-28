@@ -11,17 +11,22 @@ SECTION "Main", ROM0
 **                                                                            **
 *******************************************************************************/
 
+/*
+gbc-engine-core hands off code execution to a function labeled `_Main` when done with initial setup.
+
+The function can assume the following:
+ - All ram areas are cleared
+ - LCD is off
+ - Interrupts are disabled
+*/
 _Main::
     call _EnableSoftReset
-    
     call _LoadGraphics
 
     ; fallthrough
 
 _MainLoop:
     di
-
-    call _ScreenOff
 
     ld hl, _StateJumpTable
     ld a, [wCurrentState]

@@ -14,6 +14,8 @@ SECTION "Engine Functions", ROM0
 
 ; Initialize all core engine variables
 _InitEngine::
+    call _ScreenOff
+
     xor a
     ldh [rSCY], a
     ldh [rSCX], a

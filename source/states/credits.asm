@@ -5,14 +5,17 @@ INCLUDE "includes/charmap.inc"
 SECTION "Credits", ROM0
 
 _Credits::
+    call _ScreenOff
+    
     call _LoadTilemapCredits
 
     ld a, WINDOW_OFF
     call _ScreenOn
+
+    ; fallthrough
     
 _CreditsLoop:
     ei
-    
     call _WaitForVBLInterrupt
 
     call _RexAnimate

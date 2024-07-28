@@ -6,9 +6,6 @@ SECTION "Dead", ROM0
 
 _Dead::
     call _RexDead
-
-    ld a, WINDOW_OFF
-    call _ScreenOn
     
     ; fallthrough
     
