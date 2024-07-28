@@ -132,8 +132,7 @@ _PteroIncSpawnChance::
 ; Attempts to spawn a Ptero 
 _PteroTrySpawn::
     call _GetRandom
-    and %00000001
-    and a
+    and a, %00000001
     jr nz, .ptero2
 
 .ptero1:
