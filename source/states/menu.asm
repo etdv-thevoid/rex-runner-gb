@@ -5,8 +5,6 @@ INCLUDE "includes/charmap.inc"
 SECTION "Menu", ROM0
 
 _Menu::
-    call _LoadHighScore
-    
     call _LoadTilemapMenu
 
     call _MenuDrawCursor

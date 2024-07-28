@@ -51,6 +51,8 @@ _InitEngine::
     ld d, $00
     call _MemSet
 
+    call _LoadHighScore
+
     ld a, INITIAL_SPEED
     ld [wDifficultySpeed], a
 
@@ -210,7 +212,7 @@ ENDR
 **                                                                            **
 *******************************************************************************/
 
-_LoadHighScore::
+_LoadHighScore:
     ld hl, sHighScore
     ld bc, SCORE_BYTES ; (sHighScore.end - sHighScore)
     ld de, wHighScore
