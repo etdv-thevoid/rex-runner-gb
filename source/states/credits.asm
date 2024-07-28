@@ -19,7 +19,7 @@ _CreditsLoop:
 
 .checkKeys:
     ldh a, [hKeysPressed]
-    and a, PADF_START | PADF_SELECT | PADF_B | PADF_A
+    and a, PADF_B | PADF_A
     jr z, _CreditsLoop
     jp _SwitchStateToPrevious
 
