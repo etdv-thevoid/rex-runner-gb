@@ -34,7 +34,15 @@ _LoadGraphics::
     ld hl, _FontTiles
     ld bc, (_FontTiles.end - _FontTiles)
     ld de, vBLK21.32
-    jp _VideoMemCopyMonochrome
+    call _VideoMemCopyMonochrome
+
+    call _IsGBColor
+    ret z
+
+    call _SetBackgroundPaletteBlack
+    call _SetSpritePaletteWhite
+
+    jp _LoadMonochromePalette
 
 
 /*******************************************************************************
@@ -71,6 +79,29 @@ _LoadTilemapBackgroundNight::
     ld de, vSCRN0
     jp _VideoMemCopy
 
+/*******************************************************************************
+**                                                                            **
+**      PALETTE FUNCTIONS                                                     **
+**                                                                            **
+*******************************************************************************/
+
+_LoadMonochromePalette::
+    xor a
+    ld hl, _MonochromePalette
+    call _SetBackgroundPalette
+
+    xor a
+    ld hl, _MonochromePalette
+    jp _SetSpritePalette
+
+_LoadMonochromePaletteInverted::
+    xor a
+    ld hl, _MonochromePaletteInverted
+    call _SetBackgroundPalette
+
+    xor a
+    ld hl, _MonochromePaletteInverted
+    jp _SetSpritePalette
 
 /*******************************************************************************
 **                                                                            **
@@ -115,6 +146,21 @@ _BackgroundTilemap:
 
 _BackgroundNightTilemap:
     INCBIN "assets/background_night.tilemap"
+.end:
+
+
+/*******************************************************************************
+**                                                                            **
+**      PALETTES                                                              **
+**                                                                            **
+*******************************************************************************/
+
+_MonochromePalette:
+    rgb_palette #FFF, #AAA, #555, #000
+.end:
+
+_MonochromePaletteInverted:
+    rgb_palette #000, #555, #AAA, #FFF
 .end:
 
 ENDSECTION
