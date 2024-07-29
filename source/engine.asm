@@ -300,8 +300,8 @@ _HighScoreTiles:
 
 /*
 Returns:
-    - zero if no change of thousands digit
-    - not zero if thousands digit changed
+    - zero / no carry if no change of thousands digit
+    - not zero / carry if thousands digit changed
 */
 _IncreaseScore:
     ld a, [wScoreIncreaseDifferential]

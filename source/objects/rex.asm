@@ -10,7 +10,7 @@ _InitRex::
     ld [wRexAnimationFrameCounter], a
     ld [wRexAnimationState], a
     ld [wRexBlinkAnimationRandomDelay], a
-    ld [wRexJumpFrameCounter], a
+    ld [wRexInputDelayFrameCounter], a
 
     ld a, TRUE
     ld [wRexInitialJumpFlag], a
@@ -101,10 +101,10 @@ _RexFullJump::
     and a
     jr nz, .initialJump
 
-    ld a, [wRexJumpFrameCounter]
+    ld a, [wRexInputDelayFrameCounter]
     inc a
     and a, REX_JUMP_FRAMES_MASK
-    ld [wRexJumpFrameCounter], a
+    ld [wRexInputDelayFrameCounter], a
     ret nz
 
 .initialJump:
@@ -134,7 +134,7 @@ _RexShortJump::
     ld [wRexAnimationState], a
     xor a
     ld [wRexAnimationFrameCounter], a
-    ld [wRexJumpFrameCounter], a
+    ld [wRexInputDelayFrameCounter], a
 
     jp _RexSetSpriteStanding
 
@@ -449,7 +449,7 @@ _RexAnimateRunning:
     ld [wRexAnimationFrameCounter], a
     ret nz
 
-    ld hl, {REX_SPRITE_0} + OAMA_TILEID ; wShadowOAM.6 + OAMA_TILEID
+    ld hl, {REX_SPRITE_0} + OAMA_TILEID
     ld a, [hl]
     cp a, REX_RUNNING_SPRITE_0
     ld a, REX_RUNNING_SPRITE_0_L
@@ -458,7 +458,7 @@ _RexAnimateRunning:
 .swapL
     ld [hl], a
 
-    ld hl, {REX_SPRITE_1} + OAMA_TILEID ; wShadowOAM.7 + OAMA_TILEID
+    ld hl, {REX_SPRITE_1} + OAMA_TILEID
     ld a, [hl]
     cp a, REX_RUNNING_SPRITE_1
     ld a, REX_RUNNING_SPRITE_1_R
@@ -475,7 +475,7 @@ _RexAnimateDucking:
     ld [wRexAnimationFrameCounter], a
     ret nz
 
-    ld hl, {REX_SPRITE_0} + OAMA_TILEID ; wShadowOAM.6 + OAMA_TILEID
+    ld hl, {REX_SPRITE_0} + OAMA_TILEID
     ld a, [hl]
     cp a, REX_DUCKING_SPRITE_0
     ld a, REX_DUCKING_SPRITE_0_L
@@ -484,7 +484,7 @@ _RexAnimateDucking:
 .swapL
     ld [hl], a
 
-    ld hl, {REX_SPRITE_1} + OAMA_TILEID ; wShadowOAM.7 + OAMA_TILEID
+    ld hl, {REX_SPRITE_1} + OAMA_TILEID
     ld a, [hl]
     cp a, REX_DUCKING_SPRITE_1
     ld a, REX_DUCKING_SPRITE_1_R
@@ -630,11 +630,17 @@ wRexBlinkAnimationRandomDelay:
     DB
 
 ; Input delay for making Rex long jump or short jump
-wRexJumpFrameCounter:
+wRexInputDelayFrameCounter:
     DB
 
 ; Flag for determining if initial jump
 wRexInitialJumpFlag:
+    DB
+; Floating point position
+wRexJumpPosition:
+    DW
+; Jump Speed (increases with input time and decreases with gravity)
+wRexJumpSpeed:
     DB
 
 ENDSECTION
