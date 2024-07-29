@@ -136,7 +136,8 @@ DEF PTERO_2_INIT_Y_POS_1    EQU 102 + OAM_Y_OFS
 *******************************************************************************/
 
 DEF REX_JUMP_VELOCITY           EQU 2
-DEF REX_FAST_FALL_VELOCITY      EQU 3
+DEF REX_FALL_VELOCITY           EQU 3
+DEF REX_FAST_FALL_VELOCITY      EQU 4
 
 DEF REX_BLINK_FRAMES_MASK       EQU %00000111
 DEF REX_RUNNING_FRAMES_MASK     EQU %00000111

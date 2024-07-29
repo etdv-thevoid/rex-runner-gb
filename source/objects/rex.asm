@@ -560,19 +560,19 @@ _RexAnimateShortJumping:
 _RexAnimateFalling:
     ld hl, {REX_SPRITE_0} ; wShadowOAM.0
     ld a, [hl]
-    add a, REX_JUMP_VELOCITY
+    add a, REX_FALL_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_1} ; wShadowOAM.1
     ld a, [hl]
-    add a, REX_JUMP_VELOCITY
+    add a, REX_FALL_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_2} ; wShadowOAM.2
     ld a, [hl]
-    add a, REX_JUMP_VELOCITY
+    add a, REX_FALL_VELOCITY
     ld [hl], a
     ld hl, {REX_SPRITE_3} ; wShadowOAM.3
     ld a, [hl]
-    add a, REX_JUMP_VELOCITY
+    add a, REX_FALL_VELOCITY
     ld [hl], a
 
     ld hl, {REX_SPRITE_0} ; wShadowOAM.0
