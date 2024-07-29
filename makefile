@@ -29,9 +29,9 @@ include project.mk
 rom: ${ROM}
 .PHONY: rom
 
-# `clean`: Remove build directories (assets, bin, and dist folders)
+# `clean`: Remove build directories (temp and dist folders)
 clean:
-	@rm -rf assets/ bin/ dist/
+	@rm -rf temp/ dist/
 .PHONY: clean
 
 # `rebuild`: Build everything from scratch
@@ -42,33 +42,33 @@ rebuild:
 
 
 # How to convert graphics
-assets/%.2bpp: images/%.png
+temp/%.2bpp: images/%.png
 	@mkdir -p "${@D}"
 	${RGBGFX} -o $@ $<
 
-assets/%.1bpp: images/%.png
+temp/%.1bpp: images/%.png
 	@mkdir -p "${@D}"
 	${RGBGFX} -d 1 -o $@ $<
 
 
 # How to build `.mk` file dependency lists
-bin/%.mk: source/%.asm
+temp/%.mk: source/%.asm
 	@mkdir -p "${@D}"
 	${RGBASM} ${ASFLAGS} -M $@ -MG -MP -MQ ${@:.mk=.obj} -MQ $@ -o ${@:.mk=.obj} $<
 
-# How to compile binary files using the `.mk` files
-bin/%.obj: bin/%.mk
+# How to compile object files using the `.mk` files
+temp/%.obj: temp/%.mk
 	@touch $@
 
 # Include `.mk` file dependency lists
 ifeq ($(filter clean,${MAKECMDGOALS}),)
-include $(patsubst source/%.asm,bin/%.mk,${SRCS})
+include $(patsubst source/%.asm,temp/%.mk,${SRCS})
 endif
 
 # How to build a ROM
 # Note how libraries.inc is rebuilt and linked every time
-dist/%.${ROMEXT}: $(patsubst source/%.asm,bin/%.obj,${SRCS})
+dist/%.${ROMEXT}: $(patsubst source/%.asm,temp/%.obj,${SRCS})
 	@mkdir -p "${@D}"
-	${RGBASM} -p ${PADVALUE} -o bin/libraries.obj libraries/libraries.inc \
-	&& ${RGBLINK} ${LDFLAGS} -m dist/$*.map -n dist/$*.sym -o $@ bin/libraries.obj $^ \
+	${RGBASM} -p ${PADVALUE} -o temp/libraries.obj libraries/libraries.inc \
+	&& ${RGBLINK} ${LDFLAGS} -m dist/$*.map -n dist/$*.sym -o $@ temp/libraries.obj $^ \
 	&& ${RGBFIX} -v ${FIXFLAGS} $@

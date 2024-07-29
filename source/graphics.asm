@@ -79,19 +79,19 @@ _LoadTilemapBackgroundNight::
 *******************************************************************************/
 
 _SpriteTiles:
-    INCBIN "assets/sprites.2bpp"
+    INCBIN "temp/sprites.2bpp"
 .end:
 
 _BackgroundTiles:
-    INCBIN "assets/background.2bpp"
+    INCBIN "temp/background.2bpp"
 .end:
 
 _HUDTiles:
-    INCBIN "assets/hud.2bpp"
+    INCBIN "temp/hud.2bpp"
 .end:
 
 _FontTiles::
-    INCBIN "assets/font.1bpp"
+    INCBIN "temp/font.1bpp"
 .end:: 
 
 

@@ -1,6 +1,5 @@
 # Ignore output directories
-assets/
-bin/
+temp/
 dist/
 
 # Ignore C objects
