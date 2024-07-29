@@ -60,7 +60,7 @@ DEF COLLISION_PIXEL_OVERLAP_LEFT    EQU 4
 DEF SCORE_BYTES                 EQU 3
 DEF SCORE_DIGITS                EQU SCORE_BYTES * 2
 
-DEF SPAWN_FRAME_MASK            EQU %01111111
+DEF SPAWN_FRAME_MASK            EQU %11111111
 
 DEF SPAWN_CHANCE_INCREMENT      EQU $10
 
@@ -264,7 +264,7 @@ DEF CACTUS_TYPE_6           RB 1 ; $05
 
 DEF NUMBER_OF_CACTUS_TYPES  RB 0 ; $06
 
-DEF DEFAULT_CACTUS_TYPE     EQU CACTUS_TYPE_2
+DEF DEFAULT_CACTUS_TYPE     EQU CACTUS_TYPE_4
 
 /*******************************************************************************
 **                                                                            **
