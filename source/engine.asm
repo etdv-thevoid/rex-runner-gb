@@ -435,14 +435,8 @@ _BackgroundInvertPalette::
     call _SetDMGPalettes
     cpl
     cp a, DEFAULT_PALETTE
-    call z, _LoadTilemapBackground
-    call nz, _LoadTilemapBackgroundNight
-    call _IsGBColor
-    ret z
-    ld a, [wBackgroundPalette]
-    cp a, DEFAULT_PALETTE
-    jp z, _LoadMonochromePalette
-    jp nz, _LoadMonochromePaletteInverted
+    jp z, _LoadTilemapBackground
+    jp _LoadTilemapBackgroundNight
 
 
 /*******************************************************************************
