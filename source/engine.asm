@@ -90,33 +90,24 @@ _GetGroundSpeedDifferential::
     ld a, [wGroundSpeedDifferential]
     ret
 
-; Increment all difficulty related variables
-_EngineIncrementDifficulty::
-    ld a, [wBaseDifficultySpeed]
-    add a, DIFFICULTY_SPEED_INCREASE
-    ld [wBaseDifficultySpeed], a
-    jr nc, .skip
-    ld a, $FF
-    ld [wBaseDifficultySpeed], a
+; Checks if Palette was inverted during VBlank, and switches tilemap accordingly
+_EngineCheckTilemap::
+    ld a, [wBackgroundPaletteChanged]
+    and a
+    ret z
+    xor a
+    ld [wBackgroundPaletteChanged], a
 
-.skip:
-    call _CactusIncSpawnChance
-    jp _PteroIncSpawnChance
-
-; Increment all frame counters
-_EngineIncrementFrameCounters::
-    ld a, [wCurrentSpawnFrameCounter]
-    inc a
-    ld [wCurrentSpawnFrameCounter], a
-
-    call _PteroIncFrameCounter
-    jp _RexIncFrameCounter
+    ld a, [wBackgroundPalette]
+    cp a, DEFAULT_PALETTE
+    jp z, _LoadTilemapBackground
+    jp _LoadTilemapBackgroundNight
 
 ; Try to spawn an enemy
 _EngineTrySpawn::
-    ld a, [wCurrentSpawnFrameCounter]
+    ld a, [wSpawnFrameCounter]
     and a, SPAWN_FRAME_MASK
-    ld [wCurrentSpawnFrameCounter], a
+    ld [wSpawnFrameCounter], a
     ret nz
 
     ld hl, _EngineSpawnJumpTable
@@ -160,29 +151,21 @@ Returns:
 - no carry = no collision
 */
 _EngineCheckCollision::
-/*
-- b = Rex top y
-- c = Rex right x
-*/
-    ld hl, {REX_SPRITE_3}
+    ld hl, {REX_SPRITE_3}       ; Top right sprite
     ld a, [hl+]
     sub a, (OAM_Y_OFS - COLLISION_PIXEL_OVERLAP_TOP)
-    ld b, a
+    ld b, a                     ; b = Rex top y
     ld a, [hl]
     sub a, COLLISION_PIXEL_OVERLAP_RIGHT
-    ld c, a
+    ld c, a                     ; c = Rex right x
 
-/*
-- d = Rex bottom y
-- e = Rex left x
-*/
-    ld hl, {REX_SPRITE_1}
+    ld hl, {REX_SPRITE_1}       ; Bottom middle sprite
     ld a, [hl+]
     sub a, COLLISION_PIXEL_OVERLAP_BOTTOM
-    ld d, a
+    ld d, a                     ; d = Rex bottom y
     ld a, [hl]
     sub a, (OAM_X_OFS - COLLISION_PIXEL_OVERLAP_LEFT)
-    ld e, a
+    ld e, a                     ; e = Rex left x
 
 FOR SPRITE, NUMBER_OF_REX_SPRITES, OAM_COUNT
     ld hl, wShadowOAM + (SPRITE * sizeof_OAM_ATTRS) + OAMA_Y
@@ -257,17 +240,6 @@ _DrawHUD::
     ; fallthrough
 
 _UpdateHUD::
-    call _CompareScores
-    jr nc, .skip
-
-    xor a
-    ld hl, wCurrentScore
-    ld b, (wCurrentScore.end - wCurrentScore)
-    ld c, $00
-    ld de, vSCRN1.y0x3 + SCORE_DIGITS - 1
-    call _DrawBCDNumber
-
-.skip
     xor a
     ld hl, wCurrentScore
     ld b, (wCurrentScore.end - wCurrentScore)
@@ -297,45 +269,6 @@ _DrawBCDNumber:
 _HighScoreTiles:
     DB $10, $11, $12, $00, $00, $00, $00, $00, $00
 .end:
-
-/*
-Returns:
-    - zero / no carry if no change of thousands digit
-    - not zero / carry if thousands digit changed
-*/
-_IncreaseScore:
-    ld a, [wScoreIncreaseDifferential]
-    ld c, a
-
-    ld hl, wCurrentScore + 1
-    ld a, [hl]
-    swap a
-    and a, %00001111
-    ld b, a
-
-    scf
-    ccf
-
-    ld hl, wCurrentScore
-    ld a, [hl]
-    add a, c
-    daa
-    ld [hl+], a
-REPT SCORE_BYTES - 1
-    ld a, [hl]
-    adc a, 0
-    daa
-    ld [hl+], a
-ENDR
-
-    ld hl, wCurrentScore + 1
-    ld a, [hl]
-    swap a
-    and a, %00001111
-    ld c, a
-    ld a, b
-    cp a, c
-    ret
 
 /**
 Returns:
@@ -368,11 +301,29 @@ ENDR
 
 /*******************************************************************************
 **                                                                            **
-**      BACKGROUND FUNCTIONS                                                  **
+**      INTERRUPT FUNCTIONS                                                   **
 **                                                                            **
 *******************************************************************************/
 
-_BackgroundIncScroll:
+_VBlankHandler:
+    call _ScanKeys
+    call _RefreshOAM
+
+    call _GetStateCurrent
+    cp a, STATE_PAUSE
+    ret nc
+
+    ld a, [wSpawnFrameCounter]
+    inc a
+    ld [wSpawnFrameCounter], a
+
+    call _PteroIncFrameCounter
+    call _RexIncFrameCounter
+
+    call _GetStateCurrent
+    cp a, STATE_GAME
+    ret nz
+
     ld a, [wBaseDifficultySpeed]
     ld b, a
 
@@ -431,49 +382,58 @@ ENDR
     ld a, b
     ld [wBackgroundParallaxTop], a
 
-    ret
+    ld a, [wScoreIncreaseDifferential]
+    ld c, a
 
-_BackgroundInvertPalette::
+    ld hl, wCurrentScore + 1
+    ld a, [hl]
+    swap a
+    and a, %00001111
+    ld b, a
+
+    scf
+    ccf
+
+    ld hl, wCurrentScore
+    ld a, [hl]
+    add a, c
+    daa
+    ld [hl+], a
+REPT SCORE_BYTES - 1
+    ld a, [hl]
+    adc a, 0
+    daa
+    ld [hl+], a
+ENDR
+
+    ld hl, wCurrentScore + 1
+    ld a, [hl]
+    swap a
+    and a, %00001111
+    ld c, a
+    ld a, b
+    cp a, c
+    ret nc
+
+    ld a, [wBaseDifficultySpeed]
+    add a, DIFFICULTY_SPEED_INCREASE
+    ld [wBaseDifficultySpeed], a
+    jr nc, .difficultySpeedNotCapped
+    ld a, $FF
+    ld [wBaseDifficultySpeed], a
+
+.difficultySpeedNotCapped:
+    call _CactusIncSpawnChance
+    call _PteroIncSpawnChance
+
+    ld a, [wBackgroundPaletteChanged]
+    inc a
+    ld [wBackgroundPaletteChanged], a
+
     ld a, [wBackgroundPalette]
     cpl
     ld [wBackgroundPalette], a
-    call _SetDMGPalettes
-    cpl
-    cp a, DEFAULT_PALETTE
-    jp z, _LoadTilemapBackground
-    jp _LoadTilemapBackgroundNight
-
-
-/*******************************************************************************
-**                                                                            **
-**      INTERRUPT FUNCTIONS                                                   **
-**                                                                            **
-*******************************************************************************/
-
-_VBlankHandler:
-    call _ScanKeys
-    call _RefreshOAM
-
-    call _GetStateCurrent
-    cp a, STATE_PAUSE
-    ret z
-    cp a, STATE_DEAD
-    ret z
-
-    call _EngineIncrementFrameCounters
-
-    call _GetStateCurrent
-    cp a, STATE_GAME
-    ret nz
-
-    call _BackgroundIncScroll
-
-    call _IncreaseScore
-    ret nc
-
-    call _EngineIncrementDifficulty
-
-    jp _BackgroundInvertPalette
+    jp _SetDMGPalettes
 
 _LCDStatHandler:
     ldh a, [rLYC]
@@ -532,6 +492,9 @@ SECTION "Engine Variables", WRAM0
 wBackgroundPalette:
     DB
 
+wBackgroundPaletteChanged:
+    DB
+
 wBaseDifficultySpeed:
     DB
 
@@ -553,7 +516,7 @@ wBackgroundParallaxBottom:
 wBackgroundParallaxGround:
     DB
 
-wCurrentSpawnFrameCounter:
+wSpawnFrameCounter:
     DB
 
 wCurrentSpawnTarget:

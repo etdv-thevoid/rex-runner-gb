@@ -27,6 +27,8 @@ _GameLoop:
     
     call _WaitForVBLInterrupt
 
+    call _EngineCheckTilemap
+
     call _EngineCheckCollision
     ld a, STATE_DEAD
     jp c, _SwitchStateToNew
