@@ -371,18 +371,16 @@ _CactusType1Spawn:
     ld a, [wCactus1SpawnChance]
     cp a, b
     ret nc
-    cp a, c
-    ret nc
+    
+    ld hl, {CACTUS_TYPE_1_SPRITE_0} + OAMA_Y
+    ld a, GROUND_LEVEL_Y_POS
+    ld [hl], a
 
     ld a, [wCactus1IsSpawned]
     ld a, TRUE
     ld [wCactus1IsSpawned], a
-    
-    ld hl, {CACTUS_TYPE_1_SPRITE_0} + OAMA_Y
-    ld a, [hl]
-    sub a, (OFFSCREEN_SPRITE_Y_POS - GROUND_LEVEL_Y_POS)
-    ld [hl], a
 
+    scf 
     ret
 
 _CactusType2Spawn:
@@ -395,23 +393,20 @@ _CactusType2Spawn:
     ld a, [wCactus2SpawnChance]
     cp a, b
     jp nc, _CactusType1Spawn
-    cp a, c
-    jp nc, _CactusType1Spawn
+    
+    ld hl, {CACTUS_TYPE_2_SPRITE_0} + OAMA_Y
+    ld a, GROUND_LEVEL_Y_POS
+    ld [hl], a
+    
+    ld hl, {CACTUS_TYPE_2_SPRITE_1} + OAMA_Y
+    ld a, GROUND_LEVEL_Y_POS
+    ld [hl], a
 
     ld a, [wCactus2IsSpawned]
     ld a, TRUE
     ld [wCactus2IsSpawned], a
     
-    ld hl, {CACTUS_TYPE_2_SPRITE_0} + OAMA_Y
-    ld a, [hl]
-    sub a, (OFFSCREEN_SPRITE_Y_POS - GROUND_LEVEL_Y_POS)
-    ld [hl], a
-    
-    ld hl, {CACTUS_TYPE_2_SPRITE_1} + OAMA_Y
-    ld a, [hl]
-    sub a, (OFFSCREEN_SPRITE_Y_POS - GROUND_LEVEL_Y_POS)
-    ld [hl], a
-
+    scf 
     ret
 
 _CactusType3Spawn:
@@ -424,28 +419,26 @@ _CactusType3Spawn:
     ld a, [wCactus3SpawnChance]
     cp a, b
     jp nc, _CactusType2Spawn
-    cp a, c
-    jp nc, _CactusType2Spawn
+    
+    ld hl, {CACTUS_TYPE_3_SPRITE_0} + OAMA_Y
+    ld a, GROUND_LEVEL_Y_POS
+    ld [hl], a
+    
+    ld hl, {CACTUS_TYPE_3_SPRITE_1} + OAMA_Y
+    ld a, [hl]
+    ld a, GROUND_LEVEL_Y_POS
+    ld [hl], a
+    
+    ld hl, {CACTUS_TYPE_3_SPRITE_2} + OAMA_Y
+    ld a, [hl]
+    ld a, GROUND_LEVEL_Y_POS
+    ld [hl], a
 
     ld a, [wCactus3IsSpawned]
     ld a, TRUE
     ld [wCactus3IsSpawned], a
     
-    ld hl, {CACTUS_TYPE_3_SPRITE_0} + OAMA_Y
-    ld a, [hl]
-    sub a, (OFFSCREEN_SPRITE_Y_POS - GROUND_LEVEL_Y_POS)
-    ld [hl], a
-    
-    ld hl, {CACTUS_TYPE_3_SPRITE_1} + OAMA_Y
-    ld a, [hl]
-    sub a, (OFFSCREEN_SPRITE_Y_POS - GROUND_LEVEL_Y_POS)
-    ld [hl], a
-    
-    ld hl, {CACTUS_TYPE_3_SPRITE_2} + OAMA_Y
-    ld a, [hl]
-    sub a, (OFFSCREEN_SPRITE_Y_POS - GROUND_LEVEL_Y_POS)
-    ld [hl], a
-
+    scf 
     ret
 
 _CactusType4Spawn:
@@ -458,33 +451,28 @@ _CactusType4Spawn:
     ld a, [wCactus4SpawnChance]
     cp a, b
     jp nc, _CactusType3Spawn
-    cp a, c
-    jp nc, _CactusType3Spawn
+    
+    ld hl, {CACTUS_TYPE_4_SPRITE_0} + OAMA_Y
+    ld a, GROUND_LEVEL_Y_POS_OFF
+    ld [hl], a
+    
+    ld hl, {CACTUS_TYPE_4_SPRITE_1} + OAMA_Y
+    ld a, GROUND_LEVEL_Y_POS_OFF
+    ld [hl], a
+    
+    ld hl, {CACTUS_TYPE_4_SPRITE_2} + OAMA_Y
+    ld a, GROUND_LEVEL_Y_POS_OFF + META_SPRITE_ROW_2_Y
+    ld [hl], a
+    
+    ld hl, {CACTUS_TYPE_4_SPRITE_3} + OAMA_Y
+    ld a, GROUND_LEVEL_Y_POS_OFF + META_SPRITE_ROW_2_Y
+    ld [hl], a
 
     ld a, [wCactus4IsSpawned]
     ld a, TRUE
     ld [wCactus4IsSpawned], a
     
-    ld hl, {CACTUS_TYPE_4_SPRITE_0} + OAMA_Y
-    ld a, [hl]
-    sub a, (OFFSCREEN_SPRITE_Y_POS - GROUND_LEVEL_Y_POS_OFF)
-    ld [hl], a
-    
-    ld hl, {CACTUS_TYPE_4_SPRITE_1} + OAMA_Y
-    ld a, [hl]
-    sub a, (OFFSCREEN_SPRITE_Y_POS - GROUND_LEVEL_Y_POS_OFF)
-    ld [hl], a
-    
-    ld hl, {CACTUS_TYPE_4_SPRITE_2} + OAMA_Y
-    ld a, [hl]
-    sub a, (OFFSCREEN_SPRITE_Y_POS - GROUND_LEVEL_Y_POS_OFF)
-    ld [hl], a
-    
-    ld hl, {CACTUS_TYPE_4_SPRITE_3} + OAMA_Y
-    ld a, [hl]
-    sub a, (OFFSCREEN_SPRITE_Y_POS - GROUND_LEVEL_Y_POS_OFF)
-    ld [hl], a
-
+    scf 
     ret
 
 _CactusType5Spawn:
@@ -497,43 +485,36 @@ _CactusType5Spawn:
     ld a, [wCactus5SpawnChance]
     cp a, b
     jp nc, _CactusType4Spawn
-    cp a, c
-    jp nc, _CactusType4Spawn
+    
+    ld hl, {CACTUS_TYPE_5_SPRITE_0} + OAMA_Y
+    ld a, GROUND_LEVEL_Y_POS_OFF
+    ld [hl], a
+    
+    ld hl, {CACTUS_TYPE_5_SPRITE_1} + OAMA_Y
+    ld a, GROUND_LEVEL_Y_POS_OFF
+    ld [hl], a
+    
+    ld hl, {CACTUS_TYPE_5_SPRITE_2} + OAMA_Y
+    ld a, GROUND_LEVEL_Y_POS_OFF
+    ld [hl], a
+    
+    ld hl, {CACTUS_TYPE_5_SPRITE_3} + OAMA_Y
+    ld a, GROUND_LEVEL_Y_POS_OFF + META_SPRITE_ROW_2_Y
+    ld [hl], a
+    
+    ld hl, {CACTUS_TYPE_5_SPRITE_4} + OAMA_Y
+    ld a, GROUND_LEVEL_Y_POS_OFF + META_SPRITE_ROW_2_Y
+    ld [hl], a
+    
+    ld hl, {CACTUS_TYPE_5_SPRITE_5} + OAMA_Y
+    ld a, GROUND_LEVEL_Y_POS_OFF + META_SPRITE_ROW_2_Y
+    ld [hl], a
 
     ld a, [wCactus5IsSpawned]
     ld a, TRUE
     ld [wCactus5IsSpawned], a
     
-    ld hl, {CACTUS_TYPE_5_SPRITE_0} + OAMA_Y
-    ld a, [hl]
-    sub a, (OFFSCREEN_SPRITE_Y_POS - GROUND_LEVEL_Y_POS_OFF)
-    ld [hl], a
-    
-    ld hl, {CACTUS_TYPE_5_SPRITE_1} + OAMA_Y
-    ld a, [hl]
-    sub a, (OFFSCREEN_SPRITE_Y_POS - GROUND_LEVEL_Y_POS_OFF)
-    ld [hl], a
-    
-    ld hl, {CACTUS_TYPE_5_SPRITE_2} + OAMA_Y
-    ld a, [hl]
-    sub a, (OFFSCREEN_SPRITE_Y_POS - GROUND_LEVEL_Y_POS_OFF)
-    ld [hl], a
-    
-    ld hl, {CACTUS_TYPE_5_SPRITE_3} + OAMA_Y
-    ld a, [hl]
-    sub a, (OFFSCREEN_SPRITE_Y_POS - GROUND_LEVEL_Y_POS_OFF)
-    ld [hl], a
-    
-    ld hl, {CACTUS_TYPE_5_SPRITE_4} + OAMA_Y
-    ld a, [hl]
-    sub a, (OFFSCREEN_SPRITE_Y_POS - GROUND_LEVEL_Y_POS_OFF)
-    ld [hl], a
-    
-    ld hl, {CACTUS_TYPE_5_SPRITE_5} + OAMA_Y
-    ld a, [hl]
-    sub a, (OFFSCREEN_SPRITE_Y_POS - GROUND_LEVEL_Y_POS_OFF)
-    ld [hl], a
-
+    scf 
     ret
 
 _CactusType6Spawn:
@@ -541,68 +522,73 @@ _CactusType6Spawn:
 
     ld a, [wCactus6IsSpawned]
     and a
-    jp nz, _CactusType5Spawn
+    jp nz, _CactusType1Spawn
+    
+    ld a, [wCactus5IsSpawned]
+    and a
+    jp nz, _CactusType1Spawn
+    
+    ld a, [wCactus4IsSpawned]
+    and a
+    jp nz, _CactusType1Spawn
+    
+    ld a, [wCactus3IsSpawned]
+    and a
+    jp nz, _CactusType1Spawn
+    
+    ld a, [wCactus2IsSpawned]
+    and a
+    jp nz, _CactusType1Spawn
 
     ld a, [wCactus6SpawnChance]
     cp a, b
     jp nc, _CactusType5Spawn
-    cp a, c
-    jp nc, _CactusType5Spawn
+    
+    ld hl, {CACTUS_TYPE_6_SPRITE_0} + OAMA_Y
+    ld a, GROUND_LEVEL_Y_POS_OFF
+    ld [hl], a
+    
+    ld hl, {CACTUS_TYPE_6_SPRITE_1} + OAMA_Y
+    ld a, GROUND_LEVEL_Y_POS_OFF
+    ld [hl], a
+    
+    ld hl, {CACTUS_TYPE_6_SPRITE_2} + OAMA_Y
+    ld a, GROUND_LEVEL_Y_POS_OFF
+    ld [hl], a
+    
+    ld hl, {CACTUS_TYPE_6_SPRITE_3} + OAMA_Y
+    ld a, GROUND_LEVEL_Y_POS_OFF
+    ld [hl], a
+    
+    ld hl, {CACTUS_TYPE_6_SPRITE_4} + OAMA_Y
+    ld a, GROUND_LEVEL_Y_POS_OFF
+    ld [hl], a
+    
+    ld hl, {CACTUS_TYPE_6_SPRITE_5} + OAMA_Y
+    ld a, GROUND_LEVEL_Y_POS_OFF + META_SPRITE_ROW_2_Y
+    ld [hl], a
+    
+    ld hl, {CACTUS_TYPE_6_SPRITE_6} + OAMA_Y
+    ld a, GROUND_LEVEL_Y_POS_OFF + META_SPRITE_ROW_2_Y
+    ld [hl], a
+    
+    ld hl, {CACTUS_TYPE_6_SPRITE_7} + OAMA_Y
+    ld a, GROUND_LEVEL_Y_POS_OFF + META_SPRITE_ROW_2_Y
+    ld [hl], a
+    
+    ld hl, {CACTUS_TYPE_6_SPRITE_8} + OAMA_Y
+    ld a, GROUND_LEVEL_Y_POS_OFF + META_SPRITE_ROW_2_Y
+    ld [hl], a
+    
+    ld hl, {CACTUS_TYPE_6_SPRITE_9} + OAMA_Y
+    ld a, GROUND_LEVEL_Y_POS_OFF + META_SPRITE_ROW_2_Y
+    ld [hl], a
 
     ld a, [wCactus6IsSpawned]
     ld a, TRUE
     ld [wCactus6IsSpawned], a
     
-    ld hl, {CACTUS_TYPE_6_SPRITE_0} + OAMA_Y
-    ld a, [hl]
-    sub a, (OFFSCREEN_SPRITE_Y_POS - GROUND_LEVEL_Y_POS_OFF)
-    ld [hl], a
-    
-    ld hl, {CACTUS_TYPE_6_SPRITE_1} + OAMA_Y
-    ld a, [hl]
-    sub a, (OFFSCREEN_SPRITE_Y_POS - GROUND_LEVEL_Y_POS_OFF)
-    ld [hl], a
-    
-    ld hl, {CACTUS_TYPE_6_SPRITE_2} + OAMA_Y
-    ld a, [hl]
-    sub a, (OFFSCREEN_SPRITE_Y_POS - GROUND_LEVEL_Y_POS_OFF)
-    ld [hl], a
-    
-    ld hl, {CACTUS_TYPE_6_SPRITE_3} + OAMA_Y
-    ld a, [hl]
-    sub a, (OFFSCREEN_SPRITE_Y_POS - GROUND_LEVEL_Y_POS_OFF)
-    ld [hl], a
-    
-    ld hl, {CACTUS_TYPE_6_SPRITE_4} + OAMA_Y
-    ld a, [hl]
-    sub a, (OFFSCREEN_SPRITE_Y_POS - GROUND_LEVEL_Y_POS_OFF)
-    ld [hl], a
-    
-    ld hl, {CACTUS_TYPE_6_SPRITE_5} + OAMA_Y
-    ld a, [hl]
-    sub a, (OFFSCREEN_SPRITE_Y_POS - GROUND_LEVEL_Y_POS_OFF)
-    ld [hl], a
-    
-    ld hl, {CACTUS_TYPE_6_SPRITE_6} + OAMA_Y
-    ld a, [hl]
-    sub a, (OFFSCREEN_SPRITE_Y_POS - GROUND_LEVEL_Y_POS_OFF)
-    ld [hl], a
-    
-    ld hl, {CACTUS_TYPE_6_SPRITE_7} + OAMA_Y
-    ld a, [hl]
-    sub a, (OFFSCREEN_SPRITE_Y_POS - GROUND_LEVEL_Y_POS_OFF)
-    ld [hl], a
-    
-    ld hl, {CACTUS_TYPE_6_SPRITE_8} + OAMA_Y
-    ld a, [hl]
-    sub a, (OFFSCREEN_SPRITE_Y_POS - GROUND_LEVEL_Y_POS_OFF)
-    ld [hl], a
-    
-    ld hl, {CACTUS_TYPE_6_SPRITE_9} + OAMA_Y
-    ld a, [hl]
-    sub a, (OFFSCREEN_SPRITE_Y_POS - GROUND_LEVEL_Y_POS_OFF)
-    ld [hl], a
-
+    scf 
     ret
 
 /*******************************************************************************
@@ -629,7 +615,7 @@ _CactusAnimate::
     ld a, [hl]
     cp a, OFFSCREEN_SPRITE_X_POS + META_SPRITE_COL_0_X + 1
     jr c, .cactus2
-    cp a, OFFSCREEN_SPRITE_X_POS + META_SPRITE_COL_4_X + 1
+    cp a, $FF - META_SPRITE_COL_0_X - 1
     call c, _InitCactus1
 
 .cactus2:
@@ -654,7 +640,7 @@ _CactusAnimate::
     ld a, [hl]
     cp a, OFFSCREEN_SPRITE_X_POS + META_SPRITE_COL_0_X + 1
     jr c, .cactus3
-    cp a, OFFSCREEN_SPRITE_X_POS + META_SPRITE_COL_4_X + 1
+    cp a, $FF - META_SPRITE_COL_1_X - 1
     call c, _InitCactus2
 
 .cactus3:
@@ -684,7 +670,7 @@ _CactusAnimate::
     ld a, [hl]
     cp a, OFFSCREEN_SPRITE_X_POS + META_SPRITE_COL_0_X + 1
     jr c, .cactus4
-    cp a, OFFSCREEN_SPRITE_X_POS + META_SPRITE_COL_4_X + 1
+    cp a, $FF - META_SPRITE_COL_2_X - 1
     call c, _InitCactus3
 
 .cactus4:
@@ -719,7 +705,7 @@ _CactusAnimate::
     ld a, [hl]
     cp a, OFFSCREEN_SPRITE_X_POS + META_SPRITE_COL_0_X + 1
     jr c, .cactus5
-    cp a, OFFSCREEN_SPRITE_X_POS + META_SPRITE_COL_4_X + 1
+    cp a, $FF - META_SPRITE_COL_1_X - 1
     call c, _InitCactus4
 
 .cactus5:
@@ -764,7 +750,7 @@ _CactusAnimate::
     ld a, [hl]
     cp a, OFFSCREEN_SPRITE_X_POS + META_SPRITE_COL_0_X + 1
     jr c, .cactus6
-    cp a, OFFSCREEN_SPRITE_X_POS + META_SPRITE_COL_4_X + 1
+    cp a, $FF - META_SPRITE_COL_2_X - 1
     call c, _InitCactus5
 
 .cactus6:
@@ -829,7 +815,7 @@ _CactusAnimate::
     ld a, [hl]
     cp a, OFFSCREEN_SPRITE_X_POS + META_SPRITE_COL_0_X + 1
     jr c, .done
-    cp a, OFFSCREEN_SPRITE_X_POS + META_SPRITE_COL_4_X + 1
+    cp a, $FF - META_SPRITE_COL_4_X - 1
     call c, _InitCactus6
 
 .done:

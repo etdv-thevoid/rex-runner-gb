@@ -105,25 +105,21 @@ _EngineCheckTilemap::
 
 ; Try to spawn an enemy
 _EngineTrySpawn::
-    ld a, [wSpawnFrameCounter]
-    and a, SPAWN_FRAME_MASK
-    ld [wSpawnFrameCounter], a
-    ret nz
+    ld a, [wSpawnDistanceCounter]
+    cp a, MINIMUM_SPAWN_DISTANCE
+    ret c
 
-    ld hl, _EngineSpawnJumpTable
-    ld a, [wCurrentSpawnTarget]
+    call _GetRandom
+    and %00000011
     cp a, NUMBER_OF_OBJECTS
     jr c, .jump
-    ld a, NUMBER_OF_OBJECTS
+    ld a, DEFAULT_OBJECT
 .jump:
+    ld hl, _EngineSpawnJumpTable
     call _JumpTable
-    ld a, [wCurrentSpawnTarget]
-    inc a
-    ld [wCurrentSpawnTarget], a
-    cp a, NUMBER_OF_OBJECTS
-    ret c
+    ret nc
     xor a
-    ld [wCurrentSpawnTarget], a
+    ld [wSpawnDistanceCounter], a
     ret
 
 ; Spawn Rotation Jump Table
@@ -313,10 +309,6 @@ _VBlankHandler:
     cp a, STATE_PAUSE
     ret nc
 
-    ld a, [wSpawnFrameCounter]
-    inc a
-    ld [wSpawnFrameCounter], a
-
     call _PteroIncFrameCounter
     call _RexIncFrameCounter
 
@@ -382,12 +374,19 @@ ENDR
     ld a, b
     ld [wBackgroundParallaxTop], a
 
+    ld a, [wGroundSpeedDifferential]
+    ld c, a
+
+    ld a, [wSpawnDistanceCounter]
+    add a, c
+    ld [wSpawnDistanceCounter], a
+
     ld a, [wScoreIncreaseDifferential]
     ld c, a
 
     ld hl, wCurrentScore + 1
     ld a, [hl]
-    swap a
+    ;swap a
     and a, %00001111
     ld b, a
 
@@ -408,24 +407,20 @@ ENDR
 
     ld hl, wCurrentScore + 1
     ld a, [hl]
-    swap a
+    ;swap a
     and a, %00001111
     ld c, a
     ld a, b
     cp a, c
     ret nc
 
-    ld a, [wBaseDifficultySpeed]
-    add a, DIFFICULTY_SPEED_INCREASE
-    ld [wBaseDifficultySpeed], a
-    jr nc, .difficultySpeedNotCapped
-    ld a, $FF
-    ld [wBaseDifficultySpeed], a
-
-.difficultySpeedNotCapped:
+    ld a, c
+    cp a, PALETTE_SWITCH_100_DIGIT
+    jr nz, .noPaletteSwitch
+    
     call _CactusIncSpawnChance
     call _PteroIncSpawnChance
-
+    
     ld a, [wBackgroundPaletteChanged]
     inc a
     ld [wBackgroundPaletteChanged], a
@@ -433,7 +428,20 @@ ENDR
     ld a, [wBackgroundPalette]
     cpl
     ld [wBackgroundPalette], a
-    jp _SetDMGPalettes
+    call _SetDMGPalettes
+
+.noPaletteSwitch:
+    ld a, c
+    and a, %00000001
+    ret z
+
+    ld a, [wBaseDifficultySpeed]
+    add a, DIFFICULTY_SPEED_INCREASE
+    ld [wBaseDifficultySpeed], a
+    ret nc
+    ld a, $FF
+    ld [wBaseDifficultySpeed], a
+    ret
 
 _LCDStatHandler:
     ldh a, [rLYC]
@@ -516,10 +524,7 @@ wBackgroundParallaxBottom:
 wBackgroundParallaxGround:
     DB
 
-wSpawnFrameCounter:
-    DB
-
-wCurrentSpawnTarget:
+wSpawnDistanceCounter:
     DB
 
 wScoreIncreaseDifferential:
