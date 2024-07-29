@@ -102,19 +102,19 @@ _FontTiles::
 *******************************************************************************/
 
 _MenuTilemap:
-    INCBIN "tilemaps/menu.tilemap"
+    INCBIN "assets/menu.tilemap"
 .end:
 
 _CreditsTilemap:
-    INCBIN "tilemaps/credits.tilemap"
+    INCBIN "assets/credits.tilemap"
 .end:
 
 _BackgroundTilemap:
-    INCBIN "tilemaps/background.tilemap"
+    INCBIN "assets/background.tilemap"
 .end:
 
 _BackgroundNightTilemap:
-    INCBIN "tilemaps/background_night.tilemap"
+    INCBIN "assets/background_night.tilemap"
 .end:
 
 ENDSECTION
