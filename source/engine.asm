@@ -85,9 +85,9 @@ _InitEngine::
     ld a, STATE_MENU
     jp _SwitchStateToNew
 
-; Get per frame ground level scroll differential
-_GetBackgroundScrolllDifferential::
-    ld a, [wBackgroundScrollDifferential]
+; Get per frame ground level scroll speed differential
+_GetGroundSpeedDifferential::
+    ld a, [wGroundSpeedDifferential]
     ret
 
 ; Increment all difficulty related variables
@@ -303,7 +303,7 @@ Returns:
     - zero if no change of thousands digit
     - not zero if thousands digit changed
 */
-_IncrementScore:
+_IncreaseScore:
     ld a, [wScoreIncreaseDifferential]
     ld c, a
 
@@ -404,7 +404,7 @@ ENDR
     ld a, b
     ld [wBackgroundParallaxGround], a
     sub a, d
-    ld [wBackgroundScrollDifferential], a
+    ld [wGroundSpeedDifferential], a
     
     ld a, [wBackgroundParallaxBottom]
     ld d, a
@@ -468,7 +468,7 @@ _VBlankHandler:
 
     call _BackgroundIncScroll
 
-    call _IncrementScore
+    call _IncreaseScore
     ret nc
 
     call _EngineIncrementDifficulty
@@ -532,11 +532,14 @@ SECTION "Engine Variables", WRAM0
 wBackgroundPalette:
     DB
 
+wBaseDifficultySpeed:
+    DB
+
+wGroundSpeedDifferential:
+    DB
+    
 wBackgroundScrollPosition:
     DW
-
-wBackgroundScrollDifferential:
-    DB
 
 wBackgroundParallaxTop:
     DB
@@ -548,9 +551,6 @@ wBackgroundParallaxBottom:
     DB
 
 wBackgroundParallaxGround:
-    DB
-
-wBaseDifficultySpeed:
     DB
 
 wCurrentSpawnFrameCounter:

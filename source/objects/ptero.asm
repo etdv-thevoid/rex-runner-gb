@@ -207,7 +207,7 @@ _PteroAnimate::
     and a
     jr z, .ptero2
 
-    call _GetBackgroundScrolllDifferential
+    call _GetGroundSpeedDifferential
     ld b, a
 
     ld hl, {PTERO_1_SPRITE_0} + OAMA_X
@@ -274,7 +274,7 @@ _PteroAnimate::
     and a
     jr z, .done
 
-    call _GetBackgroundScrolllDifferential
+    call _GetGroundSpeedDifferential
     ld b, a
 
     ld hl, {PTERO_2_SPRITE_0} + OAMA_X

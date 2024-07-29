@@ -617,7 +617,7 @@ _CactusAnimate::
     and a
     jr z, .cactus2
     
-    call _GetBackgroundScrolllDifferential
+    call _GetGroundSpeedDifferential
     ld b, a
 
     ld hl, {CACTUS_TYPE_1_SPRITE_0} + OAMA_X
@@ -637,7 +637,7 @@ _CactusAnimate::
     and a
     jr z, .cactus3
     
-    call _GetBackgroundScrolllDifferential
+    call _GetGroundSpeedDifferential
     ld b, a
 
     ld hl, {CACTUS_TYPE_2_SPRITE_0} + OAMA_X
@@ -662,7 +662,7 @@ _CactusAnimate::
     and a
     jr z, .cactus4
     
-    call _GetBackgroundScrolllDifferential
+    call _GetGroundSpeedDifferential
     ld b, a
 
     ld hl, {CACTUS_TYPE_3_SPRITE_0} + OAMA_X
@@ -692,7 +692,7 @@ _CactusAnimate::
     and a
     jr z, .cactus5
     
-    call _GetBackgroundScrolllDifferential
+    call _GetGroundSpeedDifferential
     ld b, a
 
     ld hl, {CACTUS_TYPE_4_SPRITE_0} + OAMA_X
@@ -727,7 +727,7 @@ _CactusAnimate::
     and a
     jr z, .cactus6
     
-    call _GetBackgroundScrolllDifferential
+    call _GetGroundSpeedDifferential
     ld b, a
 
     ld hl, {CACTUS_TYPE_5_SPRITE_0} + OAMA_X
@@ -772,7 +772,7 @@ _CactusAnimate::
     and a
     jr z, .done
     
-    call _GetBackgroundScrolllDifferential
+    call _GetGroundSpeedDifferential
     ld b, a
 
     ld hl, {CACTUS_TYPE_6_SPRITE_0} + OAMA_X
