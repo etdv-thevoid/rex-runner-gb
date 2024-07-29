@@ -11,19 +11,20 @@ DEF TRUE    EQU 1
 *******************************************************************************/
 
 RSRESET
-DEF STATE_INIT          RB 1 ; $00
-DEF STATE_MENU          RB 1 ; $01
-DEF STATE_CREDITS       RB 1 ; $02
-DEF STATE_GAME          RB 1 ; $03
-DEF STATE_PAUSE         RB 1 ; $04
-DEF STATE_DEAD          RB 1 ; $05
+DEF STATE_LOAD          RB 1 ; $00
+DEF STATE_INIT          RB 1 ; $01
+DEF STATE_MENU          RB 1 ; $02
+DEF STATE_CREDITS       RB 1 ; $03
+DEF STATE_GAME          RB 1 ; $04
+DEF STATE_PAUSE         RB 1 ; $05
+DEF STATE_DEAD          RB 1 ; $06
 
-DEF NUMBER_OF_STATES    RB 0 ; $06
+DEF NUMBER_OF_STATES    RB 0 ; $07
 
 
 /*******************************************************************************
 **                                                                            **
-**      MAIN CONSTANTS                                                        **
+**      MENU CONSTANTS                                                        **
 **                                                                            **
 *******************************************************************************/
 
@@ -44,6 +45,10 @@ DEF NUMBER_OF_MENU_OPTS RB 0 ; $02
 
 DEF INITIAL_DIFFICULTY_SPEED    EQU 10
 DEF DIFFICULTY_SPEED_INCREASE   EQU 2
+
+DEF REX_JUMP_VELOCITY           EQU 2
+DEF REX_FALL_VELOCITY           EQU 2
+DEF REX_FAST_FALL_VELOCITY      EQU 3
 
 DEF COLLISION_PIXEL_OVERLAP_OBJ     EQU 2
 
@@ -135,11 +140,8 @@ DEF PTERO_2_INIT_Y_POS_1    EQU 102 + OAM_Y_OFS
 **                                                                            **
 *******************************************************************************/
 
-DEF REX_JUMP_VELOCITY           EQU 2
-DEF REX_FALL_VELOCITY           EQU 2
-DEF REX_FAST_FALL_VELOCITY      EQU 3
-
 DEF REX_BLINK_FRAMES_MASK       EQU %00000111
+DEF REX_BLINK_DELAY_MASK        EQU %00111111
 DEF REX_RUNNING_FRAMES_MASK     EQU %00000111
 DEF REX_JUMP_FRAMES_MASK        EQU %00000011
 

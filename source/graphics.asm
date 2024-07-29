@@ -34,7 +34,10 @@ _LoadGraphics::
     ld hl, _FontTiles
     ld bc, (_FontTiles.end - _FontTiles)
     ld de, vBLK21.32
-    jp _VideoMemCopyMonochrome
+    call _VideoMemCopyMonochrome
+
+    ld a, STATE_INIT
+    jp _SwitchStateToNew
 
 
 /*******************************************************************************

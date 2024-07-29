@@ -21,7 +21,6 @@ The function can assume the following:
 */
 _Main::
     call _EnableSoftReset
-    call _LoadGraphics
 
     ; fallthrough
 
@@ -38,6 +37,7 @@ _MainLoop:
     jr _MainLoop
 
 _StateJumpTable:
+    DW _LoadGraphics
     DW _InitEngine
     DW _Menu
     DW _Credits
@@ -49,7 +49,7 @@ _StateJumpTable:
 
 /*******************************************************************************
 **                                                                            **
-**      MAIN STATE FUNCTIONS                                                  **
+**      STATE FUNCTIONS                                                       **
 **                                                                            **
 *******************************************************************************/
 

@@ -21,9 +21,7 @@ _InitRex::
 ; Randomizes the frame delay for blinking
 _RexRandomBlinkDelay:
     call _GetRandom
-    and a, REX_BLINK_FRAMES_MASK
-    rla 
-    swap a
+    or a, REX_BLINK_DELAY_MASK
     ld [wRexBlinkAnimationRandomDelay], a
     ret
 
@@ -428,7 +426,7 @@ _RexAnimateStanding:
     ld a, [wRexBlinkAnimationRandomDelay]
     ld b, a
     ld a, [wRexAnimationFrameCounter]
-    xor a, b
+    and a, b
     ld [wRexAnimationFrameCounter], a
     ret nz
 
