@@ -56,7 +56,7 @@ _InitEngine::
     call _LoadHighScore
 
     ld a, INITIAL_DIFFICULTY_SPEED
-    ld [wDifficultySpeed], a
+    ld [wBaseDifficultySpeed], a
 
     ld a, DEFAULT_PALETTE
     ld [wBackgroundPalette], a
@@ -92,10 +92,14 @@ _GetBackgroundScrolllDifferential::
 
 ; Increment all difficulty related variables
 _EngineIncrementDifficulty::
-    ld a, [wDifficultySpeed]
-    inc a
-    ld [wDifficultySpeed], a
+    ld a, [wBaseDifficultySpeed]
+    add a, DIFFICULTY_SPEED_INCREASE
+    ld [wBaseDifficultySpeed], a
+    jr nc, .skip
+    ld a, $FF
+    ld [wBaseDifficultySpeed], a
 
+.skip:
     call _CactusIncSpawnChance
     jp _PteroIncSpawnChance
 
@@ -300,11 +304,8 @@ Returns:
     - not zero if thousands digit changed
 */
 _IncrementScore:
-    ld a, [wScoreFrameCounter]
-    inc a
-    and SCORE_INCREMENT_MASK
-    ld [wScoreFrameCounter], a
-    ret nz
+    ld a, [wScoreIncreaseDifferential]
+    ld c, a
 
     ld hl, wCurrentScore + 1
     ld a, [hl]
@@ -317,7 +318,7 @@ _IncrementScore:
 
     ld hl, wCurrentScore
     ld a, [hl]
-    add a, 1
+    add a, c
     daa
     ld [hl+], a
 REPT SCORE_BYTES - 1
@@ -372,7 +373,7 @@ ENDR
 *******************************************************************************/
 
 _BackgroundIncScroll:
-    ld a, [wDifficultySpeed]
+    ld a, [wBaseDifficultySpeed]
     ld b, a
 
     scf
@@ -405,12 +406,16 @@ ENDR
     sub a, d
     ld [wBackgroundScrollDifferential], a
     
+    ld a, [wBackgroundParallaxBottom]
+    ld d, a
 REPT PARALLAX_BIT_SHIFTS_PER_SECTION
     srl c
     rr b
 ENDR
     ld a, b
     ld [wBackgroundParallaxBottom], a
+    sub a, d
+    ld [wScoreIncreaseDifferential], a
   
 REPT PARALLAX_BIT_SHIFTS_PER_SECTION
     srl c
@@ -545,10 +550,7 @@ wBackgroundParallaxBottom:
 wBackgroundParallaxGround:
     DB
 
-wDifficultySpeed:
-    DB
-
-wDifficultyDistance:
+wBaseDifficultySpeed:
     DB
 
 wCurrentSpawnFrameCounter:
@@ -557,7 +559,7 @@ wCurrentSpawnFrameCounter:
 wCurrentSpawnTarget:
     DB
 
-wScoreFrameCounter:
+wScoreIncreaseDifferential:
     DB
 
 wCurrentScore:
