@@ -433,6 +433,8 @@ ENDR
 
 _LCDStatHandler:
     ldh a, [rLYC]
+    cp a, LYC_HUD_STOP_LINE
+    jr z, .stopHUD
     cp a, LYC_PARALLAX_TOP_START_LINE
     jr z, .top
     cp a, LYC_PARALLAX_MIDDLE_START_LINE
