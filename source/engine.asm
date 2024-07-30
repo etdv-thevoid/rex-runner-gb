@@ -338,51 +338,39 @@ _VBlankHandler:
     ld a, [wBackgroundScrollPosition+1]
     ld c, a
 
-    ld a, [wBackgroundParallaxGround]
-    ld d, a
-REPT PARALLAX_BIT_SHIFTS_INITIAL
-    srl c
-    rr b
-ENDR
-    ld a, b
-    ld [wBackgroundParallaxGround], a
-    sub a, d
-    ld [wGroundSpeedDifferential], a
-    
     ld a, [wBackgroundParallaxBottom]
     ld d, a
-REPT PARALLAX_BIT_SHIFTS_PER_SECTION
+REPT PARALLAX_BIT_SHIFTS_BOTTOM
     srl c
     rr b
 ENDR
     ld a, b
     ld [wBackgroundParallaxBottom], a
     sub a, d
-    ld [wScoreIncreaseDifferential], a
-  
-REPT PARALLAX_BIT_SHIFTS_PER_SECTION
+    ld [wGroundSpeedDifferential], a
+    ld d, a
+    ld a, [wSpawnDistanceCounter]
+    add a, d
+    ld [wSpawnDistanceCounter], a
+    
+    ld a, [wBackgroundParallaxMiddle]
+    ld e, a
+REPT PARALLAX_BIT_SHIFTS_MIDDLE
     srl c
     rr b
 ENDR
     ld a, b
     ld [wBackgroundParallaxMiddle], a
-
-REPT PARALLAX_BIT_SHIFTS_PER_SECTION
+    sub a, e
+    ld [wScoreIncreaseDifferential], a
+    ld e, a
+  
+REPT PARALLAX_BIT_SHIFTS_TOP
     srl c
     rr b
 ENDR
     ld a, b
     ld [wBackgroundParallaxTop], a
-
-    ld a, [wGroundSpeedDifferential]
-    ld c, a
-
-    ld a, [wSpawnDistanceCounter]
-    add a, c
-    ld [wSpawnDistanceCounter], a
-
-    ld a, [wScoreIncreaseDifferential]
-    ld c, a
 
     ld hl, wCurrentScore + 1
     ld a, [hl]
@@ -395,7 +383,7 @@ ENDR
 
     ld hl, wCurrentScore
     ld a, [hl]
-    add a, c
+    add a, e
     daa
     ld [hl+], a
 REPT SCORE_BYTES - 1
@@ -451,8 +439,6 @@ _LCDStatHandler:
     jr z, .middle
     cp a, LYC_PARALLAX_BOTTOM_START_LINE
     jr z, .bottom
-    cp a, LYC_PARALLAX_GROUND_START_LINE
-    jr z, .ground
 
 .default:
     ld a, LYC_PARALLAX_TOP_START_LINE
@@ -473,21 +459,14 @@ _LCDStatHandler:
 .middle:
     ld a, LYC_PARALLAX_BOTTOM_START_LINE
     ldh [rLYC], a
-    ld a, [wBackgroundParallaxMiddle]
+    ld a, [wBackgroundParallaxTop]
     ldh [rSCX], a
     ret
 
 .bottom:
-    ld a, LYC_PARALLAX_GROUND_START_LINE
-    ldh [rLYC], a
-    ld a, [wBackgroundParallaxBottom]
-    ldh [rSCX], a
-    ret
-
-.ground:
     ld a, LYC_HUD_START_LINE
     ldh [rLYC], a
-    ld a, [wBackgroundParallaxGround]
+    ld a, [wBackgroundParallaxBottom]
     ldh [rSCX], a
     ret
 
@@ -519,9 +498,6 @@ wBackgroundParallaxMiddle:
     DB
 
 wBackgroundParallaxBottom:
-    DB
-
-wBackgroundParallaxGround:
     DB
 
 wSpawnDistanceCounter:
