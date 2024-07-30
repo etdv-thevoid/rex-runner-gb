@@ -407,7 +407,7 @@ ENDR
     sub a, e
     ld [wScoreIncreaseDifferential], a
     ld e, a
-  
+
 REPT PARALLAX_BIT_SHIFTS_TOP
     srl c
     rr b
@@ -417,7 +417,6 @@ ENDR
 
     ld hl, wCurrentScore + 1
     ld a, [hl]
-    ;swap a
     and a, %00001111
     ld b, a
 
@@ -438,7 +437,6 @@ ENDR
 
     ld hl, wCurrentScore + 1
     ld a, [hl]
-    ;swap a
     and a, %00001111
     ld c, a
     ld a, b
@@ -476,14 +474,14 @@ ENDR
 
 _LCDStatHandler:
     ldh a, [rLYC]
-    cp a, LYC_HUD_STOP_LINE
-    jr z, .stopHUD
-    cp a, LYC_PARALLAX_TOP_START_LINE
-    jr z, .top
-    cp a, LYC_PARALLAX_MIDDLE_START_LINE
-    jr z, .middle
     cp a, LYC_PARALLAX_BOTTOM_START_LINE
     jr z, .bottom
+    cp a, LYC_PARALLAX_MIDDLE_START_LINE
+    jr z, .middle
+    cp a, LYC_PARALLAX_TOP_START_LINE
+    jr z, .top
+    cp a, LYC_HUD_STOP_LINE
+    jr z, .stopHUD
 
 .startHUD:
     ld a, LYC_HUD_STOP_LINE
@@ -500,7 +498,7 @@ _LCDStatHandler:
     ldh [rSCX], a
     ld a, WINDOW_OFF
     jp _ScreenOn
-
+    
 .top:
     ld a, LYC_PARALLAX_MIDDLE_START_LINE
     ldh [rLYC], a
@@ -508,13 +506,13 @@ _LCDStatHandler:
     ldh [rSCX], a
     ret
 
-
 .middle:
     ld a, LYC_PARALLAX_BOTTOM_START_LINE
     ldh [rLYC], a
     ld a, [wBackgroundParallaxMiddle]
     ldh [rSCX], a
     ret
+
 
 .bottom:
     ld a, LYC_HUD_START_LINE
