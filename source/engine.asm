@@ -412,7 +412,7 @@ ENDR
     ld c, a
     ld a, b
     cp a, c
-    ret nc
+    ret z
 
     ld a, c
     cp a, PALETTE_SWITCH_100_DIGIT
