@@ -5,7 +5,7 @@ INCLUDE "includes/charmap.inc"
 SECTION "Pause", ROM0
 
 _Pause::
-
+    call _DrawPauseScreenHUD
 
     ; fallthrough
     

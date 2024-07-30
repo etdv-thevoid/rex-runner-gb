@@ -251,6 +251,17 @@ _DrawGameOverHUD::
 
     ret
 
+_DrawPauseScreenHUD::
+    xor a
+    ld hl, _PauseScreenString
+    ld b, (_PauseScreenString.end - _PauseScreenString)
+    ld de, vSCRN1.y0x0
+    jp _VideoMemCopyFast
+
+_PauseScreenString:
+    DB " PAUSED  "
+.end:
+
 _DrawHUD::
     xor a
     ld hl, _HighScoreTiles
