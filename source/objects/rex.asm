@@ -164,7 +164,7 @@ _RexChargeJump::
     ld a, [wRexJumpVelocity]
     add a, JUMP_VELOCITY_CHARGE
     ld [wRexJumpVelocity], a
-    cp a, MAX_JUMP_VELOCITY
+    cp a, MIN_JUMP_VELOCITY
     ret c
 
     ld a, MAX_JUMP_VELOCITY
@@ -194,13 +194,9 @@ _RexJump::
     jr nz, .initialJump
     
     ld a, [wRexJumpVelocity]
-    cp a, MIN_JUMP_VELOCITY
-    jr nc, .jump
-    
-    ld a, MIN_JUMP_VELOCITY
+    add a, MIN_MAX_JUMP_DIFFERENCE
     ld [wRexJumpVelocity], a
 
-.jump:
     ld a, REX_ANIM_JUMPING
     ld [wRexAnimationState], a
 
