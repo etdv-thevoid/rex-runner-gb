@@ -98,6 +98,11 @@ _InitEngine::
     ld a, IEF_VBLANK | IEF_LCDC
     ldh [rIE], a
 
+    call _GetStatePrevious
+    cp a, STATE_DEAD
+    ld a, STATE_GAME
+    jp z, _SwitchStateToNew
+
     ld a, STATE_MENU
     jp _SwitchStateToNew
 
