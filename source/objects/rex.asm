@@ -11,6 +11,11 @@ _InitRex::
     ld [wRexAnimationState], a
     ld [wRexBlinkAnimationRandomDelay], a
     ld [wRexInputDelayFrameCounter], a
+    ld [wRexJumpAccel], a
+    ld [wRexJumpSpeed], a
+    ld [wRexJumpSpeedFrameDifferential], a
+    ld [wRexJumpVelocity], a
+    ld [wRexJumpVelocity+1], a
 
     ld a, TRUE
     ld [wRexInitialJumpFlag], a
@@ -30,6 +35,55 @@ _RexIncFrameCounter::
     ld a, [wRexAnimationFrameCounter]
     inc a
     ld [wRexAnimationFrameCounter], a
+
+    ld a, [wRexAnimationState]
+    cp a, REX_ANIM_JUMPING
+    ret c
+
+    ld a, [wRexAnimationState]
+    cp a, REX_ANIM_FAST_FALLING
+    ld d, GRAVITY_VALUE
+    jr nz, .notFastFalling
+    ld d, GRAVITY_VALUE_FAST
+
+.notFastFalling:
+    ld a, [wRexJumpAccel]
+    sub a, d
+    ld [wRexJumpAccel], a
+    bit 7, a
+    jr z, .notFalling
+
+    cpl
+
+.notFalling:
+    ld e, a
+    ld hl, wRexJumpVelocity
+    ld a, [hl]
+    add a, e
+    ld [hl+], a
+    ld a, [hl]
+    adc a, 0
+    ld [hl], a
+
+    scf
+    ccf
+
+    ld a, [wRexJumpVelocity]
+    ld b, a
+    ld a, [wRexJumpVelocity+1]
+    ld c, a
+
+    ld a, [wRexJumpSpeed]
+    ld d, a
+REPT 4
+    srl c
+    rr b
+ENDR
+    ld a, b
+    ld [wRexJumpSpeed], a
+    sub a, d
+    ld [wRexJumpSpeedFrameDifferential], a
+
     ret
 
 ; Get Rex's current animation state
@@ -48,154 +102,112 @@ _RexGetAnimationState::
 _RexStand::
     ld a, REX_ANIM_STANDING
     ld [wRexAnimationState], a
+    
     xor a
     ld [wRexAnimationFrameCounter], a
+    ld [wRexJumpAccel], a
+    ld [wRexJumpSpeed], a
+    ld [wRexJumpSpeedFrameDifferential], a
+    ld [wRexJumpVelocity], a
+    ld [wRexJumpVelocity+1], a
 
-    jp _RexSetSpriteStanding
-
-; Make Rex blink
-_RexBlink::
-    ld a, [wRexAnimationState]
-    and a
-    ret nz
-
-    ld a, REX_ANIM_BLINKING
-    ld [wRexAnimationState], a
-    xor a
-    ld [wRexAnimationFrameCounter], a
-
-    jp _RexSetSpriteBlinking
+    jp _RexSetSpriteDefault
 
 ; Make Rex run
 _RexRun::
     ld a, [wRexAnimationState]
-    cp a, REX_ANIM_SHORT_JUMPING
-    ret z
-    cp a, REX_ANIM_JUMPING
-    ret z
     cp a, REX_ANIM_RUNNING
     ret z
 
     ld a, REX_ANIM_RUNNING
     ld [wRexAnimationState], a
+
     xor a
     ld [wRexAnimationFrameCounter], a
+    ld [wRexJumpAccel], a
+    ld [wRexJumpSpeed], a
+    ld [wRexJumpSpeedFrameDifferential], a
+    ld [wRexJumpVelocity], a
+    ld [wRexJumpVelocity+1], a
 
     jp _RexSetSpriteRunning
 
-; Make Rex full jump
-_RexFullJump::
+; Make Rex jump
+_RexJump::
     ld a, [wRexAnimationState]
-    cp a, REX_ANIM_FAST_FALLING
-    ret z
-    cp a, REX_ANIM_FALLING
-    ret z
-    cp a, REX_ANIM_SHORT_JUMPING
-    ret z
-    cp a, REX_ANIM_JUMPING
-    ret z
     cp a, REX_ANIM_DUCKING
-    ret z
+    ret nc
 
     ld a, [wRexInitialJumpFlag]
     and a
+    ld a, INITIAL_JUMP_ACCEL
     jr nz, .initialJump
 
-    ld a, [wRexInputDelayFrameCounter]
-    inc a
-    and a, REX_JUMP_FRAMES_MASK
-    ld [wRexInputDelayFrameCounter], a
-    ret nz
+    ; ld a, [wRexInputDelayFrameCounter]
+    ; inc a
+    ; and a, REX_JUMP_FRAMES_MASK
+    ; ld [wRexInputDelayFrameCounter], a
+    ; ld a, INITIAL_JUMP_ACCEL
+    ; ret nz
 
 .initialJump:
+    ld [wRexJumpAccel], a
+
     ld a, REX_ANIM_JUMPING
     ld [wRexAnimationState], a
+    
     xor a
     ld [wRexAnimationFrameCounter], a
-    ld [wRexInitialJumpFlag], a
+    ld [wRexJumpSpeed], a
+    ld [wRexJumpSpeedFrameDifferential], a
+    ld [wRexJumpVelocity], a
+    ld [wRexJumpVelocity+1], a
 
-    jp _RexSetSpriteStanding
-
-; Make Rex short jump
-_RexShortJump::
-    ld a, [wRexAnimationState]
-    cp a, REX_ANIM_FAST_FALLING
-    ret z
-    cp a, REX_ANIM_FALLING
-    ret z
-    cp a, REX_ANIM_SHORT_JUMPING
-    ret z
-    cp a, REX_ANIM_JUMPING
-    ret z
-    cp a, REX_ANIM_DUCKING
-    ret z
-
-    ld a, REX_ANIM_SHORT_JUMPING
-    ld [wRexAnimationState], a
-    xor a
-    ld [wRexAnimationFrameCounter], a
-    ld [wRexInputDelayFrameCounter], a
-
-    jp _RexSetSpriteStanding
+    jp _RexSetSpriteDefault
 
 ; Toggles Rex ducking on
 _RexDuckOn::
     ld a, [wRexAnimationState]
-    cp a, REX_ANIM_FAST_FALLING
-    ret z
-    cp a, REX_ANIM_DUCKING
-    ret z
+    cp a, REX_ANIM_RUNNING
+    jr z, .running
+    cp a, REX_ANIM_JUMPING
+    jr z, .jumping
+    ret 
+
+.running:
+    ld a, REX_ANIM_DUCKING
+    ld [wRexAnimationState], a
 
     xor a
     ld [wRexAnimationFrameCounter], a
-
-    ld a, [wRexAnimationState]
-    cp a, REX_ANIM_FALLING
-    jr z, .fastFall
-    cp a, REX_ANIM_SHORT_JUMPING
-    jr z, .fastFall
-    cp a, REX_ANIM_JUMPING
-    jr z, .fastFall
-    ld a, REX_ANIM_DUCKING
-    ld [wRexAnimationState], a
+    
     jp _RexSetSpriteDucking
 
-.fastFall:
+.jumping:
     ld a, REX_ANIM_FAST_FALLING
     ld [wRexAnimationState], a
+
     ret
 
 ; Toggles Rex ducking off
 _RexDuckOff::
     ld a, [wRexAnimationState]
-    cp a, REX_ANIM_FALLING
-    ret z
-    cp a, REX_ANIM_SHORT_JUMPING
-    ret z
-    cp a, REX_ANIM_JUMPING
-    ret z
-    cp a, REX_ANIM_RUNNING
-    ret z
+    cp a, REX_ANIM_DUCKING
+    ret nz
+
+    ld a, REX_ANIM_RUNNING
+    ld [wRexAnimationState], a
 
     xor a
     ld [wRexAnimationFrameCounter], a
 
-    ld a, [wRexAnimationState]
-    cp a, REX_ANIM_FAST_FALLING
-    jr z, .fall
-    ld a, REX_ANIM_RUNNING
-    ld [wRexAnimationState], a
     jp _RexSetSpriteRunning
-
-.fall:
-    ld a, REX_ANIM_FALLING
-    ld [wRexAnimationState], a
-    ret
 
 ; Makes Rex dead :(
 _RexDead::
     ld a, REX_ANIM_DEAD
     ld [wRexAnimationState], a
+
     xor a
     ld [wRexAnimationFrameCounter], a
 
@@ -209,7 +221,7 @@ _RexDead::
 *******************************************************************************/
 
 ; Set Sprites to standing (also jumping)
-_RexSetSpriteStanding:
+_RexSetSpriteDefault:
     ld hl, {REX_SPRITE_0} ; wShadowOAM.0
     ld a, GROUND_LEVEL_Y_POS + META_SPRITE_ROW_0_Y
     ld [hl+], a
@@ -242,41 +254,6 @@ _RexSetSpriteStanding:
     ld a, REX_DEFAULT_SPRITE_3
     ld [hl], a
 
-    ret
-
-; Set Sprites to blinking
-_RexSetSpriteBlinking:
-    ld hl, {REX_SPRITE_0} ; wShadowOAM.0
-    ld a, GROUND_LEVEL_Y_POS + META_SPRITE_ROW_0_Y
-    ld [hl+], a
-    ld a, REX_INIT_X_POS + META_SPRITE_COL_0_X
-    ld [hl+], a
-    ld a, REX_DEFAULT_SPRITE_0
-    ld [hl], a
-
-    ld hl, {REX_SPRITE_1} ; wShadowOAM.1
-    ld a, GROUND_LEVEL_Y_POS + META_SPRITE_ROW_0_Y
-    ld [hl+], a
-    ld a, REX_INIT_X_POS + META_SPRITE_COL_1_X
-    ld [hl+], a
-    ld a, REX_DEFAULT_SPRITE_1
-    ld [hl], a
-
-    ld hl, {REX_SPRITE_2} ; wShadowOAM.2
-    ld a, GROUND_LEVEL_Y_POS + META_SPRITE_ROW_2_Y
-    ld [hl+], a
-    ld a, REX_INIT_X_POS + META_SPRITE_COL_1_X
-    ld [hl+], a
-    ld a, REX_BLINKING_SPRITE_2
-    ld [hl], a
-    
-    ld hl, {REX_SPRITE_3} ; wShadowOAM.3
-    ld a, GROUND_LEVEL_Y_POS + META_SPRITE_ROW_1_Y
-    ld [hl+], a
-    ld a, REX_INIT_X_POS + META_SPRITE_COL_2_X
-    ld [hl+], a
-    ld a, REX_DEFAULT_SPRITE_3
-    ld [hl], a
     ret
 
 ; Set Sprites to running
@@ -390,6 +367,7 @@ _RexSetSpriteDead:
     ld [hl+], a
     ld a, REX_DEAD_SPRITE_3
     ld [hl], a
+
     ret
     
 
@@ -411,18 +389,20 @@ _RexAnimate::
 
 _RexAnimationJumpTable:
     DW _RexAnimateStanding
-    DW _RexAnimateBlinking
     DW _RexAnimateRunning
     DW _RexAnimateDucking
     DW _RexAnimateJumping
-    DW _RexAnimateShortJumping
-    DW _RexAnimateFalling
-    DW _RexAnimateFastFalling
+    DW _RexAnimateJumping
     DW _RexAnimateDead
     DW _NULL
     
 ; Animate standing Rex
 _RexAnimateStanding:
+    ld hl, {REX_SPRITE_2} + OAMA_TILEID
+    ld a, [hl]
+    cp a, REX_BLINKING_SPRITE_2
+    jr z, .blinking
+
     ld a, [wRexBlinkAnimationRandomDelay]
     ld b, a
     ld a, [wRexAnimationFrameCounter]
@@ -430,17 +410,21 @@ _RexAnimateStanding:
     ld [wRexAnimationFrameCounter], a
     ret nz
 
-    call _RexRandomBlinkDelay
-    jp _RexBlink
+    ld a, REX_BLINKING_SPRITE_2
+    ld [hl], a
 
-; Animate blinking Rex
-_RexAnimateBlinking:
+    ret
+
+.blinking:
     ld a, [wRexAnimationFrameCounter]
     and a, REX_BLINK_FRAMES_MASK
     ld [wRexAnimationFrameCounter], a
     ret nz
 
-    jp _RexStand
+    ld a, REX_DEFAULT_SPRITE_2
+    ld [hl], a
+
+    jp _RexRandomBlinkDelay
 
 ; Animate runing Rex
 _RexAnimateRunning:
@@ -466,6 +450,7 @@ _RexAnimateRunning:
     ld a, REX_RUNNING_SPRITE_1
 .swapR
     ld [hl], a
+
     ret
 
 ; Animate ducking Rex
@@ -492,119 +477,58 @@ _RexAnimateDucking:
     ld a, REX_DUCKING_SPRITE_1
 .swapR
     ld [hl], a
+
     ret
 
 ; Animate jumping Rex
 _RexAnimateJumping:
+    ld a, [wRexJumpSpeedFrameDifferential]
+    ld b, a
+    ld a, [wRexJumpAccel]
+    bit 7, a
+    jr nz, .falling
+
     ld hl, {REX_SPRITE_0} ; wShadowOAM.0
     ld a, [hl]
-    sub a, REX_JUMP_VELOCITY
+    sub a, b
     ld [hl], a
     ld hl, {REX_SPRITE_1} ; wShadowOAM.1
     ld a, [hl]
-    sub a, REX_JUMP_VELOCITY
+    sub a, b
     ld [hl], a
     ld hl, {REX_SPRITE_2} ; wShadowOAM.2
     ld a, [hl]
-    sub a, REX_JUMP_VELOCITY
+    sub a, b
     ld [hl], a
     ld hl, {REX_SPRITE_3} ; wShadowOAM.3
     ld a, [hl]
-    sub a, REX_JUMP_VELOCITY
+    sub a, b
     ld [hl], a
 
-    ld hl, {REX_SPRITE_0} ; wShadowOAM.0
-    ld a, [hl]
-    cp a, REX_JUMP_HEIGHT
-    ret nc
-
-    ld a, REX_ANIM_FALLING
-    ld [wRexAnimationState], a
-    xor a
-    ld [wRexAnimationFrameCounter], a
     ret
 
-; Animate short jumping Rex
-_RexAnimateShortJumping:
+.falling:
     ld hl, {REX_SPRITE_0} ; wShadowOAM.0
     ld a, [hl]
-    sub a, REX_JUMP_VELOCITY
+    add a, b
     ld [hl], a
     ld hl, {REX_SPRITE_1} ; wShadowOAM.1
     ld a, [hl]
-    sub a, REX_JUMP_VELOCITY
+    add a, b
     ld [hl], a
     ld hl, {REX_SPRITE_2} ; wShadowOAM.2
     ld a, [hl]
-    sub a, REX_JUMP_VELOCITY
+    add a, b
     ld [hl], a
     ld hl, {REX_SPRITE_3} ; wShadowOAM.3
     ld a, [hl]
-    sub a, REX_JUMP_VELOCITY
-    ld [hl], a
-
-    ld hl, {REX_SPRITE_0} ; wShadowOAM.0
-    ld a, [hl]
-    cp a, REX_SHORT_JUMP_HEIGHT
-    ret nc
-
-    ld a, REX_ANIM_FALLING
-    ld [wRexAnimationState], a
-    xor a
-    ld [wRexAnimationFrameCounter], a
-    ret
-
-; Animate falling Rex
-_RexAnimateFalling:
-    ld hl, {REX_SPRITE_0} ; wShadowOAM.0
-    ld a, [hl]
-    add a, REX_FALL_VELOCITY
-    ld [hl], a
-    ld hl, {REX_SPRITE_1} ; wShadowOAM.1
-    ld a, [hl]
-    add a, REX_FALL_VELOCITY
-    ld [hl], a
-    ld hl, {REX_SPRITE_2} ; wShadowOAM.2
-    ld a, [hl]
-    add a, REX_FALL_VELOCITY
-    ld [hl], a
-    ld hl, {REX_SPRITE_3} ; wShadowOAM.3
-    ld a, [hl]
-    add a, REX_FALL_VELOCITY
+    add a, b
     ld [hl], a
 
     ld hl, {REX_SPRITE_0} ; wShadowOAM.0
     ld a, [hl]
     cp a, GROUND_LEVEL_Y_POS
     ret c
-    ret z
-
-    jp _RexRun
-
-; Animate fast falling Rex
-_RexAnimateFastFalling:
-    ld hl, {REX_SPRITE_0} ; wShadowOAM.0
-    ld a, [hl]
-    add a, REX_FAST_FALL_VELOCITY
-    ld [hl], a
-    ld hl, {REX_SPRITE_1} ; wShadowOAM.1
-    ld a, [hl]
-    add a, REX_FAST_FALL_VELOCITY
-    ld [hl], a
-    ld hl, {REX_SPRITE_2} ; wShadowOAM.2
-    ld a, [hl]
-    add a, REX_FAST_FALL_VELOCITY
-    ld [hl], a
-    ld hl, {REX_SPRITE_3} ; wShadowOAM.3
-    ld a, [hl]
-    add a, REX_FAST_FALL_VELOCITY
-    ld [hl], a
-
-    ld hl, {REX_SPRITE_0} ; wShadowOAM.0
-    ld a, [hl]
-    cp a, GROUND_LEVEL_Y_POS
-    ret c
-    ret z
 
     jp _RexRun
 
@@ -637,10 +561,16 @@ wRexInputDelayFrameCounter:
 wRexInitialJumpFlag:
     DB
 ; Floating point position
-wRexJumpPosition:
+wRexJumpVelocity:
     DW
-; Jump Speed (increases with input time and decreases with gravity)
+; Jump Accel (increases with input time and decreases with gravity)
+wRexJumpAccel:
+    DB
+
 wRexJumpSpeed:
+    DB
+
+wRexJumpSpeedFrameDifferential:
     DB
 
 ENDSECTION

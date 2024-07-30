@@ -12,7 +12,7 @@ _Game::
     call _ScreenOff
     
     call _LoadTilemapBackground
-    call _RexFullJump
+    call _RexJump
 
     call _DrawHUD
 
@@ -49,16 +49,16 @@ _GameLoop:
     and a, PADF_DOWN
     jr z, :+
     call _RexDuckOff
-:
-    ldh a, [hKeysHeld]
-    and a, PADF_A
-    jr z, :+
-    call _RexFullJump
+;:
+;     ldh a, [hKeysHeld]
+;     and a, PADF_A
+;     jr z, :+
+;     call _RexFullJump
 :
     ldh a, [hKeysReleased]
     and a, PADF_A
     jr z, :+
-    call _RexShortJump
+    call _RexJump
 :
     ldh a, [hKeysPressed]
     and a, PADF_START
