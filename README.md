@@ -1,6 +1,6 @@
 # Rex Runner GB
 
-A WIP clone of Google Chrome's popular game built for the Game Boy
+A clone of Google Chrome's popular game built for the Game Boy
 
 ![menu](./images/screenshot_01.bmp)
 ![credits](./images/screenshot_02.bmp)
