@@ -66,6 +66,22 @@ _InitEngine::
     call _InitPtero
     call _InitMeteor
     call _InitRex
+
+    ld hl, {GAME_OVER_SPRITE_0}
+    ld a, OFFSCREEN_SPRITE_Y_POS
+    ld [hl+], a
+    ld a, GAME_OVER_X_POS_0
+    ld [hl+], a
+    ld a, GAME_OVER_SPRITE_0_TILE
+    ld [hl], a
+
+    ld hl, {GAME_OVER_SPRITE_1}
+    ld a, OFFSCREEN_SPRITE_Y_POS
+    ld [hl+], a
+    ld a, GAME_OVER_X_POS_1
+    ld [hl+], a
+    ld a, GAME_OVER_SPRITE_1_TILE
+    ld [hl], a
     
     ld bc, _VBlankHandler
     rst _SetVBLHandler
@@ -218,6 +234,17 @@ _SaveHighScore::
     ld bc, SCORE_BYTES ; (wHighScore.end - wHighScore)
     ld de, sHighScore
     jp _SaveToSRAM
+
+_DrawGameOverHUD::
+    ld hl, {GAME_OVER_SPRITE_0}
+    ld a, GAME_OVER_Y_POS_0
+    ld [hl], a
+
+    ld hl, {GAME_OVER_SPRITE_1}
+    ld a, GAME_OVER_Y_POS_0
+    ld [hl], a
+
+    ret
 
 _DrawHUD::
     xor a

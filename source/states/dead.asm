@@ -6,6 +6,8 @@ SECTION "Dead", ROM0
 
 _Dead::
     call _RexDead
+
+    call _DrawGameOverHUD
     
     ; fallthrough
     
