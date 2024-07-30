@@ -388,11 +388,15 @@ _CactusType2Spawn:
 
     ld a, [wCactus2IsSpawned]
     and a
-    jp nz, _CactusType1Spawn
+    ret nz
+    
+    ld a, [wCactus6IsSpawned]
+    and a
+    ret nz
 
     ld a, [wCactus2SpawnChance]
     cp a, b
-    jp nc, _CactusType1Spawn
+    ret nc
     
     ld hl, {CACTUS_TYPE_2_SPRITE_0} + OAMA_Y
     ld a, GROUND_LEVEL_Y_POS
@@ -414,11 +418,15 @@ _CactusType3Spawn:
 
     ld a, [wCactus3IsSpawned]
     and a
-    jp nz, _CactusType2Spawn
+    ret nz
+    
+    ld a, [wCactus6IsSpawned]
+    and a
+    ret nz
 
     ld a, [wCactus3SpawnChance]
     cp a, b
-    jp nc, _CactusType2Spawn
+    ret nc
     
     ld hl, {CACTUS_TYPE_3_SPRITE_0} + OAMA_Y
     ld a, GROUND_LEVEL_Y_POS
@@ -446,11 +454,15 @@ _CactusType4Spawn:
 
     ld a, [wCactus4IsSpawned]
     and a
-    jp nz, _CactusType3Spawn
+    ret nz
+    
+    ld a, [wCactus6IsSpawned]
+    and a
+    ret nz
 
     ld a, [wCactus4SpawnChance]
     cp a, b
-    jp nc, _CactusType3Spawn
+    ret nc
     
     ld hl, {CACTUS_TYPE_4_SPRITE_0} + OAMA_Y
     ld a, GROUND_LEVEL_Y_POS_OFF
@@ -480,11 +492,15 @@ _CactusType5Spawn:
 
     ld a, [wCactus5IsSpawned]
     and a
-    jp nz, _CactusType4Spawn
+    ret nz
+
+    ld a, [wCactus6IsSpawned]
+    and a
+    ret nz
 
     ld a, [wCactus5SpawnChance]
     cp a, b
-    jp nc, _CactusType4Spawn
+    ret nc
     
     ld hl, {CACTUS_TYPE_5_SPRITE_0} + OAMA_Y
     ld a, GROUND_LEVEL_Y_POS_OFF
@@ -520,29 +536,34 @@ _CactusType5Spawn:
 _CactusType6Spawn:
     call _GetRandom
 
+    call _GetGroundSpeedDifferential
+    cp a, CACTUS_TYPE_6_SPEED_MINIMUM
+    ret c
+    ret z
+
     ld a, [wCactus6IsSpawned]
     and a
-    jp nz, _CactusType1Spawn
+    ret nz
     
     ld a, [wCactus5IsSpawned]
     and a
-    jp nz, _CactusType1Spawn
+    ret nz
     
     ld a, [wCactus4IsSpawned]
     and a
-    jp nz, _CactusType1Spawn
+    ret nz
     
     ld a, [wCactus3IsSpawned]
     and a
-    jp nz, _CactusType1Spawn
+    ret nz
     
     ld a, [wCactus2IsSpawned]
     and a
-    jp nz, _CactusType1Spawn
+    ret nz
 
     ld a, [wCactus6SpawnChance]
     cp a, b
-    jp nc, _CactusType5Spawn
+    ret nc
     
     ld hl, {CACTUS_TYPE_6_SPRITE_0} + OAMA_Y
     ld a, GROUND_LEVEL_Y_POS_OFF
