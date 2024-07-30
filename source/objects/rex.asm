@@ -40,7 +40,6 @@ _RexIncFrameCounter::
     cp a, REX_ANIM_JUMPING
     ret c
 
-    ld a, [wRexAnimationState]
     cp a, REX_ANIM_FAST_FALLING
     ld d, GRAVITY_VALUE
     jr nz, .notFastFalling
@@ -48,14 +47,31 @@ _RexIncFrameCounter::
 
 .notFastFalling:
     ld a, [wRexJumpAccel]
-    sub a, d
-    ld [wRexJumpAccel], a
     bit 7, a
     jr z, .notFalling
 
-    cpl
+    ld a, [wRexJumpAccel]
+    sub a, d
+    ld [wRexJumpAccel], a
+    
+    cp a, TERMINAL_VELOCITY
+    jr nc, .complementAccel
+
+    ld a, TERMINAL_VELOCITY
+    ld [wRexJumpAccel], a
+    jr .complementAccel
 
 .notFalling:
+    ld a, [wRexJumpAccel]
+    sub a, d
+    ld [wRexJumpAccel], a
+    bit 7, a
+    jr z, .calculateSpeed
+
+.complementAccel:
+    cpl
+
+.calculateSpeed:
     ld e, a
     ld hl, wRexJumpVelocity
     ld a, [hl]
@@ -100,9 +116,6 @@ _RexGetAnimationState::
 
 ; Make Rex stand
 _RexStand::
-    ld a, REX_ANIM_STANDING
-    ld [wRexAnimationState], a
-    
     xor a
     ld [wRexAnimationFrameCounter], a
     ld [wRexJumpAccel], a
@@ -110,6 +123,9 @@ _RexStand::
     ld [wRexJumpSpeedFrameDifferential], a
     ld [wRexJumpVelocity], a
     ld [wRexJumpVelocity+1], a
+
+    ld a, REX_ANIM_STANDING
+    ld [wRexAnimationState], a
 
     jp _RexSetSpriteDefault
 
@@ -119,9 +135,6 @@ _RexRun::
     cp a, REX_ANIM_RUNNING
     ret z
 
-    ld a, REX_ANIM_RUNNING
-    ld [wRexAnimationState], a
-
     xor a
     ld [wRexAnimationFrameCounter], a
     ld [wRexJumpAccel], a
@@ -129,6 +142,9 @@ _RexRun::
     ld [wRexJumpSpeedFrameDifferential], a
     ld [wRexJumpVelocity], a
     ld [wRexJumpVelocity+1], a
+
+    ld a, REX_ANIM_RUNNING
+    ld [wRexAnimationState], a
 
     jp _RexSetSpriteRunning
 
@@ -137,17 +153,25 @@ _RexJump::
     ld a, [wRexAnimationState]
     cp a, REX_ANIM_DUCKING
     ret nc
+    
+    xor a
+    ld [wRexAnimationFrameCounter], a
+    ld [wRexJumpAccel], a
+    ld [wRexJumpSpeed], a
+    ld [wRexJumpSpeedFrameDifferential], a
+    ld [wRexJumpVelocity], a
+    ld [wRexJumpVelocity+1], a
 
     ld a, [wRexInitialJumpFlag]
     and a
-    ld a, INITIAL_JUMP_ACCEL
-    jr nz, .initialJump
+    ld a, MAX_JUMP_ACCEL
+    ;jr nz, .initialJump
 
     ; ld a, [wRexInputDelayFrameCounter]
     ; inc a
     ; and a, REX_JUMP_FRAMES_MASK
     ; ld [wRexInputDelayFrameCounter], a
-    ; ld a, INITIAL_JUMP_ACCEL
+    ; ld a, MAX_JUMP_ACCEL
     ; ret nz
 
 .initialJump:
@@ -155,13 +179,6 @@ _RexJump::
 
     ld a, REX_ANIM_JUMPING
     ld [wRexAnimationState], a
-    
-    xor a
-    ld [wRexAnimationFrameCounter], a
-    ld [wRexJumpSpeed], a
-    ld [wRexJumpSpeedFrameDifferential], a
-    ld [wRexJumpVelocity], a
-    ld [wRexJumpVelocity+1], a
 
     jp _RexSetSpriteDefault
 
@@ -175,11 +192,16 @@ _RexDuckOn::
     ret 
 
 .running:
-    ld a, REX_ANIM_DUCKING
-    ld [wRexAnimationState], a
-
     xor a
     ld [wRexAnimationFrameCounter], a
+    ld [wRexJumpAccel], a
+    ld [wRexJumpSpeed], a
+    ld [wRexJumpSpeedFrameDifferential], a
+    ld [wRexJumpVelocity], a
+    ld [wRexJumpVelocity+1], a
+    
+    ld a, REX_ANIM_DUCKING
+    ld [wRexAnimationState], a
     
     jp _RexSetSpriteDucking
 
@@ -195,21 +217,31 @@ _RexDuckOff::
     cp a, REX_ANIM_DUCKING
     ret nz
 
-    ld a, REX_ANIM_RUNNING
-    ld [wRexAnimationState], a
-
     xor a
     ld [wRexAnimationFrameCounter], a
+    ld [wRexJumpAccel], a
+    ld [wRexJumpSpeed], a
+    ld [wRexJumpSpeedFrameDifferential], a
+    ld [wRexJumpVelocity], a
+    ld [wRexJumpVelocity+1], a
+
+    ld a, REX_ANIM_RUNNING
+    ld [wRexAnimationState], a
 
     jp _RexSetSpriteRunning
 
 ; Makes Rex dead :(
 _RexDead::
-    ld a, REX_ANIM_DEAD
-    ld [wRexAnimationState], a
-
     xor a
     ld [wRexAnimationFrameCounter], a
+    ld [wRexJumpAccel], a
+    ld [wRexJumpSpeed], a
+    ld [wRexJumpSpeedFrameDifferential], a
+    ld [wRexJumpVelocity], a
+    ld [wRexJumpVelocity+1], a
+    
+    ld a, REX_ANIM_DEAD
+    ld [wRexAnimationState], a
 
     jp _RexSetSpriteDead
 
@@ -484,6 +516,7 @@ _RexAnimateDucking:
 _RexAnimateJumping:
     ld a, [wRexJumpSpeedFrameDifferential]
     ld b, a
+
     ld a, [wRexJumpAccel]
     bit 7, a
     jr nz, .falling

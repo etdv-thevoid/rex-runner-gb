@@ -49,11 +49,11 @@ _GameLoop:
     and a, PADF_DOWN
     jr z, :+
     call _RexDuckOff
-;:
+; :
 ;     ldh a, [hKeysHeld]
 ;     and a, PADF_A
 ;     jr z, :+
-;     call _RexFullJump
+;     call _RexChargeJump
 :
     ldh a, [hKeysReleased]
     and a, PADF_A
