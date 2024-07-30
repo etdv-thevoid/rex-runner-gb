@@ -2,11 +2,11 @@
 
 A WIP clone of Google Chrome's popular game built for the Game Boy
 
-![menu](./images/screenshot_01.png)
-![credits](./images/screenshot_02.png)
-![gameplay1](./images/screenshot_03.png)
-![gameplay2](./images/screenshot_04.png)
-![gameplay3](./images/screenshot_05.png)
+![menu](./images/screenshot_01.bmp)
+![credits](./images/screenshot_02.bmp)
+![gameplay1](./images/screenshot_03.bmp)
+![gameplay2](./images/screenshot_04.bmp)
+![gameplay3](./images/screenshot_05.bmp)
 
 
 ## Game Boy (Color) Engine
