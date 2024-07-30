@@ -440,12 +440,20 @@ _LCDStatHandler:
     cp a, LYC_PARALLAX_BOTTOM_START_LINE
     jr z, .bottom
 
-.default:
-    ld a, LYC_PARALLAX_TOP_START_LINE
+.startHUD:
+    ld a, LYC_HUD_STOP_LINE
     ldh [rLYC], a
     xor a
     ldh [rSCX], a
     ld a, WINDOW_ON
+    jp _ScreenOn
+
+.stopHUD:
+    ld a, LYC_PARALLAX_TOP_START_LINE
+    ldh [rLYC], a
+    xor a
+    ldh [rSCX], a
+    ld a, WINDOW_OFF
     jp _ScreenOn
 
 .top:
@@ -453,13 +461,13 @@ _LCDStatHandler:
     ldh [rLYC], a
     ld a, [wBackgroundParallaxTop]
     ldh [rSCX], a
-    ld a, WINDOW_OFF
-    jp _ScreenOn
+    ret
+
 
 .middle:
     ld a, LYC_PARALLAX_BOTTOM_START_LINE
     ldh [rLYC], a
-    ld a, [wBackgroundParallaxTop]
+    ld a, [wBackgroundParallaxMiddle]
     ldh [rSCX], a
     ret
 
