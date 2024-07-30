@@ -10,12 +10,11 @@ _InitRex::
     ld [wRexAnimationFrameCounter], a
     ld [wRexAnimationState], a
     ld [wRexBlinkAnimationRandomDelay], a
-    ld [wRexInputDelayFrameCounter], a
-    ld [wRexJumpAccel], a
+    ld [wRexJumpVelocity], a
     ld [wRexJumpSpeed], a
     ld [wRexJumpSpeedFrameDifferential], a
-    ld [wRexJumpVelocity], a
-    ld [wRexJumpVelocity+1], a
+    ld [wRexJumpSpeedFloatingPoint], a
+    ld [wRexJumpSpeedFloatingPoint+1], a
 
     ld a, TRUE
     ld [wRexInitialJumpFlag], a
@@ -46,25 +45,25 @@ _RexIncFrameCounter::
     ld d, GRAVITY_VALUE_FAST
 
 .notFastFalling:
-    ld a, [wRexJumpAccel]
+    ld a, [wRexJumpVelocity]
     bit 7, a
     jr z, .notFalling
 
-    ld a, [wRexJumpAccel]
+    ld a, [wRexJumpVelocity]
     sub a, d
-    ld [wRexJumpAccel], a
+    ld [wRexJumpVelocity], a
     
     cp a, TERMINAL_VELOCITY
     jr nc, .complementAccel
 
     ld a, TERMINAL_VELOCITY
-    ld [wRexJumpAccel], a
+    ld [wRexJumpVelocity], a
     jr .complementAccel
 
 .notFalling:
-    ld a, [wRexJumpAccel]
+    ld a, [wRexJumpVelocity]
     sub a, d
-    ld [wRexJumpAccel], a
+    ld [wRexJumpVelocity], a
     bit 7, a
     jr z, .calculateSpeed
 
@@ -73,7 +72,7 @@ _RexIncFrameCounter::
 
 .calculateSpeed:
     ld e, a
-    ld hl, wRexJumpVelocity
+    ld hl, wRexJumpSpeedFloatingPoint
     ld a, [hl]
     add a, e
     ld [hl+], a
@@ -84,9 +83,9 @@ _RexIncFrameCounter::
     scf
     ccf
 
-    ld a, [wRexJumpVelocity]
+    ld a, [wRexJumpSpeedFloatingPoint]
     ld b, a
-    ld a, [wRexJumpVelocity+1]
+    ld a, [wRexJumpSpeedFloatingPoint+1]
     ld c, a
 
     ld a, [wRexJumpSpeed]
@@ -118,11 +117,11 @@ _RexGetAnimationState::
 _RexStand::
     xor a
     ld [wRexAnimationFrameCounter], a
-    ld [wRexJumpAccel], a
+    ld [wRexJumpVelocity], a
     ld [wRexJumpSpeed], a
     ld [wRexJumpSpeedFrameDifferential], a
-    ld [wRexJumpVelocity], a
-    ld [wRexJumpVelocity+1], a
+    ld [wRexJumpSpeedFloatingPoint], a
+    ld [wRexJumpSpeedFloatingPoint+1], a
 
     ld a, REX_ANIM_STANDING
     ld [wRexAnimationState], a
@@ -137,46 +136,83 @@ _RexRun::
 
     xor a
     ld [wRexAnimationFrameCounter], a
-    ld [wRexJumpAccel], a
+    ld [wRexJumpVelocity], a
     ld [wRexJumpSpeed], a
     ld [wRexJumpSpeedFrameDifferential], a
-    ld [wRexJumpVelocity], a
-    ld [wRexJumpVelocity+1], a
+    ld [wRexJumpSpeedFloatingPoint], a
+    ld [wRexJumpSpeedFloatingPoint+1], a
 
     ld a, REX_ANIM_RUNNING
     ld [wRexAnimationState], a
 
     jp _RexSetSpriteRunning
 
-; Make Rex jump
-_RexJump::
+; Make Rex charge up a jump. Releases after a set amount of frames
+_RexChargeJump::
     ld a, [wRexAnimationState]
     cp a, REX_ANIM_DUCKING
     ret nc
     
     xor a
     ld [wRexAnimationFrameCounter], a
-    ld [wRexJumpAccel], a
+    ;ld [wRexJumpVelocity], a
     ld [wRexJumpSpeed], a
     ld [wRexJumpSpeedFrameDifferential], a
+    ld [wRexJumpSpeedFloatingPoint], a
+    ld [wRexJumpSpeedFloatingPoint+1], a
+
+    ld a, [wRexJumpVelocity]
+    add a, JUMP_VELOCITY_CHARGE
     ld [wRexJumpVelocity], a
-    ld [wRexJumpVelocity+1], a
+    cp a, MAX_JUMP_VELOCITY
+    ret c
+
+    ld a, MAX_JUMP_VELOCITY
+    ld [wRexJumpVelocity], a
+
+    ld a, REX_ANIM_JUMPING
+    ld [wRexAnimationState], a
+
+    jp _RexSetSpriteDefault
+
+; Make Rex jump
+_RexJump::
+    ld a, [wRexAnimationState]
+    cp a, REX_ANIM_DUCKING
+    ret nc
+
+    xor a
+    ld [wRexAnimationFrameCounter], a
+    ;ld [wRexJumpVelocity], a
+    ld [wRexJumpSpeed], a
+    ld [wRexJumpSpeedFrameDifferential], a
+    ld [wRexJumpSpeedFloatingPoint], a
+    ld [wRexJumpSpeedFloatingPoint+1], a
 
     ld a, [wRexInitialJumpFlag]
     and a
-    ld a, MAX_JUMP_ACCEL
-    ;jr nz, .initialJump
+    jr nz, .initialJump
+    
+    ld a, [wRexJumpVelocity]
+    cp a, MIN_JUMP_VELOCITY
+    jr nc, .jump
+    
+    ld a, MIN_JUMP_VELOCITY
+    ld [wRexJumpVelocity], a
 
-    ; ld a, [wRexInputDelayFrameCounter]
-    ; inc a
-    ; and a, REX_JUMP_FRAMES_MASK
-    ; ld [wRexInputDelayFrameCounter], a
-    ; ld a, MAX_JUMP_ACCEL
-    ; ret nz
+.jump:
+    ld a, REX_ANIM_JUMPING
+    ld [wRexAnimationState], a
+
+    jp _RexSetSpriteDefault
 
 .initialJump:
-    ld [wRexJumpAccel], a
+    xor a
+    ld [wRexInitialJumpFlag], a
 
+    ld a, MAX_JUMP_VELOCITY
+    ld [wRexJumpVelocity], a
+    
     ld a, REX_ANIM_JUMPING
     ld [wRexAnimationState], a
 
@@ -194,11 +230,11 @@ _RexDuckOn::
 .running:
     xor a
     ld [wRexAnimationFrameCounter], a
-    ld [wRexJumpAccel], a
+    ld [wRexJumpVelocity], a
     ld [wRexJumpSpeed], a
     ld [wRexJumpSpeedFrameDifferential], a
-    ld [wRexJumpVelocity], a
-    ld [wRexJumpVelocity+1], a
+    ld [wRexJumpSpeedFloatingPoint], a
+    ld [wRexJumpSpeedFloatingPoint+1], a
     
     ld a, REX_ANIM_DUCKING
     ld [wRexAnimationState], a
@@ -219,11 +255,11 @@ _RexDuckOff::
 
     xor a
     ld [wRexAnimationFrameCounter], a
-    ld [wRexJumpAccel], a
+    ld [wRexJumpVelocity], a
     ld [wRexJumpSpeed], a
     ld [wRexJumpSpeedFrameDifferential], a
-    ld [wRexJumpVelocity], a
-    ld [wRexJumpVelocity+1], a
+    ld [wRexJumpSpeedFloatingPoint], a
+    ld [wRexJumpSpeedFloatingPoint+1], a
 
     ld a, REX_ANIM_RUNNING
     ld [wRexAnimationState], a
@@ -234,11 +270,11 @@ _RexDuckOff::
 _RexDead::
     xor a
     ld [wRexAnimationFrameCounter], a
-    ld [wRexJumpAccel], a
+    ld [wRexJumpVelocity], a
     ld [wRexJumpSpeed], a
     ld [wRexJumpSpeedFrameDifferential], a
-    ld [wRexJumpVelocity], a
-    ld [wRexJumpVelocity+1], a
+    ld [wRexJumpSpeedFloatingPoint], a
+    ld [wRexJumpSpeedFloatingPoint+1], a
     
     ld a, REX_ANIM_DEAD
     ld [wRexAnimationState], a
@@ -517,7 +553,7 @@ _RexAnimateJumping:
     ld a, [wRexJumpSpeedFrameDifferential]
     ld b, a
 
-    ld a, [wRexJumpAccel]
+    ld a, [wRexJumpVelocity]
     bit 7, a
     jr nz, .falling
 
@@ -586,23 +622,23 @@ wRexAnimationState:
 wRexBlinkAnimationRandomDelay:
     DB
 
-; Input delay for making Rex long jump or short jump
-wRexInputDelayFrameCounter:
-    DB
-
 ; Flag for determining if initial jump
 wRexInitialJumpFlag:
     DB
-; Floating point position
+
+; Jump velocity (increases with input time and decreases with gravity)
 wRexJumpVelocity:
-    DW
-; Jump Accel (increases with input time and decreases with gravity)
-wRexJumpAccel:
     DB
 
+; 16-bit 12.4 floating point jump speed
+wRexJumpSpeedFloatingPoint:
+    DW
+
+; 8-bit rounded jump speed
 wRexJumpSpeed:
     DB
 
+; Per frame pixel jump speed differential
 wRexJumpSpeedFrameDifferential:
     DB
 
