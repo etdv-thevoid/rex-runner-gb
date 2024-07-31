@@ -8,7 +8,11 @@ _Menu::
     call _ScreenOff
 
     call _LoadTilemapMenu
-    call _MenuDrawCursor
+    
+    xor a
+    ld [wMenuCursorSelection], a
+    ld [wMenuDelayFrameCounter], a
+    ld [wMenuButtonsEnabled], a
 
     ld a, WINDOW_OFF
     call _ScreenOn
@@ -20,53 +24,74 @@ _MenuLoop:
     call _WaitForVBLInterrupt
     
     call _MenuDrawCursor
+
     call _RexAnimate
+
+    ld a, [wMenuButtonsEnabled]
+    and a
+    jr nz, .checkKeys
+
+    ld a, [wMenuDelayFrameCounter]
+    inc a
+    ld [wMenuDelayFrameCounter], a
+    and a, BUTTON_DELAY_FRAMES_MASK
+    jr nz, _MenuLoop
+
+    ld a, TRUE
+    ld [wMenuButtonsEnabled], a
+
+    jr _MenuLoop
     
 .checkKeys:
     ldh a, [hKeysPressed]
+    and a, PADF_SELECT
+    jr z, :+
+    call _RexDead
+:
+    ldh a, [hKeysPressed]
     and a, PADF_UP
     jr z, :+
-    call _MainMoveCursorUp
+    call _MenuMoveCursorUp
 :
     ldh a, [hKeysPressed]
     and a, PADF_DOWN
     jr z, :+
-    call _MainMoveCursorDown
+    call _MenuMoveCursorDown
 :
     ldh a, [hKeysPressed]
     and a, PADF_A
     jr z, :+
-    jr _MainSelectOption
+    jr _MenuSelectOption
 :
     jr _MenuLoop
 
 
 /*******************************************************************************
 **                                                                            **
-**      MAIN MOVE CURSOR FUNCTIONS                                            **
+**      MENU MOVE CURSOR FUNCTIONS                                            **
 **                                                                            **
 *******************************************************************************/
 
-_MainMoveCursorUp:
-    ld a, [wMainCursorSelection]
+_MenuMoveCursorUp:
+    ld a, [wMenuCursorSelection]
     and a
     ret z
     dec a
-    ld [wMainCursorSelection], a
+    ld [wMenuCursorSelection], a
     ret
 
-_MainMoveCursorDown:
-    ld a, [wMainCursorSelection]
+_MenuMoveCursorDown:
+    ld a, [wMenuCursorSelection]
     cp a, NUMBER_OF_MENU_OPTS - 1
     ret nc
     inc a
-    ld [wMainCursorSelection], a
+    ld [wMenuCursorSelection], a
     ret
 
 
 /*******************************************************************************
 **                                                                            **
-**      MAIN DRAW CURSOR FUNCTIONS                                            **
+**      MENU DRAW CURSOR FUNCTIONS                                            **
 **                                                                            **
 *******************************************************************************/
 
@@ -85,7 +110,7 @@ _MenuDrawCursor:
     dec a
     jr nz, .loop2
 .draw:
-    ld a, [wMainCursorSelection]
+    ld a, [wMenuCursorSelection]
     ld d, " "
     cp a, c
     jr nz, .clear
@@ -103,13 +128,13 @@ _MenuDrawCursor:
 
 /*******************************************************************************
 **                                                                            **
-**      MAIN SELECT OPTION FUNCTIONS                                          **
+**      MENU SELECT OPTION FUNCTIONS                                          **
 **                                                                            **
 *******************************************************************************/
 
-_MainSelectOption:
+_MenuSelectOption:
     ld hl, _MenuSelectOptionJumpTable
-    ld a, [wMainCursorSelection]
+    ld a, [wMenuCursorSelection]
     cp a, NUMBER_OF_MENU_OPTS
     jr c, .jump
     ld a, NUMBER_OF_MENU_OPTS
@@ -126,8 +151,6 @@ _MenuSelectGame:
     jp _SwitchStateToNew
 
 _MenuSelectCredits:
-    ld a, SFX_JUMP
-    call _PlaySound
     ld a, STATE_CREDITS
     jp _SwitchStateToNew
 
@@ -136,7 +159,13 @@ ENDSECTION
 
 SECTION "Menu Variables", WRAM0
 
-wMainCursorSelection:
+wMenuCursorSelection:
+    DB
+
+wMenuDelayFrameCounter:
+    DB
+
+wMenuButtonsEnabled:
     DB
 
 ENDSECTION

@@ -113,6 +113,21 @@ _RexGetAnimationState::
 **                                                                            **
 *******************************************************************************/
 
+; Makes Rex dead :(
+_RexDead::
+    xor a
+    ld [wRexAnimationFrameCounter], a
+    ld [wRexJumpVelocity], a
+    ld [wRexJumpSpeed], a
+    ld [wRexJumpSpeedFrameDifferential], a
+    ld [wRexJumpSpeedFloatingPoint], a
+    ld [wRexJumpSpeedFloatingPoint+1], a
+    
+    ld a, REX_ANIM_DEAD
+    ld [wRexAnimationState], a
+
+    jp _RexSetSpriteDead
+
 ; Make Rex stand
 _RexStand::
     xor a
@@ -270,21 +285,6 @@ _RexDuckOff::
     ld [wRexAnimationState], a
 
     jp _RexSetSpriteRunning
-
-; Makes Rex dead :(
-_RexDead::
-    xor a
-    ld [wRexAnimationFrameCounter], a
-    ld [wRexJumpVelocity], a
-    ld [wRexJumpSpeed], a
-    ld [wRexJumpSpeedFrameDifferential], a
-    ld [wRexJumpSpeedFloatingPoint], a
-    ld [wRexJumpSpeedFloatingPoint+1], a
-    
-    ld a, REX_ANIM_DEAD
-    ld [wRexAnimationState], a
-
-    jp _RexSetSpriteDead
 
 
 /*******************************************************************************
@@ -461,14 +461,18 @@ _RexAnimate::
     jp _JumpTable
 
 _RexAnimationJumpTable:
+    DW _RexAnimateDead
     DW _RexAnimateStanding
     DW _RexAnimateRunning
     DW _RexAnimateDucking
     DW _RexAnimateJumping
     DW _RexAnimateJumping
-    DW _RexAnimateDead
     DW _NULL
     
+; Animate dead Rex
+_RexAnimateDead:
+    ret
+
 ; Animate standing Rex
 _RexAnimateStanding:
     ld hl, {REX_SPRITE_2} + OAMA_TILEID
@@ -499,7 +503,7 @@ _RexAnimateStanding:
 
     jp _RexRandomBlinkDelay
 
-; Animate runing Rex
+; Animate running Rex
 _RexAnimateRunning:
     ld a, [wRexAnimationFrameCounter]
     and a, REX_RUNNING_FRAMES_MASK
@@ -606,9 +610,6 @@ _RexAnimateJumping:
 
     jp _RexRun
 
-; Animate dead Rex
-_RexAnimateDead:
-    rst _Crash
 
 ENDSECTION
 

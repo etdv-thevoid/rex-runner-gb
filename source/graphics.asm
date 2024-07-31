@@ -12,6 +12,8 @@ SECTION "Graphics", ROM0
 *******************************************************************************/
 
 _InitGraphics::
+    call _ScreenOff
+    
     xor a
     ld hl, _SpriteTiles
     ld bc, (_SpriteTiles.end - _SpriteTiles)
@@ -35,6 +37,18 @@ _InitGraphics::
     ld bc, (_FontTiles.end - _FontTiles)
     ld de, vBLK21.32
     call _VideoMemCopyMonochrome
+
+    xor a
+    ld hl, vSCRN0
+    ld bc, (vSCRN0.end - vSCRN0)
+    ld d, " "
+    call _VideoMemSet
+    
+    xor a
+    ld hl, vSCRN1
+    ld bc, (vSCRN1.end - vSCRN1)
+    ld d, " "
+    call _VideoMemSet
 
     call _IsGBColor
     ret z

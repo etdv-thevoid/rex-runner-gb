@@ -9,7 +9,7 @@ _Game::
     cp a, STATE_PAUSE
     jr nz, .skip
 
-    call _DrawHUD
+    call _DrawGameHUD
     jr _GameLoop
 
 .skip:
@@ -20,7 +20,7 @@ _Game::
     
     call _RexJump
 
-    call _DrawHUD
+    call _DrawGameHUD
 
     ld a, WINDOW_ON
     call _ScreenOn
@@ -29,20 +29,19 @@ _Game::
 
 _GameLoop:
     ei
-    
     call _WaitForVBLInterrupt
 
+    call _UpdateScore
+    
+    call _UpdateGameHUD
+    
     call _EngineCheckCollision
     ld a, STATE_DEAD
     jp c, _SwitchStateToNew
 
-    call _EngineAnimate
-
     call _EngineTrySpawn
 
-    call _UpdateScore
-    
-    call _UpdateHUD
+    call _EngineAnimate
 
 .checkKeys:
     ldh a, [hKeysHeld]

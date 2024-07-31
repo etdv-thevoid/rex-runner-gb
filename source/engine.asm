@@ -5,7 +5,6 @@ INCLUDE "includes/charmap.inc"
 
 SECTION "Engine Functions", ROM0
 
-
 /*******************************************************************************
 **                                                                            **
 **      CORE ENGINE FUNCTIONS                                                 **
@@ -23,41 +22,24 @@ _InitEngine::
     add WX_OFS
     ldh [rWX], a
 
-    xor a
-    ld hl, vSCRN0
-    ld bc, (vSCRN0.end - vSCRN0)
-    ld d, $FF
-    call _VideoMemSet
-    
-    xor a
-    ld hl, vSCRN1
-    ld bc, (vSCRN1.end - vSCRN1)
-    ld d, $FF
-    call _VideoMemSet
-
-    xor a
-    ld hl, vSCRN1.y0x0
-    ld b, 20
-    ld d, " "
-    call _VideoMemSetFast
-
-    xor a
     ld hl, wShadowOAM
-    ld bc, (wShadowOAM.end - wShadowOAM)
-    ld d, $00
-    call _MemSet
+    ld b, (wShadowOAM.end - wShadowOAM)
+    ld a, $00
+    call _MemSetFast
     call _RefreshOAM
     
     ld hl, STARTOF("Engine Variables")
-    ld bc, SIZEOF("Engine Variables")
-    ld d, $00
-    call _MemSet
+    ld b, SIZEOF("Engine Variables")
+    ld a, $00
+    call _MemSetFast
 
     call _LoadHighScore
 
     ld a, INITIAL_DIFFICULTY_SPEED
     ld [wBaseDifficultySpeed], a
 
+    ld a, DEFAULT_PALETTE
+    ld [wCurrentPalette], a
     call _LoadMonochromeColorPalette
 
     call _InitCactus
@@ -65,21 +47,7 @@ _InitEngine::
     call _InitMeteor
     call _InitRex
 
-    ld hl, {GAME_OVER_SPRITE_0}
-    ld a, OFFSCREEN_SPRITE_Y_POS
-    ld [hl+], a
-    ld a, GAME_OVER_X_POS_0
-    ld [hl+], a
-    ld a, GAME_OVER_SPRITE_0_TILE
-    ld [hl], a
-
-    ld hl, {GAME_OVER_SPRITE_1}
-    ld a, OFFSCREEN_SPRITE_Y_POS
-    ld [hl+], a
-    ld a, GAME_OVER_X_POS_1
-    ld [hl+], a
-    ld a, GAME_OVER_SPRITE_1_TILE
-    ld [hl], a
+    call _InitGameOverHUD
     
     ld bc, _VBlankHandler
     rst _SetVBLHandler
@@ -87,7 +55,7 @@ _InitEngine::
     ld bc, _LCDStatHandler
     rst _SetLCDHandler
 
-    ld a, LYC_HUD_START_LINE
+    ld a, LYC_HUD_STOP_LINE
     ldh [rLYC], a
 
     ld a, STATF_LYC
@@ -225,6 +193,25 @@ _SaveHighScore::
     ld de, sHighScore
     jp _SaveToSRAM
 
+_InitGameOverHUD:
+    ld hl, {GAME_OVER_SPRITE_0}
+    ld a, OFFSCREEN_SPRITE_Y_POS
+    ld [hl+], a
+    ld a, GAME_OVER_X_POS_0
+    ld [hl+], a
+    ld a, GAME_OVER_SPRITE_0_TILE
+    ld [hl], a
+
+    ld hl, {GAME_OVER_SPRITE_1}
+    ld a, OFFSCREEN_SPRITE_Y_POS
+    ld [hl+], a
+    ld a, GAME_OVER_X_POS_1
+    ld [hl+], a
+    ld a, GAME_OVER_SPRITE_1_TILE
+    ld [hl], a
+
+    ret
+
 _DrawGameOverHUD::
     ld hl, {GAME_OVER_SPRITE_0}
     ld a, GAME_OVER_Y_POS_0
@@ -234,20 +221,28 @@ _DrawGameOverHUD::
     ld a, GAME_OVER_Y_POS_0
     ld [hl], a
 
-    ret
-
-_DrawPauseScreenHUD::
     xor a
-    ld hl, _PauseScreenString
-    ld b, (_PauseScreenString.end - _PauseScreenString)
+    ld hl, _GameOverString
+    ld b, (_GameOverString.end - _GameOverString)
     ld de, vSCRN1.y0x0
     jp _VideoMemCopyFast
 
-_PauseScreenString:
-    DB " PAUSED  "
+_GameOverString:
+    DB $18, $19, $1A, $1B, $0F, $1C, $1D, $1E, $1F
 .end:
 
-_DrawHUD::
+_DrawPauseHUD::
+    xor a
+    ld hl, _PausedString
+    ld b, (_PausedString.end - _PausedString)
+    ld de, vSCRN1.y0x0
+    jp _VideoMemCopyFast
+
+_PausedString:
+    DB $0F, $12, $13, $14, $15, $16, $17, $0F, $0F
+.end:
+
+_DrawGameHUD::
     xor a
     ld hl, _HighScoreTiles
     ld b, (_HighScoreTiles.end - _HighScoreTiles)
@@ -263,7 +258,7 @@ _DrawHUD::
 
     ; fallthrough
 
-_UpdateHUD::
+_UpdateGameHUD::
     xor a
     ld hl, wCurrentScore
     ld b, (wCurrentScore.end - wCurrentScore)
@@ -291,7 +286,7 @@ _DrawBCDNumber:
     ret
 
 _HighScoreTiles:
-    DB $10, $11, $12, $00, $00, $00, $00, $00, $00
+    DB $10, $11, $0F, $00, $00, $00, $00, $00, $00
 .end:
 
 _UpdateScore::
@@ -349,8 +344,10 @@ ENDR
     inc a
     ld [wPaletteChangeFlag], a
     
-    call _CactusIncSpawnChance
-    jp _PteroIncSpawnChance
+    ;call _CactusIncSpawnChance
+    ;jp _PteroIncSpawnChance
+
+    ret
     
 
 /**
@@ -392,6 +389,11 @@ _VBlankHandler:
     call _ScanKeys
     call _RefreshOAM
     call _UpdateSound
+    
+    xor a
+    ldh [rSCX], a
+    ld a, WINDOW_ON
+    call _ScreenOn
 
     call _GetStateCurrent
     cp a, STATE_PAUSE
@@ -403,6 +405,27 @@ _VBlankHandler:
     cp a, STATE_GAME
     ret nz
 
+    ld a, [wPaletteChangeFlag]
+    and a
+    jr z, .noPaletteChange
+
+    xor a
+    ld [wPaletteChangeFlag], a
+
+    ld a, [wCurrentPalette]
+    cpl
+    ld [wCurrentPalette], a
+    cp a, DEFAULT_PALETTE
+    jr nz, .invertedPalette
+    call _LoadMonochromeColorPalette
+    call _LoadTilemapBackgroundDay
+    jr .noPaletteChange
+
+.invertedPalette:
+    call _LoadMonochromeColorPaletteInverted
+    call _LoadTilemapBackgroundNight
+
+.noPaletteChange:
     call _PteroIncFrameCounter
 
     ld a, [wBaseDifficultySpeed]
@@ -460,23 +483,7 @@ ENDR
     ld a, b
     ld [wBackgroundParallaxTop], a
 
-    ld a, [wPaletteChangeFlag]
-    and a
-    ret z
-    xor a
-    ld [wPaletteChangeFlag], a
-
-    ld a, [wCurrentPalette]
-    cpl
-    ld [wCurrentPalette], a
-    cp a, DEFAULT_PALETTE_INVERTED
-    jr z, .inverted
-    call _LoadMonochromeColorPalette
-    jp _LoadTilemapBackgroundDay
-
-.inverted:
-    call _LoadMonochromeColorPaletteInverted
-    jp _LoadTilemapBackgroundNight
+    ret
 
 
 _LCDStatHandler:
@@ -487,22 +494,9 @@ _LCDStatHandler:
     jr z, .middle
     cp a, LYC_PARALLAX_TOP_START_LINE
     jr z, .top
-    cp a, LYC_HUD_STOP_LINE
-    jr z, .stopHUD
 
-.startHUD:
-    ld a, LYC_HUD_STOP_LINE
-    ldh [rLYC], a
-    xor a
-    ldh [rSCX], a
-    ld a, WINDOW_ON
-    jp _ScreenOn
-
-.stopHUD:
     ld a, LYC_PARALLAX_TOP_START_LINE
     ldh [rLYC], a
-    xor a
-    ldh [rSCX], a
     ld a, WINDOW_OFF
     jp _ScreenOn
     
@@ -520,9 +514,8 @@ _LCDStatHandler:
     ldh [rSCX], a
     ret
 
-
 .bottom:
-    ld a, LYC_HUD_START_LINE
+    ld a, LYC_HUD_STOP_LINE
     ldh [rLYC], a
     ld a, [wBackgroundParallaxBottom]
     ldh [rSCX], a
