@@ -58,9 +58,12 @@ _InitEngine::
     ld a, INITIAL_DIFFICULTY_SPEED
     ld [wBaseDifficultySpeed], a
 
-    ld a, DEFAULT_PALETTE
-    ld [wBackgroundPalette], a
-    call _SetDMGPalettes
+    ld a, DEFAULT_BG_PALETTE
+	ldh [rBGP], a
+    ld a, DEFAULT_OBJ_PALETTE
+    ldh [rOBP0], a
+    cpl
+    ldh [rOBP1], a
 
     call _InitCactus
     call _InitPtero
@@ -110,22 +113,6 @@ _InitEngine::
 _GetGroundSpeedDifferential::
     ld a, [wGroundSpeedDifferential]
     ret
-
-; Checks if Palette was inverted during VBlank, and switches tilemap accordingly
-_EngineCheckTilemap::
-    ld a, [wBackgroundPaletteChanged]
-    and a
-    ret z
-    xor a
-    ld [wBackgroundPaletteChanged], a
-
-    ld a, SFX_SCORE
-    call _PlaySound
-
-    ld a, [wBackgroundPalette]
-    cp a, DEFAULT_PALETTE
-    jp z, _LoadTilemapBackground
-    jp _LoadTilemapBackgroundNight
 
 ; Try to spawn an enemy
 _EngineTrySpawn::
@@ -312,6 +299,73 @@ _HighScoreTiles:
     DB $10, $11, $12, $00, $00, $00, $00, $00, $00
 .end:
 
+_UpdateScore::
+    ld a, [wScoreIncreaseDifferential]
+    ld c, a
+
+    ld hl, wCurrentScore + 1
+    ld a, [hl]
+    and a, %00001111
+    ld b, a
+
+    scf
+    ccf
+
+    ld hl, wCurrentScore
+    ld a, [hl]
+    add a, c
+    daa
+    ld [hl+], a
+REPT SCORE_BYTES - 1
+    ld a, [hl]
+    adc a, 0
+    daa
+    ld [hl+], a
+ENDR
+
+    ld hl, wCurrentScore + 1
+    ld a, [hl]
+    and a, %00001111
+    ld c, a
+    cp a, b
+    ret z
+
+    ld a, c
+    and a, %00000001
+    jr z, .noSpeedIncrease
+
+    ld a, [wBaseDifficultySpeed]
+    add a, DIFFICULTY_SPEED_INCREASE
+    ld [wBaseDifficultySpeed], a
+    jr nc, .noSpeedIncrease
+    ld a, $FF
+    ld [wBaseDifficultySpeed], a
+
+.noSpeedIncrease:
+    ld a, c
+    cp a, PALETTE_SWITCH_100_DIGIT
+    ret nz
+    
+    call _CactusIncSpawnChance
+    call _PteroIncSpawnChance
+    
+    ld a, SFX_SCORE
+    call _PlaySound
+
+    ldh a, [rOBP0]
+    cpl
+    ldh [rOBP0], a
+    cpl
+    ldh [rOBP1], a
+
+    ldh a, [rBGP]
+    cpl
+    ld [rBGP], a
+    cp a, DEFAULT_BG_PALETTE
+    jp z, _LoadTilemapBackground
+    jp _LoadTilemapBackgroundNight
+    
+
 /**
 Returns:
     - carry if high < current
@@ -356,12 +410,13 @@ _VBlankHandler:
     cp a, STATE_PAUSE
     ret nc
 
-    call _PteroIncFrameCounter
     call _RexIncFrameCounter
 
     call _GetStateCurrent
     cp a, STATE_GAME
     ret nz
+
+    call _PteroIncFrameCounter
 
     ld a, [wBaseDifficultySpeed]
     ld b, a
@@ -410,7 +465,6 @@ ENDR
     ld [wBackgroundParallaxMiddle], a
     sub a, e
     ld [wScoreIncreaseDifferential], a
-    ld e, a
 
 REPT PARALLAX_BIT_SHIFTS_TOP
     srl c
@@ -419,61 +473,6 @@ ENDR
     ld a, b
     ld [wBackgroundParallaxTop], a
 
-    ld hl, wCurrentScore + 1
-    ld a, [hl]
-    and a, %00001111
-    ld b, a
-
-    scf
-    ccf
-
-    ld hl, wCurrentScore
-    ld a, [hl]
-    add a, e
-    daa
-    ld [hl+], a
-REPT SCORE_BYTES - 1
-    ld a, [hl]
-    adc a, 0
-    daa
-    ld [hl+], a
-ENDR
-
-    ld hl, wCurrentScore + 1
-    ld a, [hl]
-    and a, %00001111
-    ld c, a
-    ld a, b
-    cp a, c
-    ret z
-
-    ld a, c
-    cp a, PALETTE_SWITCH_100_DIGIT
-    jr nz, .noPaletteSwitch
-    
-    call _CactusIncSpawnChance
-    call _PteroIncSpawnChance
-    
-    ld a, [wBackgroundPaletteChanged]
-    inc a
-    ld [wBackgroundPaletteChanged], a
-
-    ld a, [wBackgroundPalette]
-    cpl
-    ld [wBackgroundPalette], a
-    call _SetDMGPalettes
-
-.noPaletteSwitch:
-    ld a, c
-    and a, %00000001
-    ret z
-
-    ld a, [wBaseDifficultySpeed]
-    add a, DIFFICULTY_SPEED_INCREASE
-    ld [wBaseDifficultySpeed], a
-    ret nc
-    ld a, $FF
-    ld [wBaseDifficultySpeed], a
     ret
 
 _LCDStatHandler:
@@ -530,12 +529,6 @@ ENDSECTION
 
 
 SECTION "Engine Variables", WRAM0
-
-wBackgroundPalette:
-    DB
-
-wBackgroundPaletteChanged:
-    DB
 
 wBaseDifficultySpeed:
     DB

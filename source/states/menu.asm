@@ -126,6 +126,8 @@ _MenuSelectGame:
     jp _SwitchStateToNew
 
 _MenuSelectCredits:
+    ld a, SFX_JUMP
+    call _PlaySound
     ld a, STATE_CREDITS
     jp _SwitchStateToNew
 
