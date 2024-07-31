@@ -46,7 +46,7 @@ _AboutLoop:
 
 .checkKeys:
     ldh a, [hKeysPressed]
-    and a, PADF_B | PADF_A
+    and a, PADF_B
     jr z, _AboutLoop
     
     ld a, SFX_JUMP
