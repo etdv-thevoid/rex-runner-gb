@@ -202,19 +202,19 @@ xHUDTiles:
 *******************************************************************************/
 
 xMonochromeBGPalette:
-    rgb_palette #DEF, #ABC, #345, #012
+    rgb_palette #DEF, #9AB, #456, #012
 .end:
 
 xMonochromeBGPaletteInverted:
-    rgb_palette #012, #345, #ABC, #DEF
+    rgb_palette #012, #456, #9AB, #DEF
 .end:
 
 xMonochromeOBJPalette:
-    rgb_palette #DEF, #ABC, #345, #012
+    rgb_palette #DEF, #9AB, #456, #012
 .end:
 
 xMonochromeOBJPaletteInverted:
-    rgb_palette #012, #345, #ABC, #DEF
+    rgb_palette #012, #456, #9AB, #DEF
 .end:
 
 /*******************************************************************************
