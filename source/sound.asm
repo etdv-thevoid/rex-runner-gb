@@ -20,10 +20,10 @@ _InitSound::
     ld a, AUDENA_ON
     ldh [rNR52], a
     
-    ld a, $55
+    ld a, AUDTERM_3_LEFT | AUDTERM_1_LEFT | AUDTERM_3_RIGHT | AUDTERM_1_RIGHT
     ldh [rNR51], a
             
-    ld a, $77
+    ld a, $77 
     ldh [rNR50], a
     
     xor a
