@@ -37,7 +37,7 @@ _InitSound::
     ldh [hSoundCh3Count], a
     ldh [hSoundCh3Duration], a
 
-    ld bc, _UpdateSound
+    ld bc, _TimerHandler
     rst _SetTIMHandler
 
     ld a, (-64)
@@ -112,26 +112,22 @@ _InitCh3:
 
 /*******************************************************************************
 **                                                                            **
-**      UPDATE SOUND FUNCTION                                                 **
+**      INTERRUPT FUNCTION                                                    **
 **                                                                            **
 *******************************************************************************/
 
-_UpdateSound::
-    call _UpdateCh1
-    jp _UpdateCh3
-
-_UpdateCh1:
+_TimerHandler:
     ldh a, [hSoundCh1Duration]
     or a
-    jr z, .continue
+    jr z, .ch1
     dec a
     ldh [hSoundCh1Duration], a
-    jr .end
+    jr .next
 
-.continue:
+.ch1:
     ldh a, [hSoundCh1Length]
     or a
-    jr z, .end
+    jr z, .next
     ld hl, xSoundLookupTable
     ldh a, [hSoundCh1Type]
     sla a
@@ -176,21 +172,18 @@ _UpdateCh1:
     ld hl,hSoundCh1Length
     dec [hl]
 
-.end:
-    ret
-
-_UpdateCh3:
+.next:
     ldh a, [hSoundCh3Duration]
     or a
-    jr z, .continue
+    jr z, .ch3
     dec a
     ldh [hSoundCh3Duration], a
-    jr .end
+    jr .done
     
-.continue:
+.ch3:
     ldh a, [hSoundCh3Length]
     or a
-    jr z, .end
+    jr z, .done
     ld hl, xSoundLookupTable
     ldh a, [hSoundCh3Type]
     sla a
@@ -235,7 +228,7 @@ _UpdateCh3:
     ld hl, hSoundCh3Length
     dec [hl]
 
-.end:
+.done:
     ret
 
 ENDSECTION
