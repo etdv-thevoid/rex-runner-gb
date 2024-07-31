@@ -8,6 +8,9 @@ _Dead::
     call _RexDead
 
     call _DrawGameOverHUD
+
+    ld a, SFX_DEAD
+    call _PlaySound
     
     ; fallthrough
     

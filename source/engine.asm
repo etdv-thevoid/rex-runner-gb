@@ -119,6 +119,9 @@ _EngineCheckTilemap::
     xor a
     ld [wBackgroundPaletteChanged], a
 
+    ld a, SFX_SCORE
+    call _PlaySound
+
     ld a, [wBackgroundPalette]
     cp a, DEFAULT_PALETTE
     jp z, _LoadTilemapBackground
@@ -347,6 +350,7 @@ ENDR
 _VBlankHandler:
     call _ScanKeys
     call _RefreshOAM
+    call _UpdateSound
 
     call _GetStateCurrent
     cp a, STATE_PAUSE

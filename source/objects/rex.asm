@@ -173,6 +173,9 @@ _RexChargeJump::
     ld a, REX_ANIM_JUMPING
     ld [wRexAnimationState], a
 
+    ld a, SFX_JUMP
+    call _PlaySound
+
     jp _RexSetSpriteDefault
 
 ; Make Rex jump
@@ -200,6 +203,9 @@ _RexJump::
     ld a, REX_ANIM_JUMPING
     ld [wRexAnimationState], a
 
+    ld a, SFX_JUMP
+    call _PlaySound
+
     jp _RexSetSpriteDefault
 
 .initialJump:
@@ -211,6 +217,9 @@ _RexJump::
     
     ld a, REX_ANIM_JUMPING
     ld [wRexAnimationState], a
+
+    ld a, SFX_JUMP
+    call _PlaySound
 
     jp _RexSetSpriteDefault
 

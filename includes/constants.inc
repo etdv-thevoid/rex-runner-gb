@@ -11,15 +11,36 @@ DEF TRUE    EQU 1
 *******************************************************************************/
 
 RSRESET
-DEF STATE_LOAD          RB 1 ; $00
-DEF STATE_INIT          RB 1 ; $01
-DEF STATE_MENU          RB 1 ; $02
-DEF STATE_CREDITS       RB 1 ; $03
-DEF STATE_GAME          RB 1 ; $04
-DEF STATE_PAUSE         RB 1 ; $05
-DEF STATE_DEAD          RB 1 ; $06
+DEF STATE_INIT          RB 1 ; $00
+DEF STATE_MENU          RB 1 ; $01
+DEF STATE_CREDITS       RB 1 ; $02
+DEF STATE_GAME          RB 1 ; $03
+DEF STATE_PAUSE         RB 1 ; $04
+DEF STATE_DEAD          RB 1 ; $05
 
-DEF NUMBER_OF_STATES    RB 0 ; $07
+DEF NUMBER_OF_STATES    RB 0 ; $06
+
+
+/*******************************************************************************
+**                                                                            **
+**      SOUND CONSTANTS                                                       **
+**                                                                            **
+*******************************************************************************/
+
+RSRESET
+DEF SOUND_CH_1  RB 1    ; $00
+DEF SOUND_CH_2  RB 1    ; $01
+DEF SOUND_CH_3  RB 1    ; $02
+DEF SOUND_CH_4  RB 1    ; $03
+
+DEF NUMBER_OF_CH  RB 0  ; $04
+
+RSRESET
+DEF SFX_JUMP    RB 1    ; $00
+DEF SFX_SCORE   RB 1    ; $01
+DEF SFX_DEAD    RB 1    ; $02
+
+DEF NUMBER_OF_SFX RB 0  ; $03
 
 
 /*******************************************************************************

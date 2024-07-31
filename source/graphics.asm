@@ -7,11 +7,11 @@ SECTION "Graphics", ROM0
 
 /*******************************************************************************
 **                                                                            **
-**      LOAD GRAPHICS FUNCTION                                                **
+**      INIT GRAPHICS FUNCTION                                                **
 **                                                                            **
 *******************************************************************************/
 
-_LoadGraphics::
+_InitGraphics::
     xor a
     ld hl, _SpriteTiles
     ld bc, (_SpriteTiles.end - _SpriteTiles)
@@ -34,10 +34,7 @@ _LoadGraphics::
     ld hl, _FontTiles
     ld bc, (_FontTiles.end - _FontTiles)
     ld de, vBLK21.32
-    call _VideoMemCopyMonochrome
-
-    ld a, STATE_INIT
-    jp _SwitchStateToNew
+    jp _VideoMemCopyMonochrome
 
 
 /*******************************************************************************

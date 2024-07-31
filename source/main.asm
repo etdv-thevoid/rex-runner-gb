@@ -22,6 +22,10 @@ The function can assume the following:
 _Main::
     call _EnableSoftReset
 
+    call _InitGraphics
+    
+    call _InitSound
+
     ; fallthrough
 
 _MainLoop:
@@ -37,7 +41,6 @@ _MainLoop:
     jr _MainLoop
 
 _StateJumpTable:
-    DW _LoadGraphics
     DW _InitEngine
     DW _Menu
     DW _Credits
