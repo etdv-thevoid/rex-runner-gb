@@ -16,6 +16,8 @@ _Game::
     call _ScreenOff
     
     call _LoadTilemapBackground
+    call _LoadTilemapBackgroundDay
+    
     call _RexJump
 
     call _DrawHUD

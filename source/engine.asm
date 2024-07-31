@@ -58,12 +58,7 @@ _InitEngine::
     ld a, INITIAL_DIFFICULTY_SPEED
     ld [wBaseDifficultySpeed], a
 
-    ld a, DEFAULT_BG_PALETTE
-	ldh [rBGP], a
-    ld a, DEFAULT_OBJ_PALETTE
-    ldh [rOBP0], a
-    cpl
-    ldh [rOBP1], a
+    call _LoadMonochromeColorPalette
 
     call _InitCactus
     call _InitPtero
@@ -347,24 +342,15 @@ ENDR
     cp a, PALETTE_SWITCH_100_DIGIT
     ret nz
     
-    call _CactusIncSpawnChance
-    call _PteroIncSpawnChance
-    
     ld a, SFX_SCORE
     call _PlaySound
-
-    ldh a, [rOBP0]
-    cpl
-    ldh [rOBP0], a
-    cpl
-    ldh [rOBP1], a
-
-    ldh a, [rBGP]
-    cpl
-    ld [rBGP], a
-    cp a, DEFAULT_BG_PALETTE
-    jp z, _LoadTilemapBackground
-    jp _LoadTilemapBackgroundNight
+    
+    ld a, [wPaletteChangeFlag]
+    inc a
+    ld [wPaletteChangeFlag], a
+    
+    call _CactusIncSpawnChance
+    jp _PteroIncSpawnChance
     
 
 /**
@@ -474,7 +460,24 @@ ENDR
     ld a, b
     ld [wBackgroundParallaxTop], a
 
-    ret
+    ld a, [wPaletteChangeFlag]
+    and a
+    ret z
+    xor a
+    ld [wPaletteChangeFlag], a
+
+    ld a, [wCurrentPalette]
+    cpl
+    ld [wCurrentPalette], a
+    cp a, DEFAULT_PALETTE_INVERTED
+    jr z, .inverted
+    call _LoadMonochromeColorPalette
+    jp _LoadTilemapBackgroundDay
+
+.inverted:
+    call _LoadMonochromeColorPaletteInverted
+    jp _LoadTilemapBackgroundNight
+
 
 _LCDStatHandler:
     ldh a, [rLYC]
@@ -530,6 +533,11 @@ ENDSECTION
 
 
 SECTION "Engine Variables", WRAM0
+
+wCurrentPalette:
+    DB
+wPaletteChangeFlag:
+    DB
 
 wBaseDifficultySpeed:
     DB

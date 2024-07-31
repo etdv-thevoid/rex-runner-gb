@@ -34,8 +34,64 @@ _InitGraphics::
     ld hl, _FontTiles
     ld bc, (_FontTiles.end - _FontTiles)
     ld de, vBLK21.32
-    jp _VideoMemCopyMonochrome
+    call _VideoMemCopyMonochrome
 
+    call _IsGBColor
+    ret z
+
+    ld a, 1
+    ld hl, vSCRN0
+    ld bc, (vSCRN0.end - vSCRN0)
+    ld d, $00
+    call _VideoMemSet
+    
+    ld a, 1
+    ld hl, vSCRN1
+    ld bc, (vSCRN1.end - vSCRN1)
+    ld d, $00
+    call _VideoMemSet
+
+    call _SetBackgroundPaletteBlack
+    call _SetSpritePaletteWhite
+
+    ; fallthrough
+
+
+/*******************************************************************************
+**                                                                            **
+**      LOAD PALETTE FUNCTIONS                                                **
+**                                                                            **
+*******************************************************************************/
+
+_LoadMonochromeColorPalette::
+    ld a, DEFAULT_PALETTE
+    call _SetDMGPalettes
+
+    call _IsGBColor
+    ret z
+
+    xor a
+    ld hl, _MonochromeBGPalette
+    call _SetBackgroundPalette
+    
+    xor a
+    ld hl, _MonochromeOBJPalette
+    jp _SetSpritePalette
+
+_LoadMonochromeColorPaletteInverted::
+    ld a, DEFAULT_PALETTE_INVERTED
+    call _SetDMGPalettes
+
+    call _IsGBColor
+    ret z
+
+    xor a
+    ld hl, _MonochromeBGPaletteInverted
+    call _SetBackgroundPalette
+    
+    xor a
+    ld hl, _MonochromeOBJPaletteInverted
+    jp _SetSpritePalette
 
 /*******************************************************************************
 **                                                                            **
@@ -61,14 +117,21 @@ _LoadTilemapBackground::
     xor a
     ld hl, _BackgroundTilemap
     ld bc, (_BackgroundTilemap.end - _BackgroundTilemap)
-    ld de, vSCRN0
+    ld de, vSCRN0.y11x0
+    jp _VideoMemCopy
+
+_LoadTilemapBackgroundDay::
+    xor a
+    ld hl, _BackgroundDayTilemap
+    ld bc, (_BackgroundDayTilemap.end - _BackgroundDayTilemap)
+    ld de, vSCRN0.y1x0
     jp _VideoMemCopy
 
 _LoadTilemapBackgroundNight::
     xor a
     ld hl, _BackgroundNightTilemap
     ld bc, (_BackgroundNightTilemap.end - _BackgroundNightTilemap)
-    ld de, vSCRN0
+    ld de, vSCRN0.y1x0
     jp _VideoMemCopy
 
 
@@ -97,6 +160,28 @@ _FontTiles::
 
 /*******************************************************************************
 **                                                                            **
+**      GBC PALETTES                                                          **
+**                                                                            **
+*******************************************************************************/
+
+_MonochromeBGPalette:
+    rgb_palette #DEF, #9AB, #456, #012
+.end:
+
+_MonochromeBGPaletteInverted:
+    rgb_palette #012, #456, #9AB, #DEF
+.end:
+
+_MonochromeOBJPalette:
+    rgb_palette #DEF, #9AB, #456, #012
+.end:
+
+_MonochromeOBJPaletteInverted:
+    rgb_palette #012, #456, #9AB, #DEF
+.end:
+
+/*******************************************************************************
+**                                                                            **
 **      TILEMAPS                                                              **
 **                                                                            **
 *******************************************************************************/
@@ -111,6 +196,10 @@ _CreditsTilemap:
 
 _BackgroundTilemap:
     INCBIN "assets/background.tilemap"
+.end:
+
+_BackgroundDayTilemap:
+    INCBIN "assets/background_day.tilemap"
 .end:
 
 _BackgroundNightTilemap:
