@@ -3,7 +3,7 @@ INCLUDE "includes/macros.inc"
 INCLUDE "includes/charmap.inc"
 
 
-SECTION "Graphics", ROM0
+SECTION "Graphics Functions", ROM0
 
 /*******************************************************************************
 **                                                                            **
@@ -15,20 +15,20 @@ _InitGraphics::
     call _ScreenOff
     
     xor a
-    ld hl, _SpriteTiles
-    ld bc, (_SpriteTiles.end - _SpriteTiles)
+    ld hl, xSpriteTiles
+    ld bc, (xSpriteTiles.end - xSpriteTiles)
     ld de, vBLK01.0
     call _VideoMemCopy
 
     xor a
-    ld hl, _BackgroundTiles
-    ld bc, (_BackgroundTiles.end - _BackgroundTiles)
+    ld hl, xBackgroundTiles
+    ld bc, (xBackgroundTiles.end - xBackgroundTiles)
     ld de, vBLK01.128
     call _VideoMemCopy
 
     xor a
-    ld hl, _HUDTiles
-    ld bc, (_HUDTiles.end - _HUDTiles)
+    ld hl, xHUDTiles
+    ld bc, (xHUDTiles.end - xHUDTiles)
     ld de, vBLK21.0
     call _VideoMemCopy
 
@@ -85,11 +85,11 @@ _LoadMonochromeColorPalette::
     ret z
 
     xor a
-    ld hl, _MonochromeBGPalette
+    ld hl, xMonochromeBGPalette
     call _SetBackgroundPalette
     
     xor a
-    ld hl, _MonochromeOBJPalette
+    ld hl, xMonochromeOBJPalette
     jp _SetSpritePalette
 
 _LoadMonochromeColorPaletteInverted::
@@ -100,11 +100,11 @@ _LoadMonochromeColorPaletteInverted::
     ret z
 
     xor a
-    ld hl, _MonochromeBGPaletteInverted
+    ld hl, xMonochromeBGPaletteInverted
     call _SetBackgroundPalette
     
     xor a
-    ld hl, _MonochromeOBJPaletteInverted
+    ld hl, xMonochromeOBJPaletteInverted
     jp _SetSpritePalette
 
 /*******************************************************************************
@@ -115,39 +115,66 @@ _LoadMonochromeColorPaletteInverted::
 
 _LoadTilemapMenu::
     xor a
-    ld hl, _MenuTilemap
-    ld bc, (_MenuTilemap.end - _MenuTilemap)
+    ld hl, xMenuTilemap
+    ld bc, (xMenuTilemap.end - xMenuTilemap)
     ld de, vSCRN0
     jp _VideoMemCopy
 
-_LoadTilemapCredits::
+_LoadTilemapSecret::
     xor a
-    ld hl, _CreditsTilemap
-    ld bc, (_CreditsTilemap.end - _CreditsTilemap)
+    ld hl, xSecretTilemap
+    ld bc, (xSecretTilemap.end - xSecretTilemap)
+    ld de, vSCRN0
+    jp _VideoMemCopy
+
+_LoadTilemapControls::
+    xor a
+    ld hl, xControlsTilemap
+    ld bc, (xControlsTilemap.end - xControlsTilemap)
+    ld de, vSCRN0
+    jp _VideoMemCopy
+
+_LoadTilemapAbout::
+    xor a
+    ld hl, xAboutTilemap
+    ld bc, (xAboutTilemap.end - xAboutTilemap)
     ld de, vSCRN0
     jp _VideoMemCopy
 
 _LoadTilemapBackground::
     xor a
-    ld hl, _BackgroundTilemap
-    ld bc, (_BackgroundTilemap.end - _BackgroundTilemap)
+    ld hl, xBackgroundTilemap
+    ld bc, (xBackgroundTilemap.end - xBackgroundTilemap)
     ld de, vSCRN0.y11x0
     jp _VideoMemCopy
 
 _LoadTilemapBackgroundDay::
     xor a
-    ld hl, _BackgroundDayTilemap
-    ld bc, (_BackgroundDayTilemap.end - _BackgroundDayTilemap)
+    ld hl, xBackgroundDayTilemap
+    ld bc, (xBackgroundDayTilemap.end - xBackgroundDayTilemap)
     ld de, vSCRN0.y1x0
     jp _VideoMemCopy
 
 _LoadTilemapBackgroundNight::
     xor a
-    ld hl, _BackgroundNightTilemap
-    ld bc, (_BackgroundNightTilemap.end - _BackgroundNightTilemap)
+    ld hl, xBackgroundNightTilemap
+    ld bc, (xBackgroundNightTilemap.end - xBackgroundNightTilemap)
     ld de, vSCRN0.y1x0
     jp _VideoMemCopy
 
+ENDSECTION
+
+
+SECTION "Font Data", ROM0
+
+_FontTiles::
+    INCBIN "temp/font.1bpp"
+.end:: 
+
+ENDSECTION
+
+
+SECTION "Graphics Data", ROMX
 
 /*******************************************************************************
 **                                                                            **
@@ -155,21 +182,17 @@ _LoadTilemapBackgroundNight::
 **                                                                            **
 *******************************************************************************/
 
-_SpriteTiles:
+xSpriteTiles:
     INCBIN "temp/sprites.2bpp"
 .end:
 
-_BackgroundTiles:
+xBackgroundTiles:
     INCBIN "temp/background.2bpp"
 .end:
 
-_HUDTiles:
+xHUDTiles:
     INCBIN "temp/hud.2bpp"
 .end:
-
-_FontTiles::
-    INCBIN "temp/font.1bpp"
-.end:: 
 
 
 /*******************************************************************************
@@ -178,20 +201,20 @@ _FontTiles::
 **                                                                            **
 *******************************************************************************/
 
-_MonochromeBGPalette:
-    rgb_palette #DEF, #9AB, #456, #012
+xMonochromeBGPalette:
+    rgb_palette #DEF, #ABC, #345, #012
 .end:
 
-_MonochromeBGPaletteInverted:
-    rgb_palette #012, #456, #9AB, #DEF
+xMonochromeBGPaletteInverted:
+    rgb_palette #012, #345, #ABC, #DEF
 .end:
 
-_MonochromeOBJPalette:
-    rgb_palette #DEF, #9AB, #456, #012
+xMonochromeOBJPalette:
+    rgb_palette #DEF, #ABC, #345, #012
 .end:
 
-_MonochromeOBJPaletteInverted:
-    rgb_palette #012, #456, #9AB, #DEF
+xMonochromeOBJPaletteInverted:
+    rgb_palette #012, #345, #ABC, #DEF
 .end:
 
 /*******************************************************************************
@@ -200,23 +223,31 @@ _MonochromeOBJPaletteInverted:
 **                                                                            **
 *******************************************************************************/
 
-_MenuTilemap:
+xMenuTilemap:
     INCBIN "assets/menu.tilemap"
 .end:
 
-_CreditsTilemap:
-    INCBIN "assets/credits.tilemap"
+xSecretTilemap:
+    INCBIN "assets/menu_secret.tilemap"
 .end:
 
-_BackgroundTilemap:
+xControlsTilemap:
+    INCBIN "assets/controls.tilemap"
+.end:
+
+xAboutTilemap:
+    INCBIN "assets/about.tilemap"
+.end:
+
+xBackgroundTilemap:
     INCBIN "assets/background.tilemap"
 .end:
 
-_BackgroundDayTilemap:
+xBackgroundDayTilemap:
     INCBIN "assets/background_day.tilemap"
 .end:
 
-_BackgroundNightTilemap:
+xBackgroundNightTilemap:
     INCBIN "assets/background_night.tilemap"
 .end:
 

@@ -3,7 +3,7 @@ INCLUDE "includes/macros.inc"
 INCLUDE "includes/charmap.inc"
 
 
-SECTION "Sound", ROM0
+SECTION "Sound Functions", ROM0
 
 /*******************************************************************************
 **                                                                            **
@@ -12,7 +12,7 @@ SECTION "Sound", ROM0
 *******************************************************************************/
 
 _InitSound::
-    ld hl, _TriangleWaveform
+    ld hl, xTriangleWaveform
     ld de, _AUD3WAVERAM
     ld b, $10
     call _MemCopyFast
@@ -37,6 +37,20 @@ _InitSound::
     ldh [hSoundCh3Count], a
     ldh [hSoundCh3Duration], a
 
+    ld bc, _UpdateSound
+    rst _SetTIMHandler
+
+    ld a, (-64)
+    ldh [rTMA], a
+    ld a, TACF_START|TACF_4KHZ
+    ldh [rTAC], a
+    xor a
+    ldh [rTIMA], a
+
+    ldh a, [rIE]
+    or a, IEF_TIMER
+    ldh [rIE], a
+
     ret 
 
 
@@ -49,7 +63,7 @@ _InitSound::
 _PlaySound::
     ldh [hSoundType], a
     
-    ld hl, _SoundLookupTable
+    ld hl, xSoundLookupTable
     sla a
     add l
     ld l, a
@@ -118,7 +132,7 @@ _UpdateCh1:
     ldh a, [hSoundCh1Length]
     or a
     jr z, .end
-    ld hl, _SoundLookupTable
+    ld hl, xSoundLookupTable
     ldh a, [hSoundCh1Type]
     sla a
     ld c, a
@@ -177,7 +191,7 @@ _UpdateCh3:
     ldh a, [hSoundCh3Length]
     or a
     jr z, .end
-    ld hl, _SoundLookupTable
+    ld hl, xSoundLookupTable
     ldh a, [hSoundCh3Type]
     sla a
     ld c, a
@@ -224,6 +238,10 @@ _UpdateCh3:
 .end:
     ret
 
+ENDSECTION
+
+
+SECTION "Sound Data", ROMX
 
 /*******************************************************************************
 **                                                                            **
@@ -231,28 +249,28 @@ _UpdateCh3:
 **                                                                            **
 *******************************************************************************/
 
-_TriangleWaveform:
+xTriangleWaveform:
     DB $01, $23, $45, $67, $89, $AB, $CD, $EF
     DB $FE, $DC, $BA, $98, $76, $54, $32, $10
     
-_SoundLookupTable:
-    DW _JumpSFX
-    DW _ScoreSFX
-    DW _DeadSFX
+xSoundLookupTable:
+    DW xJumpSFX
+    DW xScoreSFX
+    DW xDeadSFX
     DW _NULL
 
-_JumpSFX:
+xJumpSFX:
     DB SOUND_CH_3, 2
     DB  3, $80, $F8, $20, $84, $C7, $00, $00
     DB  1, $00, $00, $00, $00, $00, $00, $00
 
-_ScoreSFX:
+xScoreSFX:
     DB SOUND_CH_1, 3
     DB  5, $00, $AA, $F0, $07, $87, $00, $00
     DB 14, $00, $84, $F0, $59, $87, $00, $00
     DB  1, $00, $00, $00, $00, $00, $00, $00
 
-_DeadSFX:
+xDeadSFX:
     DB SOUND_CH_1, 4
     DB  3, $00, $B3, $F0, $1F, $80, $00, $00
     DB  2, $00, $B7, $00, $1F, $80, $00, $00

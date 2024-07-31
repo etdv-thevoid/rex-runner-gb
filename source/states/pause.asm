@@ -2,7 +2,7 @@ INCLUDE "includes/constants.inc"
 INCLUDE "includes/macros.inc"
 INCLUDE "includes/charmap.inc"
 
-SECTION "Pause", ROM0
+SECTION "Pause State", ROM0
 
 _Pause::
     call _DrawPauseHUD
@@ -47,7 +47,7 @@ _PauseLoop:
 ENDSECTION
 
 
-SECTION "Pause Variables", WRAM0
+SECTION "Pause State Variables", WRAM0
 
 wPauseDelayFrameCounter:
     DB

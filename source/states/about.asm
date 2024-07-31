@@ -2,16 +2,18 @@ INCLUDE "includes/constants.inc"
 INCLUDE "includes/macros.inc"
 INCLUDE "includes/charmap.inc"
 
-SECTION "Credits", ROM0
+SECTION "About State", ROM0
 
-_Credits::
+_About::
     call _ScreenOff
     
-    call _LoadTilemapCredits
+    call _LoadTilemapAbout
+
+    call _RexStand
     
     xor a
-    ld [wCreditsDelayFrameCounter], a
-    ld [wCreditsButtonsEnabled], a
+    ld [wAboutDelayFrameCounter], a
+    ld [wAboutButtonsEnabled], a
 
     ld a, SFX_JUMP
     call _PlaySound
@@ -21,31 +23,31 @@ _Credits::
 
     ; fallthrough
     
-_CreditsLoop:
+_AboutLoop:
     ei
     call _WaitForVBLInterrupt
 
     call _RexAnimate
     
-    ld a, [wCreditsButtonsEnabled]
+    ld a, [wAboutButtonsEnabled]
     and a
     jr nz, .checkKeys
 
-    ld a, [wCreditsDelayFrameCounter]
+    ld a, [wAboutDelayFrameCounter]
     inc a
-    ld [wCreditsDelayFrameCounter], a
+    ld [wAboutDelayFrameCounter], a
     and a, BUTTON_DELAY_FRAMES_MASK
-    jr nz, _CreditsLoop
+    jr nz, _AboutLoop
 
     ld a, TRUE
-    ld [wCreditsButtonsEnabled], a
+    ld [wAboutButtonsEnabled], a
 
-    jr _CreditsLoop
+    jr _AboutLoop
 
 .checkKeys:
     ldh a, [hKeysPressed]
     and a, PADF_B | PADF_A
-    jr z, _CreditsLoop
+    jr z, _AboutLoop
     
     ld a, SFX_JUMP
     call _PlaySound
@@ -54,12 +56,12 @@ _CreditsLoop:
 ENDSECTION
 
 
-SECTION "Credits Variables", WRAM0
+SECTION "About State Variables", WRAM0
 
-wCreditsDelayFrameCounter:
+wAboutDelayFrameCounter:
     DB
 
-wCreditsButtonsEnabled:
+wAboutButtonsEnabled:
     DB
 
 ENDSECTION

@@ -2,7 +2,7 @@ INCLUDE "includes/constants.inc"
 INCLUDE "includes/macros.inc"
 INCLUDE "includes/charmap.inc"
 
-SECTION "Dead", ROM0
+SECTION "Dead State", ROM0
 
 _Dead::
     call _RexDead
@@ -51,7 +51,7 @@ _DeadLoop:
 ENDSECTION
 
 
-SECTION "Dead Variables", WRAM0
+SECTION "Dead Variables State", WRAM0
 
 wDeadDelayFrameCounter:
     DB

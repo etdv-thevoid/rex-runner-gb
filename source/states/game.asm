@@ -2,7 +2,7 @@ INCLUDE "includes/constants.inc"
 INCLUDE "includes/macros.inc"
 INCLUDE "includes/charmap.inc"
 
-SECTION "Game", ROM0
+SECTION "Game State", ROM0
 
 _Game::
     call _GetStatePrevious

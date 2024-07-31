@@ -20,6 +20,9 @@ The function can assume the following:
  - Interrupts are disabled
 */
 _Main::
+    ld a, 1
+    ld [rROMB0], a
+    
     call _EnableSoftReset
 
     call _InitGraphics
@@ -43,7 +46,9 @@ _MainLoop:
 _StateJumpTable:
     DW _InitEngine
     DW _Menu
-    DW _Credits
+    DW _Secret
+    DW _Controls
+    DW _About
     DW _Game
     DW _Pause
     DW _Dead

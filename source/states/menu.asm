@@ -2,13 +2,16 @@ INCLUDE "includes/constants.inc"
 INCLUDE "includes/macros.inc"
 INCLUDE "includes/charmap.inc"
 
-SECTION "Menu", ROM0
+SECTION "Menu State", ROM0
 
 _Menu::
     call _ScreenOff
-
-    call _LoadTilemapMenu
     
+    call _LoadTilemapMenu
+    call _LoadMonochromeColorPalette
+
+    call _RexStand
+
     xor a
     ld [wMenuCursorSelection], a
     ld [wMenuDelayFrameCounter], a
@@ -46,7 +49,7 @@ _MenuLoop:
     ldh a, [hKeysPressed]
     and a, PADF_SELECT
     jr z, :+
-    call _RexDead
+    jp _MenuSwitch
 :
     ldh a, [hKeysPressed]
     and a, PADF_UP
@@ -114,7 +117,7 @@ _MenuDrawCursor:
     ld d, " "
     cp a, c
     jr nz, .clear
-    ld d, ">"
+    ld d, MENU_CURSOR_TILE
 .clear:
     xor a
     ld b, 1
@@ -143,21 +146,63 @@ _MenuSelectOption:
 
 _MenuSelectOptionJumpTable:
     DW _MenuSelectGame
-    DW _MenuSelectCredits
+    DW _MenuSelectControls
+    DW _MenuSelectAbout
     DW _NULL
 
 _MenuSelectGame:
     ld a, STATE_GAME
     jp _SwitchStateToNew
 
-_MenuSelectCredits:
-    ld a, STATE_CREDITS
+_MenuSelectControls:
+    ld a, STATE_CONTROLS
+    jp _SwitchStateToNew
+
+_MenuSelectAbout:
+    ld a, STATE_ABOUT
+    jp _SwitchStateToNew
+
+
+/*******************************************************************************
+**                                                                            **
+**      SECRET MENU                                                           **
+**                                                                            **
+*******************************************************************************/
+
+_Secret::
+    call _ScreenOff
+    
+    call _LoadTilemapSecret
+    call _LoadMonochromeColorPaletteInverted
+
+    call _RexDead
+
+    xor a
+    ld [wMenuCursorSelection], a
+    ld [wMenuDelayFrameCounter], a
+    ld [wMenuButtonsEnabled], a
+
+    ld a, WINDOW_OFF
+    call _ScreenOn
+
+    jp _MenuLoop
+
+_MenuSwitch:
+    call _GetStateCurrent
+    cp a, STATE_SECRET
+    jr nz, .secret
+
+    ld a, STATE_MENU
+    jp _SwitchStateToNew
+
+.secret:
+    ld a, STATE_SECRET
     jp _SwitchStateToNew
 
 ENDSECTION
 
 
-SECTION "Menu Variables", WRAM0
+SECTION "Menu State Variables", WRAM0
 
 wMenuCursorSelection:
     DB

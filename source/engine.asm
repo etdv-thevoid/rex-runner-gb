@@ -61,7 +61,8 @@ _InitEngine::
     ld a, STATF_LYC
     ldh [rSTAT], a
 
-    ld a, IEF_VBLANK | IEF_LCDC
+    ldh a, [rIE]
+    or a, IEF_VBLANK | IEF_LCDC
     ldh [rIE], a
 
     call _GetStatePrevious
@@ -228,7 +229,7 @@ _DrawGameOverHUD::
     jp _VideoMemCopyFast
 
 _GameOverString:
-    DB $18, $19, $1A, $1B, $0F, $1C, $1D, $1E, $1F
+    DB $18, $19, $1A, $1B, " ", $1C, $1D, $1E, $1F
 .end:
 
 _DrawPauseHUD::
@@ -239,7 +240,7 @@ _DrawPauseHUD::
     jp _VideoMemCopyFast
 
 _PausedString:
-    DB $0F, $12, $13, $14, $15, $16, $17, $0F, $0F
+    DB " ", $12, $13, $14, $15, $16, $17, " ", " "
 .end:
 
 _DrawGameHUD::
@@ -286,7 +287,7 @@ _DrawBCDNumber:
     ret
 
 _HighScoreTiles:
-    DB $10, $11, $0F, $00, $00, $00, $00, $00, $00
+    DB $10, $11, " ", $00, $00, $00, $00, $00, $00
 .end:
 
 _UpdateScore::
@@ -388,7 +389,6 @@ ENDR
 _VBlankHandler:
     call _ScanKeys
     call _RefreshOAM
-    call _UpdateSound
     
     xor a
     ldh [rSCX], a
