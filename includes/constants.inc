@@ -60,12 +60,24 @@ DEF NUMBER_OF_MENU_OPTS RB 0 ; $02
 
 /*******************************************************************************
 **                                                                            **
-**      ENGINE & DIFFICULTY CONSTANTS                                         **
+**      SCORE CONSTANTS                                                       **
+**                                                                            **
+*******************************************************************************/
+
+DEF SCORE_BYTES                 EQU 3
+DEF SCORE_DIGITS                EQU SCORE_BYTES * 2
+
+
+/*******************************************************************************
+**                                                                            **
+**      ENGINE DIFFICULTY CONSTANTS                                           **
 **                                                                            **
 *******************************************************************************/
 
 DEF INITIAL_DIFFICULTY_SPEED    EQU 10
 DEF DIFFICULTY_SPEED_INCREASE   EQU 1
+DEF MAX_DIFFICULTY_SPEED        EQU 25
+
 DEF PALETTE_SWITCH_100_DIGIT    EQU 0
 
 DEF GRAVITY_VALUE               EQU 6
@@ -83,9 +95,6 @@ DEF COLLISION_PIXEL_OVERLAP_TOP     EQU 3
 DEF COLLISION_PIXEL_OVERLAP_RIGHT   EQU 5
 DEF COLLISION_PIXEL_OVERLAP_BOTTOM  EQU 3
 DEF COLLISION_PIXEL_OVERLAP_LEFT    EQU 4
-
-DEF SCORE_BYTES                 EQU 3
-DEF SCORE_DIGITS                EQU SCORE_BYTES * 2
 
 DEF SPAWN_CHANCE_INCREMENT      EQU $05
 
@@ -177,7 +186,7 @@ DEF GAME_OVER_X_POS_1       EQU (SCRN_X / 2) + META_SPRITE_COL_1_X
 
 /*******************************************************************************
 **                                                                            **
-**      REX ANIMATION CONSTANTS                                               **
+**      GAME OVER SPRITE CONSTANTS                                            **
 **                                                                            **
 *******************************************************************************/
 

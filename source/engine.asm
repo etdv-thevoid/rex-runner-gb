@@ -337,8 +337,9 @@ ENDR
     ld a, [wBaseDifficultySpeed]
     add a, DIFFICULTY_SPEED_INCREASE
     ld [wBaseDifficultySpeed], a
-    jr nc, .noSpeedIncrease
-    ld a, $FF
+    cp a, MAX_DIFFICULTY_SPEED
+    jr c, .noSpeedIncrease
+    ld a, MAX_DIFFICULTY_SPEED
     ld [wBaseDifficultySpeed], a
 
 .noSpeedIncrease:
