@@ -15,7 +15,7 @@ TITLE := Rex Runner
 GAMEID := RXRN
 
 # ROM version (typically starting at 0 and incremented for each published version).
-VERSION := 0x00
+VERSION := 0x01
 
 # New licensee, 2 ASCII chars.
 # Homebrew games FTW!.
