@@ -26,7 +26,7 @@ _RexStand::
 _RexRandomBlinkDelay:
     call _GetRandom
     or a, REX_BLINK_DELAY_MASK
-    ld [wRexBlinkAnimationRandomDelay], a
+    ld [wRexAnimationDelay], a
     ret
 
 ; Increments Rex's internal animation frame counter
@@ -36,6 +36,15 @@ _RexIncFrameCounter::
     ld [wRexAnimationFrameCounter], a
 
     ld a, [wRexAnimationState]
+    ld b, a
+    cp a, REX_ANIM_RUNNING
+    ret c
+
+    ld a, [wRexAnimationDelay]
+    inc a
+    ld [wRexAnimationDelay], a
+
+    ld a, b
     cp a, REX_ANIM_JUMPING
     ret c
 
@@ -115,8 +124,8 @@ _RexGetAnimationState::
 
 ; Makes Rex dead :(
 _RexDead::
-    ld hl, STARTOF("Rex Variables")
-    ld b, SIZEOF("Rex Variables")
+    ld hl, STARTOF("Rex Variables") + 1
+    ld b, SIZEOF("Rex Variables") - 1 ; dont clear initial jump
     xor a
     call _MemSetFast
     
@@ -226,6 +235,11 @@ _RexDuckOn::
     ret 
 
 .running:
+    ld a, [wRexAnimationDelay]
+    and a, REX_DUCK_DELAY_MASK
+    ld [wRexAnimationDelay], a
+    ret nz
+
     ld hl, STARTOF("Rex Variables")
     ld b, SIZEOF("Rex Variables")
     xor a
@@ -452,7 +466,7 @@ _RexAnimateStanding:
     cp a, REX_BLINKING_SPRITE_2
     jr z, .blinking
 
-    ld a, [wRexBlinkAnimationRandomDelay]
+    ld a, [wRexAnimationDelay]
     ld b, a
     ld a, [wRexAnimationFrameCounter]
     and a, b
@@ -588,6 +602,12 @@ ENDSECTION
 
 SECTION "Rex Variables", WRAM0
 
+; Flag for determining if initial jump
+wRexInitialJumpFlag:
+    DB
+
+ASSERT wRexInitialJumpFlag == STARTOF("Rex Variables")
+
 ; Current Rex animation state
 wRexAnimationState:
     DB
@@ -596,12 +616,8 @@ wRexAnimationState:
 wRexAnimationFrameCounter:
     DB
 
-; Random delay to animate Rex blinking
-wRexBlinkAnimationRandomDelay:
-    DB
-
-; Flag for determining if initial jump
-wRexInitialJumpFlag:
+; Delay to animate Rex (random delay for blinking, delay for ducking)
+wRexAnimationDelay:
     DB
 
 ; 16-bit 12.4 floating point jump speed
@@ -620,8 +636,12 @@ wRexJumpSpeedFrameDifferential:
 wRexJumpVelocity:
     DB
 
+ASSERT wRexJumpVelocity == (STARTOF("Rex Variables") + SIZEOF("Rex Variables") - 2)
+
 ; Jump velocity charge
 wRexJumpVelocityCharge:
     DB
+
+ASSERT wRexJumpVelocityCharge == (STARTOF("Rex Variables") + SIZEOF("Rex Variables") - 1)
 
 ENDSECTION
