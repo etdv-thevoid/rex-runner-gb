@@ -78,6 +78,13 @@ _GetGroundSpeedDifferential::
     ld a, [wGroundSpeedDifferential]
     ret
 
+_GetAirSpeedDifferential::
+    ld a, [wGroundSpeedDifferential]
+    ld b, a
+    ld a, [wScoreIncreaseDifferential]
+    add a, b
+    ret
+
 ; Try to spawn an enemy
 _EngineTrySpawn::
     ld a, [wSpawnDistanceCounter]
