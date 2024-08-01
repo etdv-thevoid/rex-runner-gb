@@ -6,11 +6,8 @@ SECTION "Ptero Functions", ROM0
 
 ; Initializes both Pteros
 _InitPtero::
-    ld a, PTERO_1_INIT_SPAWN_CHANCE
-    ld [wPtero1SpawnChance], a
-    
-    ld a, PTERO_2_INIT_SPAWN_CHANCE
-    ld [wPtero2SpawnChance], a
+    ld a, PTERO_INIT_SPAWN_CHANCE
+    ld [wPteroSpawnChance], a
 
     call _InitPtero1
     jp _InitPtero2
@@ -87,22 +84,13 @@ _InitPtero2:
 
 ; Increments Ptero spawn chance variables
 _PteroIncSpawnChance::
-    ld a, [wPtero1SpawnChance]
-    add a, SPAWN_CHANCE_INCREMENT
-    ld [wPtero1SpawnChance], a
-    jr nc, .ptero2
-    ld a, $FF
-    ld [wPtero1SpawnChance], a
-    
-.ptero2:
-    ld a, [wPtero2SpawnChance]
-    add a, SPAWN_CHANCE_INCREMENT
-    ld [wPtero2SpawnChance], a
-    jr nc, .done
-    ld a, $FF
-    ld [wPtero2SpawnChance], a
-
-.done:
+    ld a, [wPteroSpawnChance]
+    add a, PTERO_SPAWN_INCREMENT
+    ld [wPteroSpawnChance], a
+    cp a, PTERO_MAX_SPAWN_CHANCE
+    ret c
+    ld a, PTERO_MAX_SPAWN_CHANCE
+    ld [wPteroSpawnChance], a
     ret
 
 ; Attempts to spawn a Ptero 
@@ -120,7 +108,7 @@ _Ptero1Spawn:
     and a
     ret nz
 
-    ld a, [wPtero1SpawnChance]
+    ld a, [wPteroSpawnChance]
     cp a, b
     ret c
     
@@ -186,7 +174,7 @@ _Ptero2Spawn:
     and a
     ret nz
 
-    ld a, [wPtero2SpawnChance]
+    ld a, [wPteroSpawnChance]
     cp a, b
     ret c
     
@@ -416,16 +404,13 @@ ENDSECTION
 
 SECTION "Ptero Variables", WRAM0
 
-wPtero1SpawnChance:
+wPteroSpawnChance:
     DB
 
 wPtero1IsSpawned:
     DB
 
 wPtero1AnimationFrameCounter:
-    DB
-
-wPtero2SpawnChance:
     DB
 
 wPtero2IsSpawned:

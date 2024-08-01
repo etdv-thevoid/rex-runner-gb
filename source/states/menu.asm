@@ -6,16 +6,42 @@ SECTION "Menu State", ROM0
 
 _Menu::
     call _ScreenOff
-    
+
     call _LoadTilemapMenu
     call _LoadMonochromeColorPalette
 
     call _RexStand
+    
+    ld a, SFX_JUMP
+    call _PlaySound
 
+    jr _MenuCommon
+
+_Secret::
+    call _ScreenOff
+    
+    call _LoadTilemapSecret
+    call _LoadMonochromeColorPaletteInverted
+
+    call _RexDead
+    
+    ld a, SFX_SCORE
+    call _PlaySound
+
+_MenuCommon:
+    call _GetStatePrevious
+    cp a, STATE_GAME
+    jr c, .skipInit
+
+    call _InitEngine
+
+.skipInit:
+    ld hl, STARTOF("Menu State Variables")
+    ld b, SIZEOF("Menu State Variables")
     xor a
-    ld [wMenuCursorSelection], a
-    ld [wMenuDelayFrameCounter], a
-    ld [wMenuButtonsEnabled], a
+    call _MemSetFast
+
+    call _ClearHUD
 
     ld a, WINDOW_OFF
     call _ScreenOn
@@ -135,6 +161,18 @@ _MenuDrawCursor:
 **                                                                            **
 *******************************************************************************/
 
+_MenuSwitch:
+    call _GetStateCurrent
+    cp a, STATE_SECRET
+    jr nz, .secret
+
+    ld a, STATE_MENU
+    jp _SwitchStateToNew
+
+.secret:
+    ld a, STATE_SECRET
+    jp _SwitchStateToNew
+
 _MenuSelectOption:
     ld hl, _MenuSelectOptionJumpTable
     ld a, [wMenuCursorSelection]
@@ -160,43 +198,6 @@ _MenuSelectControls:
 
 _MenuSelectAbout:
     ld a, STATE_ABOUT
-    jp _SwitchStateToNew
-
-
-/*******************************************************************************
-**                                                                            **
-**      SECRET MENU                                                           **
-**                                                                            **
-*******************************************************************************/
-
-_Secret::
-    call _ScreenOff
-    
-    call _LoadTilemapSecret
-    call _LoadMonochromeColorPaletteInverted
-
-    call _RexDead
-
-    xor a
-    ld [wMenuCursorSelection], a
-    ld [wMenuDelayFrameCounter], a
-    ld [wMenuButtonsEnabled], a
-
-    ld a, WINDOW_OFF
-    call _ScreenOn
-
-    jp _MenuLoop
-
-_MenuSwitch:
-    call _GetStateCurrent
-    cp a, STATE_SECRET
-    jr nz, .secret
-
-    ld a, STATE_MENU
-    jp _SwitchStateToNew
-
-.secret:
-    ld a, STATE_SECRET
     jp _SwitchStateToNew
 
 ENDSECTION

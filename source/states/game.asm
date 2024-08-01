@@ -7,18 +7,25 @@ SECTION "Game State", ROM0
 _Game::
     call _GetStatePrevious
     cp a, STATE_PAUSE
-    jr nz, .skip
+    jr nz, .notFromPause
 
     call _DrawGameHUD
     jr _GameLoop
 
-.skip:
+.notFromPause:
     call _ScreenOff
     
+    call _GetStatePrevious
+    cp a, STATE_DEAD
+    jr nz, .notFromDead
+
+    call _InitEngine
+
+.notFromDead:
     call _LoadTilemapBackground
     call _LoadTilemapBackgroundDay
     
-    call _RexJump
+    call _RexJumpFull
 
     call _DrawGameHUD
 

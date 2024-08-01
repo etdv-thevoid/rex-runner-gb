@@ -29,6 +29,13 @@ _Main::
     
     call _InitSound
 
+    call _InitEngine
+
+    ld hl, STARTOF("Main Variables")
+    ld b, SIZEOF("Main Variables")
+    xor a
+    call _MemSetFast
+
     ; fallthrough
 
 _MainLoop:
@@ -44,7 +51,6 @@ _MainLoop:
     jr _MainLoop
 
 _StateJumpTable:
-    DW _InitEngine
     DW _Menu
     DW _Secret
     DW _Controls

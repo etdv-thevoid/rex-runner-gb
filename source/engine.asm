@@ -27,6 +27,8 @@ _InitEngine::
     ld a, $00
     call _MemSetFast
     call _RefreshOAM
+
+    call _SaveHighScore
     
     ld hl, STARTOF("Engine Variables")
     ld b, SIZEOF("Engine Variables")
@@ -38,7 +40,7 @@ _InitEngine::
     ld a, INITIAL_DIFFICULTY_SPEED
     ld [wBaseDifficultySpeed], a
 
-    ld a, DEFAULT_PALETTE
+    ld a, DEFAULT_BG_PALETTE
     ld [wCurrentPalette], a
     call _LoadMonochromeColorPalette
 
@@ -65,13 +67,7 @@ _InitEngine::
     or a, IEF_VBLANK | IEF_LCDC
     ldh [rIE], a
 
-    call _GetStatePrevious
-    cp a, STATE_DEAD
-    ld a, STATE_GAME
-    jp z, _SwitchStateToNew
-
-    ld a, STATE_MENU
-    jp _SwitchStateToNew
+    ret
 
 ; Get per frame ground level scroll speed differential
 _GetGroundSpeedDifferential::
@@ -149,10 +145,10 @@ _EngineCheckCollision::
     sub a, COLLISION_PIXEL_OVERLAP_BOTTOM
     ld d, a                     ; d = Rex bottom y
     ld a, [hl]
-    sub a, (OAM_X_OFS - COLLISION_PIXEL_OVERLAP_LEFT)
+    sub a, (OAM_X_OFS + COLLISION_PIXEL_OVERLAP_LEFT)
     ld e, a                     ; e = Rex left x
 
-FOR SPRITE, NUMBER_OF_REX_SPRITES, OAM_COUNT
+FOR SPRITE, (NUMBER_OF_REX_SPRITES + NUMBER_OF_IGNORED_PTERO_SPRITES), OAM_COUNT
     ld hl, wShadowOAM + (SPRITE * sizeof_OAM_ATTRS) + OAMA_Y
     ld a, [hl]
     sub a, COLLISION_PIXEL_OVERLAP_OBJ
@@ -207,6 +203,13 @@ _SaveHighScore::
     ld bc, SCORE_BYTES ; (wHighScore.end - wHighScore)
     ld de, sHighScore
     jp _SaveToSRAM
+
+_ClearHUD::
+    xor a
+    ld hl, vSCRN1.y0x0
+    ld bc, SCRN_VX_B
+    ld d, " "
+    call _VideoMemSet
 
 _InitGameOverHUD:
     ld hl, {GAME_OVER_SPRITE_0}
@@ -359,10 +362,8 @@ ENDR
     inc a
     ld [wPaletteChangeFlag], a
     
-    ;call _CactusIncSpawnChance
-    ;jp _PteroIncSpawnChance
-
-    ret
+    call _CactusIncSpawnChance
+    jp _PteroIncSpawnChance
     
 
 /**
@@ -429,7 +430,7 @@ _VBlankHandler:
     ld a, [wCurrentPalette]
     cpl
     ld [wCurrentPalette], a
-    cp a, DEFAULT_PALETTE
+    cp a, DEFAULT_BG_PALETTE
     jr nz, .invertedPalette
     call _LoadMonochromeColorPalette
     call _LoadTilemapBackgroundDay

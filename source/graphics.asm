@@ -78,8 +78,13 @@ _InitGraphics::
 *******************************************************************************/
 
 _LoadMonochromeColorPalette::
-    ld a, DEFAULT_PALETTE
-    call _SetDMGPalettes
+    ld a, DEFAULT_BG_PALETTE
+	ldh [rBGP], a
+    
+    ld a, DEFAULT_OBJ_PALETTE
+    ldh [rOBP0], a
+    cpl
+    ldh [rOBP1], a
 
     call _IsGBColor
     ret z
@@ -93,8 +98,12 @@ _LoadMonochromeColorPalette::
     jp _SetSpritePalette
 
 _LoadMonochromeColorPaletteInverted::
-    ld a, DEFAULT_PALETTE_INVERTED
-    call _SetDMGPalettes
+    ld a, INVERTED_BG_PALETTE
+	ldh [rBGP], a
+    ld a, INVERTED_OBJ_PALETTE
+    ldh [rOBP0], a
+    cpl
+    ldh [rOBP1], a
 
     call _IsGBColor
     ret z
@@ -210,11 +219,11 @@ xMonochromeBGPaletteInverted:
 .end:
 
 xMonochromeOBJPalette:
-    rgb_palette #DFDFDF, #9F9F9F, #606060, #202020
+    rgb_palette #DFDFDF, #DFDFDF, #9F9F9F, #202020
 .end:
 
 xMonochromeOBJPaletteInverted:
-    rgb_palette #202020, #606060, #9F9F9F, #DFDFDF
+    rgb_palette #202020, #202020, #606060, #DFDFDF
 .end:
 
 /*******************************************************************************

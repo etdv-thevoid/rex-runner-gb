@@ -12,9 +12,6 @@ _RexStand::
     ld b, SIZEOF("Rex Variables")
     xor a
     call _MemSetFast
-    
-    ld a, TRUE
-    ld [wRexInitialJumpFlag], a
 
     ld a, REX_ANIM_STANDING
     ld [wRexAnimationState], a
@@ -124,8 +121,8 @@ _RexGetAnimationState::
 
 ; Makes Rex dead :(
 _RexDead::
-    ld hl, STARTOF("Rex Variables") + 1
-    ld b, SIZEOF("Rex Variables") - 1 ; dont clear initial jump
+    ld hl, STARTOF("Rex Variables")
+    ld b, SIZEOF("Rex Variables")
     xor a
     call _MemSetFast
     
@@ -162,31 +159,13 @@ _RexChargeJump::
     cp a, REX_ANIM_DUCKING
     ret nc
 
-    ld hl, STARTOF("Rex Variables")
-    ld b, SIZEOF("Rex Variables")
-    xor a
-    call _MemSetFast
-
-    ld a, MAX_JUMP_VELOCITY
-    ld [wRexJumpVelocity], a
-
-    ld a, REX_ANIM_JUMPING
-    ld [wRexAnimationState], a
-
-    ld a, SFX_JUMP
-    call _PlaySound
-
-    jp _RexSetSpriteDefault
+    jr _RexJumpFull
 
 ; Make Rex jump
 _RexJump::
     ld a, [wRexAnimationState]
     cp a, REX_ANIM_DUCKING
     ret nc
-
-    ld a, [wRexInitialJumpFlag]
-    and a
-    jr nz, .initialJump
 
     ld hl, STARTOF("Rex Variables")
     ld b, SIZEOF("Rex Variables") - 2 ; dont clear jump charge or velocity
@@ -208,7 +187,8 @@ _RexJump::
 
     jp _RexSetSpriteDefault
 
-.initialJump:
+; Makes Rex jump to full height
+_RexJumpFull::
     ld hl, STARTOF("Rex Variables")
     ld b, SIZEOF("Rex Variables")
     xor a
@@ -601,12 +581,6 @@ ENDSECTION
 
 
 SECTION "Rex Variables", WRAM0
-
-; Flag for determining if initial jump
-wRexInitialJumpFlag:
-    DB
-
-ASSERT wRexInitialJumpFlag == STARTOF("Rex Variables")
 
 ; Current Rex animation state
 wRexAnimationState:

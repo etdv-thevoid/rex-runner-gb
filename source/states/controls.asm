@@ -68,9 +68,6 @@ _ControlsLoop:
     ldh a, [hKeysPressed]
     and a, PADF_B
     jr z, :+
-    
-    ld a, SFX_JUMP
-    call _PlaySound
     jp _SwitchStateToPrevious
 :
     jr _ControlsLoop

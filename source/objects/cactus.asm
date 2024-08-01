@@ -6,23 +6,8 @@ SECTION "Cactus Functions", ROM0
 
 ; Initializes all Cactus
 _InitCactus::
-    ld a, CACTUS_TYPE_1_INIT_SPAWN_CHANCE
-    ld [wCactus1SpawnChance], a
-    
-    ld a, CACTUS_TYPE_2_INIT_SPAWN_CHANCE
-    ld [wCactus2SpawnChance], a
-    
-    ld a, CACTUS_TYPE_3_INIT_SPAWN_CHANCE
-    ld [wCactus3SpawnChance], a
-    
-    ld a, CACTUS_TYPE_4_INIT_SPAWN_CHANCE
-    ld [wCactus4SpawnChance], a
-    
-    ld a, CACTUS_TYPE_5_INIT_SPAWN_CHANCE
-    ld [wCactus5SpawnChance], a
-    
-    ld a, CACTUS_TYPE_6_INIT_SPAWN_CHANCE
-    ld [wCactus6SpawnChance], a
+    ld a, CACTUS_INIT_SPAWN_CHANCE
+    ld [wCactusSpawnChance], a
 
     call _InitCactus6
     call _InitCactus5
@@ -291,54 +276,13 @@ _InitCactus6:
 
 ; Increments Cactus spawn chance variables
 _CactusIncSpawnChance::
-    ld a, [wCactus1SpawnChance]
-    add a, SPAWN_CHANCE_INCREMENT
-    ld [wCactus1SpawnChance], a
-    jr nc, .cactus2
-    ld a, $FF
-    ld [wCactus1SpawnChance], a
-    
-.cactus2:
-    ld a, [wCactus2SpawnChance]
-    add a, SPAWN_CHANCE_INCREMENT
-    ld [wCactus2SpawnChance], a
-    jr nc, .cactus3
-    ld a, $FF
-    ld [wCactus2SpawnChance], a
-    
-.cactus3:
-    ld a, [wCactus3SpawnChance]
-    add a, SPAWN_CHANCE_INCREMENT
-    ld [wCactus3SpawnChance], a
-    jr nc, .cactus4
-    ld a, $FF
-    ld [wCactus3SpawnChance], a
-    
-.cactus4:
-    ld a, [wCactus4SpawnChance]
-    add a, SPAWN_CHANCE_INCREMENT
-    ld [wCactus4SpawnChance], a
-    jr nc, .cactus5
-    ld a, $FF
-    ld [wCactus4SpawnChance], a
-    
-.cactus5:
-    ld a, [wCactus5SpawnChance]
-    add a, SPAWN_CHANCE_INCREMENT
-    ld [wCactus1SpawnChance], a
-    jr nc, .cactus6
-    ld a, $FF
-    ld [wCactus5SpawnChance], a
-    
-.cactus6:
-    ld a, [wCactus6SpawnChance]
-    add a, SPAWN_CHANCE_INCREMENT
-    ld [wCactus6SpawnChance], a
-    jr nc, .done
-    ld a, $FF
-    ld [wCactus6SpawnChance], a
-
-.done:
+    ld a, [wCactusSpawnChance]
+    add a, CACTUS_SPAWN_INCREMENT
+    ld [wCactusSpawnChance], a
+    cp a, CACTUS_MAX_SPAWN_CHANCE
+    ret c
+    ld a, CACTUS_MAX_SPAWN_CHANCE
+    ld [wCactusSpawnChance], a
     ret
 
 ; Attempts to spawn a Cactus
@@ -368,7 +312,7 @@ _CactusType1Spawn:
     and a
     ret nz
 
-    ld a, [wCactus1SpawnChance]
+    ld a, [wCactusSpawnChance]
     cp a, b
     ret c
     
@@ -397,7 +341,7 @@ _CactusType2Spawn:
     and a
     ret nz
 
-    ld a, [wCactus2SpawnChance]
+    ld a, [wCactusSpawnChance]
     cp a, b
     ret c
     
@@ -430,7 +374,7 @@ _CactusType3Spawn:
     and a
     ret nz
 
-    ld a, [wCactus3SpawnChance]
+    ld a, [wCactusSpawnChance]
     cp a, b
     ret c
     
@@ -469,7 +413,7 @@ _CactusType4Spawn:
     and a
     ret nz
 
-    ld a, [wCactus4SpawnChance]
+    ld a, [wCactusSpawnChance]
     cp a, b
     ret c
     
@@ -510,7 +454,7 @@ _CactusType5Spawn:
     and a
     ret nz
 
-    ld a, [wCactus5SpawnChance]
+    ld a, [wCactusSpawnChance]
     cp a, b
     ret c
     
@@ -576,7 +520,7 @@ _CactusType6Spawn:
     and a
     ret nz
 
-    ld a, [wCactus6SpawnChance]
+    ld a, [wCactusSpawnChance]
     cp a, b
     ret c
     
@@ -865,37 +809,22 @@ ENDSECTION
 
 SECTION "Cactus Variables", WRAM0
 
-wCactus1SpawnChance:
+wCactusSpawnChance:
     DB
 
 wCactus1IsSpawned:
     DB
 
-wCactus2SpawnChance:
-    DB
-
 wCactus2IsSpawned:
     DB
 
-wCactus3SpawnChance:
-    DB
-
 wCactus3IsSpawned:
-    DB
-    
-wCactus4SpawnChance:
     DB
 
 wCactus4IsSpawned:
     DB
 
-wCactus5SpawnChance:
-    DB
-
 wCactus5IsSpawned:
-    DB
-
-wCactus6SpawnChance:
     DB
 
 wCactus6IsSpawned:

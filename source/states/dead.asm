@@ -41,12 +41,20 @@ _DeadLoop:
 
 .checkKeys:
     ldh a, [hKeysPressed]
-    and a, PADF_START | PADF_A
-    jr z, _DeadLoop
+    and a, PADF_B
+    jr z, :+
     
-    call _SaveHighScore
-    ld a, STATE_INIT
+    ld a, STATE_MENU
     jp _SwitchStateToNew
+:
+    ldh a, [hKeysPressed]
+    and a, PADF_A
+    jr z, :+
+    
+    ld a, STATE_GAME
+    jp _SwitchStateToNew
+:
+    jr _DeadLoop
 
 ENDSECTION
 
