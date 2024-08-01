@@ -15,9 +15,6 @@ _Controls::
     ld [wControlsDelayFrameCounter], a
     ld [wControlsButtonsEnabled], a
 
-    ld a, SFX_JUMP
-    call _PlaySound
-
     ld a, WINDOW_OFF
     call _ScreenOn
 
@@ -28,49 +25,30 @@ _ControlsLoop:
     call _WaitForVBLInterrupt
 
     call _RexAnimate
-    
-    ld a, [wControlsButtonsEnabled]
-    and a
-    jr nz, .checkKeys
 
-    ld a, [wControlsDelayFrameCounter]
-    inc a
-    ld [wControlsDelayFrameCounter], a
-    and a, BUTTON_DELAY_FRAMES_MASK
-    jr nz, _ControlsLoop
+    check_keys_start wControlsButtonsEnabled, \
+                     wControlsDelayFrameCounter, \
+                     _ControlsLoop
 
-    ld a, TRUE
-    ld [wControlsButtonsEnabled], a
-
-    jr _ControlsLoop
-
-.checkKeys:
-    ldh a, [hKeysHeld]
-    and a, PADF_DOWN
-    jr z, :+
+    check_keys_add hKeysHeld, PADF_DOWN
     call _RexDuckOn
-:
-    ldh a, [hKeysReleased]
-    and a, PADF_DOWN
-    jr z, :+
+
+    check_keys_add hKeysReleased, PADF_DOWN
     call _RexDuckOff
-:
-    ldh a, [hKeysHeld]
-    and a, PADF_A
-    jr z, :+
+
+    check_keys_add hKeysHeld, PADF_A
     call _RexChargeJump
-:
-    ldh a, [hKeysReleased]
-    and a, PADF_A
-    jr z, :+
+
+    check_keys_add hKeysReleased, PADF_A
     call _RexJump
-:
-    ldh a, [hKeysPressed]
-    and a, PADF_B
-    jr z, :+
+
+    check_keys_add hKeysPressed, PADF_B
+    ld a, SFX_MENU_B
+    call _PlaySound
     jp _SwitchStateToPrevious
-:
-    jr _ControlsLoop
+
+    check_keys_end _ControlsLoop
+
 
 ENDSECTION
 

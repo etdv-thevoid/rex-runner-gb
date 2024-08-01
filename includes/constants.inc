@@ -8,11 +8,12 @@ RSRESET
 DEF STATE_MENU              RB 1 ; $00
 DEF STATE_SECRET            RB 1 ; $01
 DEF STATE_CONTROLS          RB 1 ; $02
-DEF STATE_ABOUT             RB 1 ; $03
-DEF STATE_GAME              RB 1 ; $04
-DEF STATE_PAUSE             RB 1 ; $05
-DEF STATE_DEAD              RB 1 ; $06
-DEF NUMBER_OF_STATES        RB 0 ; $07
+DEF STATE_SCORES            RB 1 ; $03
+DEF STATE_ABOUT             RB 1 ; $04
+DEF STATE_GAME              RB 1 ; $05
+DEF STATE_PAUSE             RB 1 ; $06
+DEF STATE_DEAD              RB 1 ; $07
+DEF NUMBER_OF_STATES        RB 0 ; $08
 
 RSRESET
 DEF SOUND_CH_1              RB 1 ; $00
@@ -22,19 +23,24 @@ DEF SOUND_CH_4              RB 1 ; $03
 DEF NUMBER_OF_CH            RB 0 ; $04
 
 RSRESET
-DEF SFX_JUMP                RB 1 ; $00
-DEF SFX_SCORE               RB 1 ; $01
-DEF SFX_DEAD                RB 1 ; $02
-DEF NUMBER_OF_SFX           RB 0 ; $03
+DEF SFX_MENU_A              RB 1 ; $00
+DEF SFX_MENU_B              RB 1 ; $01
+DEF SFX_JUMP                RB 1 ; $02
+DEF SFX_DEAD                RB 1 ; $03
+DEF SFX_SCORE               RB 1 ; $04
+DEF SFX_SECRET              RB 1 ; $05
+DEF NUMBER_OF_SFX           RB 0 ; $06
 
 RSRESET
 DEF MENU_OPT_START          RB 1 ; $00
 DEF MENU_OPT_CONTROLS       RB 1 ; $01
-DEF MENU_OPT_ABOUT          RB 1 ; $02
-DEF NUMBER_OF_MENU_OPTS     RB 0 ; $03
+;DEF MENU_OPT_SCORES         RB 1 ; $02
+DEF MENU_OPT_ABOUT          RB 1 ; $03
+DEF NUMBER_OF_MENU_OPTS     RB 0 ; $04
 
 DEF MENU_OPT_START_TILE     EQUS "vSCRN0.y5x5"
 DEF MENU_CURSOR_TILE        EQU $0F
+DEF MENU_BUTTON_DELAY_MASK  EQU %00001111
 
 RSRESET
 DEF OBJECT_CACTUS           RB 1 ; $00
@@ -44,11 +50,8 @@ DEF NUMBER_OF_OBJECTS       RB 0 ; $03
 
 DEF DEFAULT_OBJECT          EQU OBJECT_CACTUS
 
-
-DEF BUTTON_DELAY_FRAMES_MASK    EQU %00001111
-
-DEF SCORE_BYTES                 EQU 3
-DEF SCORE_DIGITS                EQU SCORE_BYTES * 2
+DEF SCORE_BYTES             EQU 3
+DEF SCORE_DIGITS            EQU SCORE_BYTES * 2
 
 
 /*******************************************************************************

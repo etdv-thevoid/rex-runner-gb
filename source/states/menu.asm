@@ -11,9 +11,6 @@ _Menu::
     call _LoadMonochromeColorPalette
 
     call _RexStand
-    
-    ld a, SFX_JUMP
-    call _PlaySound
 
     jr _MenuCommon
 
@@ -24,9 +21,6 @@ _Secret::
     call _LoadMonochromeColorPaletteInverted
 
     call _RexDead
-    
-    ld a, SFX_SCORE
-    call _PlaySound
 
 _MenuCommon:
     call _GetStatePrevious
@@ -56,43 +50,23 @@ _MenuLoop:
 
     call _RexAnimate
 
-    ld a, [wMenuButtonsEnabled]
-    and a
-    jr nz, .checkKeys
+    check_keys_start wMenuButtonsEnabled, \
+                     wMenuDelayFrameCounter, \
+                     _MenuLoop
 
-    ld a, [wMenuDelayFrameCounter]
-    inc a
-    ld [wMenuDelayFrameCounter], a
-    and a, BUTTON_DELAY_FRAMES_MASK
-    jr nz, _MenuLoop
-
-    ld a, TRUE
-    ld [wMenuButtonsEnabled], a
-
-    jr _MenuLoop
-    
-.checkKeys:
-    ldh a, [hKeysPressed]
-    and a, PADF_SELECT
-    jr z, :+
+    check_keys_add hKeysPressed, PADF_SELECT
     jp _MenuSwitch
-:
-    ldh a, [hKeysPressed]
-    and a, PADF_UP
-    jr z, :+
+
+    check_keys_add hKeysPressed, PADF_UP
     call _MenuMoveCursorUp
-:
-    ldh a, [hKeysPressed]
-    and a, PADF_DOWN
-    jr z, :+
+
+    check_keys_add hKeysPressed, PADF_DOWN
     call _MenuMoveCursorDown
-:
-    ldh a, [hKeysPressed]
-    and a, PADF_A
-    jr z, :+
+
+    check_keys_add hKeysPressed, PADF_A
     jr _MenuSelectOption
-:
-    jr _MenuLoop
+
+    check_keys_end _MenuLoop
 
 
 /*******************************************************************************
@@ -166,10 +140,16 @@ _MenuSwitch:
     cp a, STATE_SECRET
     jr nz, .secret
 
+    ld a, SFX_SCORE
+    call _PlaySound
+
     ld a, STATE_MENU
     jp _SwitchStateToNew
 
 .secret:
+    ld a, SFX_SECRET
+    call _PlaySound
+
     ld a, STATE_SECRET
     jp _SwitchStateToNew
 
@@ -185,6 +165,7 @@ _MenuSelectOption:
 _MenuSelectOptionJumpTable:
     DW _MenuSelectGame
     DW _MenuSelectControls
+    ;DW _MenuSelectScores
     DW _MenuSelectAbout
     DW _NULL
 
@@ -193,10 +174,20 @@ _MenuSelectGame:
     jp _SwitchStateToNew
 
 _MenuSelectControls:
+    ld a, SFX_MENU_A
+    call _PlaySound
     ld a, STATE_CONTROLS
     jp _SwitchStateToNew
 
+_MenuSelectScores:
+    ld a, SFX_MENU_A
+    call _PlaySound
+    ld a, STATE_SCORES
+    jp _SwitchStateToNew
+
 _MenuSelectAbout:
+    ld a, SFX_MENU_A
+    call _PlaySound
     ld a, STATE_ABOUT
     jp _SwitchStateToNew
 

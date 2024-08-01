@@ -143,6 +143,13 @@ _LoadTilemapControls::
     ld de, vSCRN0
     jp _VideoMemCopy
 
+_LoadTilemapScores::
+    xor a
+    ld hl, xScoresTilemap
+    ld bc, (xScoresTilemap.end - xScoresTilemap)
+    ld de, vSCRN0
+    jp _VideoMemCopy
+
 _LoadTilemapAbout::
     xor a
     ld hl, xAboutTilemap
@@ -242,6 +249,10 @@ xSecretTilemap:
 
 xControlsTilemap:
     INCBIN "assets/controls.tilemap"
+.end:
+
+xScoresTilemap:
+    INCBIN "assets/scores.tilemap"
 .end:
 
 xAboutTilemap:

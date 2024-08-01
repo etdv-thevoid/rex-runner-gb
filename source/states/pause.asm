@@ -11,9 +11,6 @@ _Pause::
     ld [wPauseDelayFrameCounter], a
     ld [wPauseButtonsEnabled], a
 
-    ld a, SFX_JUMP
-    call _PlaySound
-
     ; fallthrough
     
 _PauseLoop:
@@ -22,27 +19,17 @@ _PauseLoop:
     
     call _DrawPauseHUD
 
-    ld a, [wPauseButtonsEnabled]
-    and a
-    jr nz, .checkKeys
+    check_keys_start wPauseButtonsEnabled, \
+                     wPauseDelayFrameCounter, \
+                     _PauseLoop
 
-    ld a, [wPauseDelayFrameCounter]
-    inc a
-    ld [wPauseDelayFrameCounter], a
-    and a, BUTTON_DELAY_FRAMES_MASK
-    jr nz, _PauseLoop
-
-    ld a, TRUE
-    ld [wPauseButtonsEnabled], a
-
-    jr _PauseLoop
-
-.checkKeys:
-    ldh a, [hKeysPressed]
-    and a, PADF_START
-    jr z, _PauseLoop
-    
+    check_keys_add hKeysPressed, PADF_START
+    ld a, SFX_MENU_B
+    call _PlaySound
     jp _SwitchStateToPrevious
+
+    check_keys_end _PauseLoop
+
 
 ENDSECTION
 

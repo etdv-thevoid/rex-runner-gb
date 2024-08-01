@@ -36,6 +36,9 @@ _Main::
     xor a
     call _MemSetFast
 
+    ld a, SFX_SCORE
+    call _PlaySound
+
     ; fallthrough
 
 _MainLoop:
@@ -54,6 +57,7 @@ _StateJumpTable:
     DW _Menu
     DW _Secret
     DW _Controls
+    DW _Scores
     DW _About
     DW _Game
     DW _Pause

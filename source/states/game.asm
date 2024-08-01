@@ -50,33 +50,27 @@ _GameLoop:
 
     call _EngineAnimate
 
-.checkKeys:
-    ldh a, [hKeysHeld]
-    and a, PADF_DOWN
-    jr z, :+
+    ; no check_keys_start since we don't want input delays
+
+    check_keys_add hKeysHeld, PADF_DOWN
     call _RexDuckOn
-:
-    ldh a, [hKeysReleased]
-    and a, PADF_DOWN
-    jr z, :+
+
+    check_keys_add hKeysReleased, PADF_DOWN
     call _RexDuckOff
-:
-    ldh a, [hKeysHeld]
-    and a, PADF_A
-    jr z, :+
+
+    check_keys_add hKeysHeld, PADF_A
     call _RexChargeJump
-:
-    ldh a, [hKeysReleased]
-    and a, PADF_A
-    jr z, :+
+
+    check_keys_add hKeysReleased, PADF_A
     call _RexJump
-:
-    ldh a, [hKeysPressed]
-    and a, PADF_START
-    jr z, :+
+
+    check_keys_add hKeysPressed, PADF_START
+    ld a, SFX_MENU_A
+    call _PlaySound
     ld a, STATE_PAUSE
     jp _SwitchStateToNew
-:
-    jr _GameLoop
+
+    check_keys_end _GameLoop
+
 
 ENDSECTION

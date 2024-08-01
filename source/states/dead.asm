@@ -24,37 +24,20 @@ _DeadLoop:
 
     call _DrawGameOverHUD
 
-    ld a, [wDeadButtonsEnabled]
-    and a
-    jr nz, .checkKeys
+    check_keys_start wDeadButtonsEnabled, \
+                     wDeadDelayFrameCounter, \
+                     _DeadLoop
 
-    ld a, [wDeadDelayFrameCounter]
-    inc a
-    ld [wDeadDelayFrameCounter], a
-    and a, BUTTON_DELAY_FRAMES_MASK
-    jr nz, _DeadLoop
-
-    ld a, TRUE
-    ld [wDeadButtonsEnabled], a
-
-    jr _DeadLoop
-
-.checkKeys:
-    ldh a, [hKeysPressed]
-    and a, PADF_B
-    jr z, :+
-    
+    check_keys_add hKeysPressed, PADF_B
+    ld a, SFX_SCORE
+    call _PlaySound
     ld a, STATE_MENU
     jp _SwitchStateToNew
-:
-    ldh a, [hKeysPressed]
-    and a, PADF_A
-    jr z, :+
-    
-    ld a, STATE_GAME
-    jp _SwitchStateToNew
-:
-    jr _DeadLoop
+
+    check_keys_add hKeysPressed, PADF_A
+    jp _SwitchStateToPrevious
+
+    check_keys_end _DeadLoop
 
 ENDSECTION
 
