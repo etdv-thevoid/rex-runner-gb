@@ -79,18 +79,29 @@ _GetGroundSpeedDifferential::
     ret
 
 _GetAirSpeedDifferential::
-    ld a, [wGroundSpeedDifferential]
-    ld b, a
-    ld a, [wScoreIncreaseDifferential]
-    add a, b
+    ld a, [wAirSpeedDifferential]
+    ret
+
+_GetGroundSpawnDistanceCounter::
+    ld a, [wGroundSpawnDistanceCounter]
+    ret
+
+_ResetGroundSpawnDistanceCounter::
+    xor a
+    ld [wGroundSpawnDistanceCounter], a
+    ret
+
+_GetAirSpawnDistanceCounter::
+    ld a, [wAirSpawnDistanceCounter]
+    ret
+
+_ResetAirSpawnDistanceCounter::
+    xor a
+    ld [wAirSpawnDistanceCounter], a
     ret
 
 ; Try to spawn an enemy
 _EngineTrySpawn::
-    ld a, [wSpawnDistanceCounter]
-    cp a, MINIMUM_SPAWN_DISTANCE
-    ret c
-
     call _GetRandom
     and %00000011
     cp a, NUMBER_OF_OBJECTS
@@ -98,11 +109,7 @@ _EngineTrySpawn::
     ld a, DEFAULT_OBJECT
 .jump:
     ld hl, _EngineSpawnJumpTable
-    call _JumpTable
-    ret nc
-    xor a
-    ld [wSpawnDistanceCounter], a
-    ret
+    jp _JumpTable
 
 ; Spawn Rotation Jump Table
 _EngineSpawnJumpTable:
@@ -458,19 +465,19 @@ _VBlankHandler:
     ld c, a
 
     ld a, [wBackgroundParallaxBottom]
-    ld d, a
+    ld e, a
 REPT PARALLAX_BIT_SHIFTS_BOTTOM
     srl c
     rr b
 ENDR
     ld a, b
     ld [wBackgroundParallaxBottom], a
-    sub a, d
+    sub a, e
     ld [wGroundSpeedDifferential], a
     ld d, a
-    ld a, [wSpawnDistanceCounter]
+    ld a, [wGroundSpawnDistanceCounter]
     add a, d
-    ld [wSpawnDistanceCounter], a
+    ld [wGroundSpawnDistanceCounter], a
     
     ld a, [wBackgroundParallaxMiddle]
     ld e, a
@@ -482,6 +489,12 @@ ENDR
     ld [wBackgroundParallaxMiddle], a
     sub a, e
     ld [wScoreIncreaseDifferential], a
+    add a, d
+    ld [wAirSpeedDifferential], a
+    ld d, a
+    ld a, [wAirSpawnDistanceCounter]
+    add a, d
+    ld [wAirSpawnDistanceCounter], a
 
 REPT PARALLAX_BIT_SHIFTS_TOP
     srl c
@@ -544,6 +557,9 @@ wBaseDifficultySpeed:
 
 wGroundSpeedDifferential:
     DB
+
+wAirSpeedDifferential:
+    DB
     
 wBackgroundScrollPosition:
     DW
@@ -557,7 +573,10 @@ wBackgroundParallaxMiddle:
 wBackgroundParallaxBottom:
     DB
 
-wSpawnDistanceCounter:
+wGroundSpawnDistanceCounter:
+    DB
+
+wAirSpawnDistanceCounter:
     DB
 
 wScoreIncreaseDifferential:

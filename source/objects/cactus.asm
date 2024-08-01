@@ -370,7 +370,11 @@ _CactusType1Spawn:
 
     ld a, [wCactus1SpawnChance]
     cp a, b
-    ret nc
+    ret c
+    
+    call _GetGroundSpawnDistanceCounter
+    cp a, MINIMUM_SPAWN_DISTANCE
+    ret c
     
     ld hl, {CACTUS_TYPE_1_SPRITE_0} + OAMA_Y
     ld a, GROUND_LEVEL_Y_POS
@@ -380,8 +384,7 @@ _CactusType1Spawn:
     ld a, TRUE
     ld [wCactus1IsSpawned], a
 
-    scf 
-    ret
+    jp _ResetGroundSpawnDistanceCounter
 
 _CactusType2Spawn:
     call _GetRandom
@@ -396,7 +399,11 @@ _CactusType2Spawn:
 
     ld a, [wCactus2SpawnChance]
     cp a, b
-    ret nc
+    ret c
+    
+    call _GetGroundSpawnDistanceCounter
+    cp a, MINIMUM_SPAWN_DISTANCE
+    ret c
     
     ld hl, {CACTUS_TYPE_2_SPRITE_0} + OAMA_Y
     ld a, GROUND_LEVEL_Y_POS
@@ -410,8 +417,7 @@ _CactusType2Spawn:
     ld a, TRUE
     ld [wCactus2IsSpawned], a
     
-    scf 
-    ret
+    jp _ResetGroundSpawnDistanceCounter
 
 _CactusType3Spawn:
     call _GetRandom
@@ -426,7 +432,11 @@ _CactusType3Spawn:
 
     ld a, [wCactus3SpawnChance]
     cp a, b
-    ret nc
+    ret c
+    
+    call _GetGroundSpawnDistanceCounter
+    cp a, MINIMUM_SPAWN_DISTANCE
+    ret c
     
     ld hl, {CACTUS_TYPE_3_SPRITE_0} + OAMA_Y
     ld a, GROUND_LEVEL_Y_POS
@@ -446,8 +456,7 @@ _CactusType3Spawn:
     ld a, TRUE
     ld [wCactus3IsSpawned], a
     
-    scf 
-    ret
+    jp _ResetGroundSpawnDistanceCounter
 
 _CactusType4Spawn:
     call _GetRandom
@@ -462,7 +471,11 @@ _CactusType4Spawn:
 
     ld a, [wCactus4SpawnChance]
     cp a, b
-    ret nc
+    ret c
+    
+    call _GetGroundSpawnDistanceCounter
+    cp a, MINIMUM_SPAWN_DISTANCE
+    ret c
     
     ld hl, {CACTUS_TYPE_4_SPRITE_0} + OAMA_Y
     ld a, GROUND_LEVEL_Y_POS_OFF
@@ -484,8 +497,7 @@ _CactusType4Spawn:
     ld a, TRUE
     ld [wCactus4IsSpawned], a
     
-    scf 
-    ret
+    jp _ResetGroundSpawnDistanceCounter
 
 _CactusType5Spawn:
     call _GetRandom
@@ -500,7 +512,11 @@ _CactusType5Spawn:
 
     ld a, [wCactus5SpawnChance]
     cp a, b
-    ret nc
+    ret c
+    
+    call _GetGroundSpawnDistanceCounter
+    cp a, MINIMUM_SPAWN_DISTANCE
+    ret c
     
     ld hl, {CACTUS_TYPE_5_SPRITE_0} + OAMA_Y
     ld a, GROUND_LEVEL_Y_POS_OFF
@@ -530,8 +546,7 @@ _CactusType5Spawn:
     ld a, TRUE
     ld [wCactus5IsSpawned], a
     
-    scf 
-    ret
+    jp _ResetGroundSpawnDistanceCounter
 
 _CactusType6Spawn:
     call _GetRandom
@@ -563,7 +578,11 @@ _CactusType6Spawn:
 
     ld a, [wCactus6SpawnChance]
     cp a, b
-    ret nc
+    ret c
+    
+    call _GetGroundSpawnDistanceCounter
+    cp a, MINIMUM_SPAWN_DISTANCE
+    ret c
     
     ld hl, {CACTUS_TYPE_6_SPRITE_0} + OAMA_Y
     ld a, GROUND_LEVEL_Y_POS_OFF
@@ -609,8 +628,7 @@ _CactusType6Spawn:
     ld a, TRUE
     ld [wCactus6IsSpawned], a
     
-    scf 
-    ret
+    jp _ResetGroundSpawnDistanceCounter
 
 /*******************************************************************************
 **                                                                            **

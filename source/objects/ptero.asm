@@ -109,9 +109,11 @@ _PteroIncSpawnChance::
 _PteroTrySpawn::
     call _GetRandom
     and a, %00000001
-    jr nz, .ptero2
+    jr nz, _Ptero2Spawn
 
-.ptero1:
+    ; fallthrough
+
+_Ptero1Spawn:
     call _GetRandom
 
     ld a, [wPtero1IsSpawned]
@@ -120,24 +122,23 @@ _PteroTrySpawn::
 
     ld a, [wPtero1SpawnChance]
     cp a, b
-    ret nc
+    ret c
+    
+    call _GetAirSpawnDistanceCounter
+    cp a, MINIMUM_SPAWN_DISTANCE
+    ret c
 
     call _GetRandom
     and a, %00000001
-    jr z, .ptero1YPos1
+    jr z, .yPos1
 
-.ptero1YPos0:
+.yPos0:
     ld b, PTERO_1_INIT_Y_POS_0 + META_SPRITE_ROW_0_Y
-    jr .gotPtero1YPos
-
-.ptero1YPos1:
-    ld b, PTERO_1_INIT_Y_POS_1 + META_SPRITE_ROW_0_Y
-
-.gotPtero1YPos:
+    
     ld hl, {PTERO_1_SPRITE_0}
     ld a, b
     ld [hl], a
-    
+
     ld hl, {PTERO_1_SPRITE_1}
     ld a, b
     ld [hl], a
@@ -149,11 +150,36 @@ _PteroTrySpawn::
     ld a, [wPtero1IsSpawned]
     ld a, TRUE
     ld [wPtero1IsSpawned], a
-    
-    scf 
-    ret
 
-.ptero2:
+    jp _ResetAirSpawnDistanceCounter
+
+.yPos1:
+    call _GetGroundSpawnDistanceCounter
+    cp a, MINIMUM_SPAWN_DISTANCE
+    ret c
+
+    ld b, PTERO_1_INIT_Y_POS_1 + META_SPRITE_ROW_0_Y
+    
+    ld hl, {PTERO_1_SPRITE_0}
+    ld a, b
+    ld [hl], a
+
+    ld hl, {PTERO_1_SPRITE_1}
+    ld a, b
+    ld [hl], a
+    
+    ld hl, {PTERO_1_SPRITE_2}
+    ld a, b
+    ld [hl], a
+    
+    ld a, [wPtero1IsSpawned]
+    ld a, TRUE
+    ld [wPtero1IsSpawned], a
+
+    call _ResetAirSpawnDistanceCounter
+    jp _ResetGroundSpawnDistanceCounter
+
+_Ptero2Spawn:
     call _GetRandom
 
     ld a, [wPtero2IsSpawned]
@@ -162,20 +188,19 @@ _PteroTrySpawn::
 
     ld a, [wPtero2SpawnChance]
     cp a, b
-    ret nc
+    ret c
+    
+    call _GetAirSpawnDistanceCounter
+    cp a, MINIMUM_SPAWN_DISTANCE
+    ret c
 
     call _GetRandom
     and a, %00000001
-    jr z, .ptero2YPos1
+    jr z, .yPos1
 
-.ptero2YPos0:
+.yPos0:
     ld b, PTERO_2_INIT_Y_POS_0 + META_SPRITE_ROW_0_Y
-    jr .gotPtero2YPos
-
-.ptero2YPos1:
-    ld b, PTERO_2_INIT_Y_POS_1 + META_SPRITE_ROW_0_Y
-
-.gotPtero2YPos:
+    
     ld hl, {PTERO_2_SPRITE_0}
     ld a, b
     ld [hl], a
@@ -192,8 +217,33 @@ _PteroTrySpawn::
     ld a, TRUE
     ld [wPtero2IsSpawned], a
 
-    scf 
-    ret
+    jp _ResetAirSpawnDistanceCounter
+
+.yPos1:
+    call _GetGroundSpawnDistanceCounter
+    cp a, MINIMUM_SPAWN_DISTANCE
+    ret c
+
+    ld b, PTERO_2_INIT_Y_POS_1 + META_SPRITE_ROW_0_Y
+    
+    ld hl, {PTERO_2_SPRITE_0}
+    ld a, b
+    ld [hl], a
+
+    ld hl, {PTERO_2_SPRITE_1}
+    ld a, b
+    ld [hl], a
+    
+    ld hl, {PTERO_2_SPRITE_2}
+    ld a, b
+    ld [hl], a
+    
+    ld a, [wPtero2IsSpawned]
+    ld a, TRUE
+    ld [wPtero2IsSpawned], a
+
+    call _ResetAirSpawnDistanceCounter
+    jp _ResetGroundSpawnDistanceCounter
 
 /*******************************************************************************
 **                                                                            **
