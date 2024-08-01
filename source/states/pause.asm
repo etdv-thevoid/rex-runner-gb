@@ -39,7 +39,7 @@ _PauseLoop:
 
 .checkKeys:
     ldh a, [hKeysPressed]
-    and a, PADF_START | PADF_A
+    and a, PADF_START
     jr z, _PauseLoop
     
     jp _SwitchStateToPrevious

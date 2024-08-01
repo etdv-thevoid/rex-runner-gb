@@ -202,19 +202,19 @@ xHUDTiles:
 *******************************************************************************/
 
 xMonochromeBGPalette:
-    rgb_palette #DEF, #9AB, #456, #012
+    rgb_palette #DFDFDF, #9F9F9F, #606060, #202020
 .end:
 
 xMonochromeBGPaletteInverted:
-    rgb_palette #012, #456, #9AB, #DEF
+    rgb_palette #202020, #606060, #9F9F9F, #DFDFDF
 .end:
 
 xMonochromeOBJPalette:
-    rgb_palette #DEF, #9AB, #456, #012
+    rgb_palette #DFDFDF, #9F9F9F, #606060, #202020
 .end:
 
 xMonochromeOBJPaletteInverted:
-    rgb_palette #012, #456, #9AB, #DEF
+    rgb_palette #202020, #606060, #9F9F9F, #DFDFDF
 .end:
 
 /*******************************************************************************
