@@ -292,11 +292,12 @@ _CactusTrySpawn::
     cp a, NUMBER_OF_CACTUS_TYPES
     jr c, .jump
     ld a, DEFAULT_CACTUS_TYPE
+
 .jump:
-    ld hl, _CactusSpawnJumpTable
+    ld hl, .jumpTable
     jp _JumpTable
 
-_CactusSpawnJumpTable:
+.jumpTable:
     DW _CactusType1Spawn
     DW _CactusType2Spawn
     DW _CactusType3Spawn

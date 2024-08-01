@@ -11,9 +11,10 @@ _About::
 
     call _RexStand
     
+    ld hl, STARTOF("About State Variables")
+    ld b, SIZEOF("About State Variables")
     xor a
-    ld [wAboutDelayFrameCounter], a
-    ld [wAboutButtonsEnabled], a
+    call _MemSetFast
 
     ld a, WINDOW_OFF
     call _ScreenOn

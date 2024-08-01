@@ -7,9 +7,10 @@ SECTION "Pause State", ROM0
 _Pause::
     call _DrawPauseHUD
 
+    ld hl, STARTOF("Pause State Variables")
+    ld b, SIZEOF("Pause State Variables")
     xor a
-    ld [wPauseDelayFrameCounter], a
-    ld [wPauseButtonsEnabled], a
+    call _MemSetFast
 
     ; fallthrough
     

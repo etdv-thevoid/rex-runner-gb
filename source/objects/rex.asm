@@ -418,15 +418,16 @@ _RexSetSpriteDead:
 
 ; Call once per frame to animate Rex
 _RexAnimate::
-    ld hl, _RexAnimationJumpTable
     ld a, [wRexAnimationState]
     cp a, NUMBER_OF_REX_ANIMATIONS
     jr c, .jump
     ld a, NUMBER_OF_REX_ANIMATIONS
+    
 .jump:
+    ld hl, .jumpTable
     jp _JumpTable
 
-_RexAnimationJumpTable:
+.jumpTable:
     DW _RexAnimateDead
     DW _RexAnimateStanding
     DW _RexAnimateRunning

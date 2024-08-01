@@ -9,11 +9,14 @@ _Scores::
     
     call _LoadTilemapScores
 
+    call _DrawScoreboard
+
     call _RexStand
     
+    ld hl, STARTOF("Scores State Variables")
+    ld b, SIZEOF("Scores State Variables")
     xor a
-    ld [wScoresDelayFrameCounter], a
-    ld [wScoresButtonsEnabled], a
+    call _MemSetFast
 
     ld a, WINDOW_OFF
     call _ScreenOn

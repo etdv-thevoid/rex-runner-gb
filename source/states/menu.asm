@@ -6,30 +6,32 @@ SECTION "Menu State", ROM0
 
 _Menu::
     call _ScreenOff
+    
+    call _GetStateCurrent
+    cp a, STATE_SECRET
+    jr z, .secret
 
     call _LoadTilemapMenu
     call _LoadMonochromeColorPalette
 
     call _RexStand
 
-    jr _MenuCommon
+    jr .continue
 
-_Secret::
-    call _ScreenOff
-    
+.secret:
     call _LoadTilemapSecret
     call _LoadMonochromeColorPaletteInverted
 
     call _RexDead
 
-_MenuCommon:
+.continue:
     call _GetStatePrevious
     cp a, STATE_GAME
-    jr c, .skipInit
+    jr c, .skip
 
     call _InitEngine
 
-.skipInit:
+.skip:
     ld hl, STARTOF("Menu State Variables")
     ld b, SIZEOF("Menu State Variables")
     xor a
@@ -154,18 +156,19 @@ _MenuSwitch:
     jp _SwitchStateToNew
 
 _MenuSelectOption:
-    ld hl, _MenuSelectOptionJumpTable
     ld a, [wMenuCursorSelection]
     cp a, NUMBER_OF_MENU_OPTS
     jr c, .jump
     ld a, NUMBER_OF_MENU_OPTS
+
 .jump:
+    ld hl, .jumpTable
     jp _JumpTable
 
-_MenuSelectOptionJumpTable:
+.jumpTable:
     DW _MenuSelectGame
     DW _MenuSelectControls
-    ;DW _MenuSelectScores
+    DW _MenuSelectScores
     DW _MenuSelectAbout
     DW _NULL
 

@@ -11,9 +11,10 @@ _Controls::
 
     call _RexStand
     
+    ld hl, STARTOF("Controls State Variables")
+    ld b, SIZEOF("Controls State Variables")
     xor a
-    ld [wControlsDelayFrameCounter], a
-    ld [wControlsButtonsEnabled], a
+    call _MemSetFast
 
     ld a, WINDOW_OFF
     call _ScreenOn

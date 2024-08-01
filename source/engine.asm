@@ -103,12 +103,12 @@ _EngineTrySpawn::
     cp a, NUMBER_OF_OBJECTS
     jr c, .jump
     ld a, DEFAULT_OBJECT
+    
 .jump:
-    ld hl, _EngineSpawnJumpTable
+    ld hl, .jumpTable
     jp _JumpTable
 
-; Spawn Rotation Jump Table
-_EngineSpawnJumpTable:
+.jumpTable:
     DW _CactusTrySpawn
     DW _PteroTrySpawn
     ;DW _MeteorTrySpawn
@@ -185,24 +185,55 @@ ENDR
 *******************************************************************************/
 
 _LoadHighScore:
-    ld hl, sHighScore
-    ld bc, SCORE_BYTES ; (sHighScore.end - sHighScore)
-    ld de, wHighScore
+    ld hl, sHighScore0
+    ld bc, (sHighScore4.end - sHighScore0)
+    ld de, wHighScore0
     jp _LoadFromSRAM
 
 _SaveHighScore::
-    call _CompareScores
+    call _SortScores
     ret nc
 
-    ld hl, wCurrentScore
-    ld b, SCORE_BYTES ; (wCurrentScore.end - wCurrentScore)
-    ld de, wHighScore
-    call _MemCopyFast
-
-    ld hl, wHighScore
-    ld bc, SCORE_BYTES ; (wHighScore.end - wHighScore)
-    ld de, sHighScore
+    ld hl, wHighScore0
+    ld bc, (wHighScore4.end - wHighScore0)
+    ld de, sHighScore0
     jp _SaveToSRAM
+
+_DrawScoreboard::
+    xor a
+    ld hl, wHighScore0
+    ld b, (wHighScore0.end - wHighScore0)
+    ld c, "0"
+    ld de, vSCRN0.y5x7 + SCORE_DIGITS - 1
+    call _DrawBCDNumber
+    
+    xor a
+    ld hl, wHighScore1
+    ld b, (wHighScore1.end - wHighScore1)
+    ld c, "0"
+    ld de, vSCRN0.y7x7 + SCORE_DIGITS - 1
+    call _DrawBCDNumber
+    
+    xor a
+    ld hl, wHighScore2
+    ld b, (wHighScore2.end - wHighScore2)
+    ld c, "0"
+    ld de, vSCRN0.y9x7 + SCORE_DIGITS - 1
+    call _DrawBCDNumber
+    
+    xor a
+    ld hl, wHighScore3
+    ld b, (wHighScore3.end - wHighScore3)
+    ld c, "0"
+    ld de, vSCRN0.y11x7 + SCORE_DIGITS - 1
+    call _DrawBCDNumber
+    
+    xor a
+    ld hl, wHighScore4
+    ld b, (wHighScore4.end - wHighScore4)
+    ld c, "0"
+    ld de, vSCRN0.y13x7 + SCORE_DIGITS - 1
+    jp _DrawBCDNumber
 
 _ClearHUD::
     xor a
@@ -268,8 +299,8 @@ _DrawGameHUD::
     call _VideoMemCopyFast
 
     xor a
-    ld hl, wHighScore
-    ld b, (wHighScore.end - wHighScore)
+    ld hl, wHighScore0
+    ld b, (wHighScore0.end - wHighScore0)
     ld c, $00
     ld de, vSCRN1.y0x3 + SCORE_DIGITS - 1
     call _DrawBCDNumber
@@ -364,16 +395,103 @@ ENDR
     
     call _CactusIncSpawnChance
     jp _PteroIncSpawnChance
-    
-
+  
 /**
 Returns:
     - carry if high < current
     - no carry if high >= current
 */
-_CompareScores:
+_SortScores:
+    ; Compare with 4
+    ld hl, wHighScore4.end
     ld de, wCurrentScore.end
-    ld hl, wHighScore.end
+    call _CompareScores
+    ret nc
+
+    ld hl, wCurrentScore
+    ld b, (wCurrentScore.end - wCurrentScore)
+    ld de, wHighScore4
+    call _MemCopyFast
+
+    ; Compare with 3
+    ld hl, wHighScore3.end
+    ld de, wCurrentScore.end
+    call _CompareScores
+    jr nc, .done
+
+    ld hl, wHighScore3
+    ld b, (wHighScore3.end - wHighScore3)
+    ld de, wHighScore4
+    call _MemCopyFast
+    
+    ld hl, wCurrentScore
+    ld b, (wCurrentScore.end - wCurrentScore)
+    ld de, wHighScore3
+    call _MemCopyFast
+
+    ; Compare with 2
+    ld hl, wHighScore2.end
+    ld de, wCurrentScore.end
+    call _CompareScores
+    jr nc, .done
+
+    ld hl, wHighScore2
+    ld b, (wHighScore2.end - wHighScore2)
+    ld de, wHighScore3
+    call _MemCopyFast
+    
+    ld hl, wCurrentScore
+    ld b, (wCurrentScore.end - wCurrentScore)
+    ld de, wHighScore2
+    call _MemCopyFast
+
+    ; Compare with 1
+    ld hl, wHighScore1.end
+    ld de, wCurrentScore.end
+    call _CompareScores
+    jr nc, .done
+
+    ld hl, wHighScore1
+    ld b, (wHighScore1.end - wHighScore1)
+    ld de, wHighScore2
+    call _MemCopyFast
+    
+    ld hl, wCurrentScore
+    ld b, (wCurrentScore.end - wCurrentScore)
+    ld de, wHighScore1
+    call _MemCopyFast
+    
+    ; Compare with 0
+    ld hl, wHighScore0.end
+    ld de, wCurrentScore.end
+    call _CompareScores
+    jr nc, .done
+
+    ld hl, wHighScore0
+    ld b, (wHighScore0.end - wHighScore0)
+    ld de, wHighScore1
+    call _MemCopyFast
+    
+    ld hl, wCurrentScore
+    ld b, (wCurrentScore.end - wCurrentScore)
+    ld de, wHighScore0
+    call _MemCopyFast
+
+.done:
+    scf
+    ret
+
+
+/**
+Inputs:
+    - hl = high score
+    - de = current score
+
+Returns:
+    - carry if high < current
+    - no carry if high >= current
+*/
+_CompareScores:
 REPT SCORE_BYTES
     dec de
     dec hl
@@ -388,11 +506,9 @@ ENDR
 .greaterThan:           ; exit with no carry if high >= current
     scf
     ccf
+.lessThan:              ; exit with carry if high < current
     ret
 
-.lessThan:              ; exit with carry if high < current
-    scf
-    ret
 
 
 /*******************************************************************************
@@ -587,7 +703,23 @@ wCurrentScore:
     DS SCORE_BYTES
 .end:
 
-wHighScore:
+wHighScore0:
+    DS SCORE_BYTES
+.end:
+
+wHighScore1:
+    DS SCORE_BYTES
+.end:
+
+wHighScore2:
+    DS SCORE_BYTES
+.end:
+
+wHighScore3:
+    DS SCORE_BYTES
+.end:
+
+wHighScore4:
     DS SCORE_BYTES
 .end:
 
@@ -596,7 +728,23 @@ ENDSECTION
 
 SECTION "Save Data", SRAM
 
-sHighScore:
+sHighScore0:
+    DS SCORE_BYTES
+.end:
+
+sHighScore1:
+    DS SCORE_BYTES
+.end:
+
+sHighScore2:
+    DS SCORE_BYTES
+.end:
+
+sHighScore3:
+    DS SCORE_BYTES
+.end:
+
+sHighScore4:
     DS SCORE_BYTES
 .end:
 

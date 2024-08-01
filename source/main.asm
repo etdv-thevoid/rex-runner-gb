@@ -44,18 +44,19 @@ _Main::
 _MainLoop:
     di
 
-    ld hl, _StateJumpTable
     ld a, [wCurrentState]
     cp a, NUMBER_OF_STATES
     jr c, .jump
     ld a, NUMBER_OF_STATES
+    
 .jump:
+    ld hl, .jumpTable
     call _JumpTable
     jr _MainLoop
 
-_StateJumpTable:
+.jumpTable:
     DW _Menu
-    DW _Secret
+    DW _Menu
     DW _Controls
     DW _Scores
     DW _About

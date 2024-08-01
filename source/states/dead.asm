@@ -9,9 +9,10 @@ _Dead::
 
     call _DrawGameOverHUD
 
+    ld hl, STARTOF("Dead State Variables")
+    ld b, SIZEOF("Dead State Variables")
     xor a
-    ld [wDeadDelayFrameCounter], a
-    ld [wDeadButtonsEnabled], a
+    call _MemSetFast
 
     ld a, SFX_DEAD
     call _PlaySound
@@ -29,7 +30,7 @@ _DeadLoop:
                      _DeadLoop
 
     check_keys_add hKeysPressed, PADF_B
-    ld a, SFX_SCORE
+    ld a, SFX_MENU_B
     call _PlaySound
     ld a, STATE_MENU
     jp _SwitchStateToNew
@@ -42,7 +43,7 @@ _DeadLoop:
 ENDSECTION
 
 
-SECTION "Dead Variables State", WRAM0
+SECTION "Dead State Variables", WRAM0
 
 wDeadDelayFrameCounter:
     DB
