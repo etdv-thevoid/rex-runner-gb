@@ -5,7 +5,7 @@ INCLUDE "includes/charmap.inc"
 SECTION "About State", ROM0
 
 _About::
-    call _ScreenOff
+    call _ResetScreen
     
     call _LoadTilemapAbout
 
@@ -15,6 +15,12 @@ _About::
     ld b, SIZEOF("About State Variables")
     xor a
     call _MemSetFast
+
+    ld bc, _AboutVBlankHandler
+    rst _SetVBLHandler
+
+    ld a, IEF_VBLANK | IEF_TIMER
+    ldh [rIE], a
 
     ld a, WINDOW_OFF
     call _ScreenOn
@@ -37,6 +43,14 @@ _AboutLoop:
     jp _SwitchStateToPrevious
 
     check_keys_end _AboutLoop
+
+_AboutVBlankHandler:
+    call _ScanKeys
+    call _RefreshOAM
+    
+    call _RexIncFrameCounter
+
+    ret
 
 ENDSECTION
 

@@ -5,16 +5,16 @@ INCLUDE "includes/charmap.inc"
 SECTION "Menu State", ROM0
 
 _Menu::
-    call _ScreenOff
-    
+    call _ResetScreen
+
+    call _RexStand
+
     ld a, [wCurrentState]
     cp a, STATE_SECRET
     jr z, .secret
 
     call _LoadTilemapMenu
     call _LoadMonochromeColorPalette
-
-    call _RexStand
 
     jr .continue
 
@@ -25,19 +25,16 @@ _Menu::
     call _RexDead
 
 .continue:
-    ld a, [wPreviousState]
-    cp a, STATE_GAME
-    jr c, .skip
-
-    call _InitEngine
-
-.skip:
     ld hl, STARTOF("Menu State Variables")
     ld b, SIZEOF("Menu State Variables")
     xor a
     call _MemSetFast
 
-    call _ClearHUD
+    ld bc, _MenuVBlankHandler
+    rst _SetVBLHandler
+
+    ld a, IEF_VBLANK | IEF_TIMER
+    ldh [rIE], a
 
     ld a, WINDOW_OFF
     call _ScreenOn
@@ -69,6 +66,14 @@ _MenuLoop:
     jr _MenuSelectOption
 
     check_keys_end _MenuLoop
+
+_MenuVBlankHandler:
+    call _ScanKeys
+    call _RefreshOAM
+    
+    call _RexIncFrameCounter
+
+    ret
 
 
 /*******************************************************************************
@@ -185,7 +190,7 @@ _MenuSelectControls:
 _MenuSelectScores:
     ld a, SFX_MENU_A
     call _PlaySound
-    ld a, STATE_SCORES
+    ld a, STATE_SCOREBOARD
     jp _SwitchStateToNew
 
 _MenuSelectAbout:
@@ -193,6 +198,7 @@ _MenuSelectAbout:
     call _PlaySound
     ld a, STATE_ABOUT
     jp _SwitchStateToNew
+
 
 ENDSECTION
 

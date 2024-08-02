@@ -31,7 +31,7 @@ _InitSound::
     ld a, $77 
     ldh [rNR50], a
 
-    ld bc, _TimerHandler
+    ld bc, _UpdateSound
     rst _SetTIMHandler
 
     ld a, $C0 ; 64 Hz
@@ -40,7 +40,7 @@ _InitSound::
     ldh [rTAC], a
     xor a
     ldh [rTIMA], a
-
+    
     ldh a, [rIE]
     or a, IEF_TIMER
     ldh [rIE], a
@@ -50,7 +50,7 @@ _InitSound::
 
 /*******************************************************************************
 **                                                                            **
-**      PLAY SOUND FUNCTIONS                                                  **
+**      PLAY SOUND FUNCTION                                                   **
 **                                                                            **
 *******************************************************************************/
 
@@ -70,14 +70,14 @@ _PlaySound::
     ld a, [hl+]
 
     cp SOUND_CH_1
-    jp z, _InitCh1
+    jp z, .ch1
 
     cp SOUND_CH_3
-    jp z, _InitCh3
+    jp z, .ch3
 
     ret
 
-_InitCh1:
+.ch1:
     ldh a, [hSoundType]
     ldh [hSoundCh1Type], a
     
@@ -90,7 +90,7 @@ _InitCh1:
     
     ret
 
-_InitCh3:
+.ch3:
     ldh a, [hSoundType]
     ldh [hSoundCh3Type], a
     
@@ -103,14 +103,13 @@ _InitCh3:
     
     ret
 
-
 /*******************************************************************************
 **                                                                            **
 **      INTERRUPT FUNCTION                                                    **
 **                                                                            **
 *******************************************************************************/
 
-_TimerHandler:
+_UpdateSound:
     ldh a, [hSoundCh1Duration]
     or a
     jr z, .ch1

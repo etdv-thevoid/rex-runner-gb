@@ -5,7 +5,7 @@ INCLUDE "includes/charmap.inc"
 SECTION "Controls State", ROM0
 
 _Controls::
-    call _ScreenOff
+    call _ResetScreen
     
     call _LoadTilemapControls
 
@@ -15,6 +15,12 @@ _Controls::
     ld b, SIZEOF("Controls State Variables")
     xor a
     call _MemSetFast
+
+    ld bc, _ControlsVBlankHandler
+    rst _SetVBLHandler
+
+    ld a, IEF_VBLANK | IEF_TIMER
+    ldh [rIE], a
 
     ld a, WINDOW_OFF
     call _ScreenOn
@@ -50,6 +56,13 @@ _ControlsLoop:
 
     check_keys_end _ControlsLoop
 
+_ControlsVBlankHandler:
+    call _ScanKeys
+    call _RefreshOAM
+    
+    call _RexIncFrameCounter
+
+    ret
 
 ENDSECTION
 

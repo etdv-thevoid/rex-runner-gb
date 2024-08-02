@@ -13,7 +13,7 @@ SECTION "Graphics Functions", ROM0
 
 _InitGraphics::
     call _ScreenOff
-    
+
     xor a
     ld hl, xSpriteTiles
     ld bc, (xSpriteTiles.end - xSpriteTiles)
@@ -80,6 +80,7 @@ _InitGraphics::
 _LoadMonochromeColorPalette::
     ld a, DEFAULT_BG_PALETTE
 	ldh [rBGP], a
+    ld [wCurrentPalette], a
     
     ld a, DEFAULT_OBJ_PALETTE
     ldh [rOBP0], a
@@ -100,6 +101,8 @@ _LoadMonochromeColorPalette::
 _LoadMonochromeColorPaletteInverted::
     ld a, INVERTED_BG_PALETTE
 	ldh [rBGP], a
+    ld [wCurrentPalette], a
+
     ld a, INVERTED_OBJ_PALETTE
     ldh [rOBP0], a
     cpl
@@ -115,6 +118,30 @@ _LoadMonochromeColorPaletteInverted::
     xor a
     ld hl, xMonochromeOBJPaletteInverted
     jp _SetSpritePalette
+
+
+/*******************************************************************************
+**                                                                            **
+**      RESET FUNCTION                                                        **
+**                                                                            **
+*******************************************************************************/
+
+_ResetScreen::
+    call _ScreenOff
+
+    xor a
+    ldh [rSCY], a
+    ldh [rSCX], a
+    ldh [rWY], a
+    add WX_OFS
+    ldh [rWX], a
+    
+    ld hl, wShadowOAM
+    ld b, (wShadowOAM.end - wShadowOAM)
+    ld a, $00
+    call _MemSetFast
+
+    jp _RefreshOAM
 
 /*******************************************************************************
 **                                                                            **
@@ -143,10 +170,10 @@ _LoadTilemapControls::
     ld de, vSCRN0
     jp _VideoMemCopy
 
-_LoadTilemapScores::
+_LoadTilemapScoreboard::
     xor a
-    ld hl, xScoresTilemap
-    ld bc, (xScoresTilemap.end - xScoresTilemap)
+    ld hl, xScoreboardTilemap
+    ld bc, (xScoreboardTilemap.end - xScoreboardTilemap)
     ld de, vSCRN0
     jp _VideoMemCopy
 
@@ -251,8 +278,8 @@ xControlsTilemap:
     INCBIN "assets/controls.tilemap"
 .end:
 
-xScoresTilemap:
-    INCBIN "assets/scores.tilemap"
+xScoreboardTilemap:
+    INCBIN "assets/scoreboard.tilemap"
 .end:
 
 xAboutTilemap:
@@ -270,5 +297,13 @@ xBackgroundDayTilemap:
 xBackgroundNightTilemap:
     INCBIN "assets/background_night.tilemap"
 .end:
+
+ENDSECTION
+
+
+SECTION "Graphics Variables", WRAM0
+
+wCurrentPalette::
+    DB
 
 ENDSECTION

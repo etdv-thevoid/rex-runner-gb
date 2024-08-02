@@ -29,7 +29,7 @@ _Main::
     
     call _InitSound
 
-    call _InitEngine
+    call _LoadHighScores
 
     ld hl, STARTOF("Main Variables")
     ld b, SIZEOF("Main Variables")
@@ -58,11 +58,9 @@ _MainLoop:
     DW _Menu
     DW _Menu
     DW _Controls
-    DW _Scores
+    DW _Scoreboard
     DW _About
     DW _Game
-    DW _Pause
-    DW _Dead
     DW _NULL
 
 
