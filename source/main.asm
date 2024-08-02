@@ -72,14 +72,6 @@ _MainLoop:
 **                                                                            **
 *******************************************************************************/
 
-_GetStateCurrent::
-    ld a, [wCurrentState]
-    ret
-
-_GetStatePrevious::
-    ld a, [wPreviousState]
-    ret
-
 _SwitchStateToPrevious::
     ld a, [wPreviousState]
     ;fallthrough
@@ -97,10 +89,10 @@ ENDSECTION
 
 SECTION "Main Variables", WRAM0
 
-wCurrentState:
+wCurrentState::
     DB
 
-wPreviousState:
+wPreviousState::
     DB
 
 ENDSECTION

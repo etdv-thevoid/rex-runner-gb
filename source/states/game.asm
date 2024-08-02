@@ -5,7 +5,7 @@ INCLUDE "includes/charmap.inc"
 SECTION "Game State", ROM0
 
 _Game::
-    call _GetStatePrevious
+    ld a, [wPreviousState]
     cp a, STATE_PAUSE
     jr nz, .notFromPause
 
@@ -15,7 +15,7 @@ _Game::
 .notFromPause:
     call _ScreenOff
     
-    call _GetStatePrevious
+    ld a, [wPreviousState]
     cp a, STATE_DEAD
     jr nz, .notFromDead
 

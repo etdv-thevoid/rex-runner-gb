@@ -526,13 +526,13 @@ _VBlankHandler:
     ld a, WINDOW_ON
     call _ScreenOn
 
-    call _GetStateCurrent
+    ld a, [wCurrentState]
     cp a, STATE_PAUSE
     ret nc
 
     call _RexIncFrameCounter
 
-    call _GetStateCurrent
+    ld a, [wCurrentState]
     cp a, STATE_GAME
     ret nz
 

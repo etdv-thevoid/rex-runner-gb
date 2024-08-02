@@ -7,7 +7,7 @@ SECTION "Menu State", ROM0
 _Menu::
     call _ScreenOff
     
-    call _GetStateCurrent
+    ld a, [wCurrentState]
     cp a, STATE_SECRET
     jr z, .secret
 
@@ -25,7 +25,7 @@ _Menu::
     call _RexDead
 
 .continue:
-    call _GetStatePrevious
+    ld a, [wPreviousState]
     cp a, STATE_GAME
     jr c, .skip
 
@@ -138,7 +138,7 @@ _MenuDrawCursor:
 *******************************************************************************/
 
 _MenuSwitch:
-    call _GetStateCurrent
+    ld a, [wCurrentState]
     cp a, STATE_SECRET
     jr nz, .secret
 
