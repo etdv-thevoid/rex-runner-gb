@@ -551,9 +551,6 @@ ENDR
     cp a, PALETTE_SWITCH_100_DIGIT
     ret nz
     
-    ld a, SFX_SCORE
-    call _PlaySound
-    
     ld a, [wPaletteChangeFlag]
     inc a
     ld [wPaletteChangeFlag], a
@@ -602,11 +599,16 @@ _VBlankHandler:
     ld [wCurrentPalette], a
     cp a, DEFAULT_BG_PALETTE
     jr nz, .invertedPalette
+    
+    ld a, SFX_SCORE
+    call _PlaySound
     call _LoadMonochromeColorPalette
     call _LoadTilemapBackgroundDay
     jr .noPaletteChange
 
 .invertedPalette:
+    ld a, SFX_SECRET
+    call _PlaySound
     call _LoadMonochromeColorPaletteInverted
     call _LoadTilemapBackgroundNight
 
