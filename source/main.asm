@@ -44,6 +44,8 @@ _Main::
 _MainLoop:
     di
 
+    call _ScreenOff
+
     ld a, [wCurrentState]
     cp a, NUMBER_OF_STATES
     jr c, .jump

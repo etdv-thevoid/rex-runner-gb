@@ -64,75 +64,63 @@ _ScoreboardVBlankHandler:
     ret
 
 _DrawScoreboard:
-    xor a
     ld hl, wHighScore0
+
+    xor a
     ld b, SCORE_BYTES
     ld c, "0"
-    ld de, vSCRN0.y5x9 + SCORE_DIGITS - 1
+    ld de, vSCRN0.y5x7 + SCORE_DIGITS - 1
     call _DrawBCDNumber
     
     xor a
-    ld hl, wHighScore1
     ld b, SCORE_BYTES
-    ld c, "0"
-    ld de, vSCRN0.y7x9 + SCORE_DIGITS - 1
+    ld c, $00
+    ld de, vSCRN0.y7x7 + SCORE_DIGITS - 1
     call _DrawBCDNumber
     
     xor a
-    ld hl, wHighScore2
     ld b, SCORE_BYTES
-    ld c, "0"
-    ld de, vSCRN0.y9x9 + SCORE_DIGITS - 1
+    ld de, vSCRN0.y9x7 + SCORE_DIGITS - 1
     call _DrawBCDNumber
     
     xor a
-    ld hl, wHighScore3
     ld b, SCORE_BYTES
-    ld c, "0"
-    ld de, vSCRN0.y11x9 + SCORE_DIGITS - 1
+    ld de, vSCRN0.y11x7 + SCORE_DIGITS - 1
     call _DrawBCDNumber
     
     xor a
-    ld hl, wHighScore4
     ld b, SCORE_BYTES
-    ld c, "0"
-    ld de, vSCRN0.y13x9 + SCORE_DIGITS - 1
+    ld de, vSCRN0.y13x7 + SCORE_DIGITS - 1
     jp _DrawBCDNumber
 
 _DrawScoreboardHard:
-    xor a
     ld hl, wHighScore0Hard
+
+    xor a
     ld b, SCORE_BYTES
     ld c, "0"
-    ld de, vSCRN0.y5x9 + SCORE_DIGITS - 1
+    ld de, vSCRN0.y5x7 + SCORE_DIGITS - 1
     call _DrawBCDNumber
     
     xor a
-    ld hl, wHighScore1Hard
     ld b, SCORE_BYTES
-    ld c, "0"
-    ld de, vSCRN0.y7x9 + SCORE_DIGITS - 1
+    ld c, $00
+    ld de, vSCRN0.y7x7 + SCORE_DIGITS - 1
     call _DrawBCDNumber
     
     xor a
-    ld hl, wHighScore2Hard
     ld b, SCORE_BYTES
-    ld c, "0"
-    ld de, vSCRN0.y9x9 + SCORE_DIGITS - 1
+    ld de, vSCRN0.y9x7 + SCORE_DIGITS - 1
     call _DrawBCDNumber
     
     xor a
-    ld hl, wHighScore3Hard
     ld b, SCORE_BYTES
-    ld c, "0"
-    ld de, vSCRN0.y11x9 + SCORE_DIGITS - 1
+    ld de, vSCRN0.y11x7 + SCORE_DIGITS - 1
     call _DrawBCDNumber
     
     xor a
-    ld hl, wHighScore4Hard
     ld b, SCORE_BYTES
-    ld c, "0"
-    ld de, vSCRN0.y13x9 + SCORE_DIGITS - 1
+    ld de, vSCRN0.y13x7 + SCORE_DIGITS - 1
     jp _DrawBCDNumber
 
 ENDSECTION

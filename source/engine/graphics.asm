@@ -13,57 +13,58 @@ SECTION "Graphics Functions", ROM0
 
 _InitGraphics::
     call _ScreenOff
-
+    
     xor a
+    ldh [rVBK], a
+
     ld hl, xSpriteTiles
     ld bc, (xSpriteTiles.end - xSpriteTiles)
     ld de, vBLK01.0
-    call _VideoMemCopy
+    call _MemCopy
 
-    xor a
     ld hl, xBackgroundTiles
     ld bc, (xBackgroundTiles.end - xBackgroundTiles)
     ld de, vBLK01.128
-    call _VideoMemCopy
+    call _MemCopy
 
-    xor a
     ld hl, xHUDTiles
     ld bc, (xHUDTiles.end - xHUDTiles)
     ld de, vBLK21.0
-    call _VideoMemCopy
+    call _MemCopy
 
-    xor a
     ld hl, _FontTiles
     ld bc, (_FontTiles.end - _FontTiles)
     ld de, vBLK21.32
-    call _VideoMemCopyMonochrome
+    call _MemCopyMonochrome
 
-    xor a
     ld hl, vSCRN0
     ld bc, (vSCRN0.end - vSCRN0)
     ld d, " "
-    call _VideoMemSet
+    call _MemSet
     
-    xor a
     ld hl, vSCRN1
     ld bc, (vSCRN1.end - vSCRN1)
     ld d, " "
-    call _VideoMemSet
+    call _MemSet
 
     call _IsGBColor
     ret z
 
     ld a, 1
+    ldh [rVBK], a
+
     ld hl, vSCRN0
     ld bc, (vSCRN0.end - vSCRN0)
     ld d, $00
-    call _VideoMemSet
+    call _MemSet
     
-    ld a, 1
     ld hl, vSCRN1
     ld bc, (vSCRN1.end - vSCRN1)
     ld d, $00
-    call _VideoMemSet
+    call _MemSet
+
+    xor a
+    ldh [rVBK], a
 
     call _SetBackgroundPaletteBlack
     call _SetSpritePaletteWhite
@@ -150,60 +151,54 @@ _ResetScreen::
 *******************************************************************************/
 
 _LoadTilemapMenu::
-    xor a
     ld hl, xMenuTilemap
     ld bc, (xMenuTilemap.end - xMenuTilemap)
     ld de, vSCRN0
-    jp _VideoMemCopy
+    jp _MemCopy
 
 _LoadTilemapSecret::
-    xor a
     ld hl, xSecretTilemap
     ld bc, (xSecretTilemap.end - xSecretTilemap)
     ld de, vSCRN0
-    jp _VideoMemCopy
+    jp _MemCopy
 
 _LoadTilemapControls::
-    xor a
     ld hl, xControlsTilemap
     ld bc, (xControlsTilemap.end - xControlsTilemap)
     ld de, vSCRN0
-    jp _VideoMemCopy
+    jp _MemCopy
 
 _LoadTilemapScoreboard::
-    xor a
     ld hl, xScoreboardTilemap
     ld bc, (xScoreboardTilemap.end - xScoreboardTilemap)
     ld de, vSCRN0
-    jp _VideoMemCopy
+    jp _MemCopy
 
 _LoadTilemapAbout::
-    xor a
     ld hl, xAboutTilemap
     ld bc, (xAboutTilemap.end - xAboutTilemap)
     ld de, vSCRN0
-    jp _VideoMemCopy
+    jp _MemCopy
 
 _LoadTilemapBackground::
-    xor a
     ld hl, xBackgroundTilemap
     ld bc, (xBackgroundTilemap.end - xBackgroundTilemap)
-    ld de, vSCRN0.y11x0
-    jp _VideoMemCopy
+    ld de, vSCRN0
+    jp _MemCopy
 
 _LoadTilemapBackgroundDay::
     xor a
     ld hl, xBackgroundDayTilemap
-    ld bc, (xBackgroundDayTilemap.end - xBackgroundDayTilemap)
-    ld de, vSCRN0.y1x0
-    jp _VideoMemCopy
+    ld b, (xBackgroundDayTilemap.end - xBackgroundDayTilemap)
+    ld de, vSCRN0.y4x0
+    jp _VideoMemCopyFast
 
 _LoadTilemapBackgroundNight::
     xor a
     ld hl, xBackgroundNightTilemap
-    ld bc, (xBackgroundNightTilemap.end - xBackgroundNightTilemap)
-    ld de, vSCRN0.y1x0
-    jp _VideoMemCopy
+    ld b, (xBackgroundNightTilemap.end - xBackgroundNightTilemap)
+    ld de, vSCRN0.y4x0
+    jp _VideoMemCopyFast
 
 ENDSECTION
 

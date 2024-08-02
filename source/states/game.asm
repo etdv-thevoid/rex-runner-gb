@@ -79,7 +79,7 @@ _Game::
     ld bc, _LCDStatHandler
     rst _SetLCDHandler
 
-    ld a, LYC_HUD_STOP_LINE
+    ld a, LYC_PARALLAX_TOP_START_LINE
     ldh [rLYC], a
 
     ld a, STATF_LYC
@@ -127,6 +127,10 @@ _GameStateSwitch:
 
 _Play:
     call _DrawGameHUD
+
+    xor a
+    ld [wGameButtonsEnabled], a
+    ld [wGameDelayFrameCounter], a
     
     ld a, WINDOW_ON
     call _ScreenOn
@@ -137,7 +141,7 @@ _PlayLoop:
     ei
     call _WaitForVBLInterrupt
 
-    call _UpdateScore
+    call _IncreaseScore
     
     call _UpdateGameHUD
     
@@ -379,7 +383,7 @@ _CheckCollision:
     sub a, (OAM_X_OFS + COLLISION_PIXEL_OVERLAP_LEFT)
     ld e, a                     ; e = Rex left x
 
-FOR SPRITE, (NUMBER_OF_REX_SPRITES + NUMBER_OF_IGNORED_PTERO_SPRITES), OAM_COUNT
+FOR SPRITE, (NUMBER_OF_REX_SPRITES + NUMBER_OF_IGNORED_SPRITES), OAM_COUNT
     ld hl, wShadowOAM + (SPRITE * sizeof_OAM_ATTRS) + OAMA_Y
     ld a, [hl]
     sub a, COLLISION_PIXEL_OVERLAP_OBJ
@@ -503,7 +507,7 @@ _HighScoreTiles:
     DB $10, $11, " ", $00, $00, $00, $00, $00, $00
 .end:
 
-_UpdateScore:
+_IncreaseScore:
     ld a, [wScoreIncreaseDifferential]
     ld c, a
 
@@ -550,7 +554,27 @@ ENDR
     ld a, c
     cp a, PALETTE_SWITCH_100_DIGIT
     ret nz
+
+    ld a, [wCurrentPalette]
+    cpl
+    ld [wCurrentPalette], a
+
+    cp a, DEFAULT_BG_PALETTE
+    jr nz, .invertedPalette
     
+    ld a, SFX_SCORE
+    call _PlaySound
+
+    ld a, [wPaletteChangeFlag]
+    inc a
+    ld [wPaletteChangeFlag], a
+
+    jp _IncreaseSpawnChances
+
+.invertedPalette:
+    ld a, SFX_SECRET
+    call _PlaySound
+
     ld a, [wPaletteChangeFlag]
     inc a
     ld [wPaletteChangeFlag], a
@@ -577,6 +601,26 @@ _VBlankHandler:
     cp a, GAME_STATE_PAUSE
     ret nc
 
+    ld a, [wPaletteChangeFlag]
+    and a
+    jr z, .noPaletteChange
+
+    xor a
+    ld [wPaletteChangeFlag], a
+
+    ld a, [wCurrentPalette]
+    cp a, DEFAULT_BG_PALETTE
+    jr nz, .invertedPalette
+    
+    call _LoadMonochromeColorPalette
+    call _LoadTilemapBackgroundDay
+    jr .noPaletteChange
+
+.invertedPalette:
+    call _LoadMonochromeColorPaletteInverted
+    call _LoadTilemapBackgroundNight
+
+.noPaletteChange:
     call _RexIncFrameCounter
 
     ld a, [wPtero1IsSpawned]
@@ -587,32 +631,6 @@ _VBlankHandler:
     and a
     call nz, _Ptero2IncFrameCounter
 
-    ld a, [wPaletteChangeFlag]
-    and a
-    jr z, .noPaletteChange
-
-    xor a
-    ld [wPaletteChangeFlag], a
-
-    ld a, [wCurrentPalette]
-    cpl
-    ld [wCurrentPalette], a
-    cp a, DEFAULT_BG_PALETTE
-    jr nz, .invertedPalette
-    
-    ld a, SFX_SCORE
-    call _PlaySound
-    call _LoadMonochromeColorPalette
-    call _LoadTilemapBackgroundDay
-    jr .noPaletteChange
-
-.invertedPalette:
-    ld a, SFX_SECRET
-    call _PlaySound
-    call _LoadMonochromeColorPaletteInverted
-    call _LoadTilemapBackgroundNight
-
-.noPaletteChange:
     ld a, [wBaseDifficultySpeed]
     ld b, a
 
@@ -678,7 +696,7 @@ ENDR
 
 /*******************************************************************************
 **                                                                            **
-**      LCD STAT FUNCTION                                                     **
+**      LCD STAT FUNCTIONS                                                    **
 **                                                                            **
 *******************************************************************************/
 
@@ -688,19 +706,14 @@ _LCDStatHandler:
     jr z, .bottom
     cp a, LYC_PARALLAX_MIDDLE_START_LINE
     jr z, .middle
-    cp a, LYC_PARALLAX_TOP_START_LINE
-    jr z, .top
-
-    ld a, LYC_PARALLAX_TOP_START_LINE
-    ldh [rLYC], a
-    ld a, WINDOW_OFF
-    jp _ScreenOn
     
 .top:
     ld a, LYC_PARALLAX_MIDDLE_START_LINE
     ldh [rLYC], a
     ld a, [wBackgroundParallaxTop]
     ldh [rSCX], a
+    ld a, WINDOW_OFF
+    jp _ScreenOn
     ret
 
 .middle:
@@ -711,7 +724,7 @@ _LCDStatHandler:
     ret
 
 .bottom:
-    ld a, LYC_HUD_STOP_LINE
+    ld a, LYC_PARALLAX_TOP_START_LINE
     ldh [rLYC], a
     ld a, [wBackgroundParallaxBottom]
     ldh [rSCX], a

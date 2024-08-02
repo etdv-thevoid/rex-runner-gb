@@ -19,8 +19,6 @@ DEF PTERO_2_SPRITE_0            EQUS "wShadowOAM.5"
 DEF PTERO_2_SPRITE_1            EQUS "wShadowOAM.7"
 DEF PTERO_2_SPRITE_2            EQUS "wShadowOAM.9"
 
-DEF NUMBER_OF_IGNORED_PTERO_SPRITES EQU 2 ; Don't calc collision with heads
-
 /* Frame 1
     0   1   2
     0   1   2

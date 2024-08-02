@@ -5,7 +5,9 @@ INCLUDE "includes/charmap.inc"
 SECTION "Menu State", ROM0
 
 _Menu::
-    call _ResetScreen
+    ld a, [wPreviousState]
+    cp a, STATE_GAME
+    call z, _ResetScreen
 
     call _RexStand
 
