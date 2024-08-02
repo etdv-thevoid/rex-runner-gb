@@ -11,13 +11,13 @@ DEF PTERO_2_INIT_Y_POS_1        EQU 102 + OAM_Y_OFS
 
 DEF PTERO_FRAMES_MASK           EQU %00001111
 
-DEF PTERO_1_SPRITE_0            EQUS "wShadowOAM.4"
-DEF PTERO_1_SPRITE_1            EQUS "wShadowOAM.6"
-DEF PTERO_1_SPRITE_2            EQUS "wShadowOAM.8"
+DEF PTERO_1_SPRITE_0            EQUS "wShadowOAM.10"    ; collision ignored
+DEF PTERO_1_SPRITE_1            EQUS "wShadowOAM.14"    ; sprites into the lower
+DEF PTERO_1_SPRITE_2            EQUS "wShadowOAM.11"    ; slots
 
-DEF PTERO_2_SPRITE_0            EQUS "wShadowOAM.5"
-DEF PTERO_2_SPRITE_1            EQUS "wShadowOAM.7"
-DEF PTERO_2_SPRITE_2            EQUS "wShadowOAM.9"
+DEF PTERO_2_SPRITE_0            EQUS "wShadowOAM.12"
+DEF PTERO_2_SPRITE_1            EQUS "wShadowOAM.15"
+DEF PTERO_2_SPRITE_2            EQUS "wShadowOAM.13"
 
 /* Frame 1
     0   1   2

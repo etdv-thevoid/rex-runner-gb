@@ -12,7 +12,7 @@ _Game::
     xor a
     call _MemSetFast
     
-    call _InitGameOverHUD
+    call _InitGameOver
 
     ld a, [wPreviousState]
     cp a, STATE_SECRET
@@ -55,7 +55,6 @@ _Game::
     ld a, CACTUS_INIT_SPAWN_CHANCE_HARD
     ld [wCactusSpawnChance], a
 
-    call _InitCactus1
     call _InitCactus2
     call _InitCactus3
     call _InitCactus4
@@ -65,10 +64,13 @@ _Game::
     ld a, PTERO_INIT_SPAWN_CHANCE_HARD
     ld [wPteroSpawnChance], a
 
-    call _InitPtero1
     call _InitPtero2
+    
+    ld a, METEOR_INIT_SPAWN_CHANCE_HARD
+    ld [wMeteorSpawnChance], a
 
-    ;call _InitMeteor
+    call _InitMeteor1
+    call _InitMeteor2
 
 .continue:
     call _RexJumpFull
@@ -290,15 +292,21 @@ _IncreaseSpawnChances:
     add a, PTERO_SPAWN_INCREMENT
     ld [wPteroSpawnChance], a
     cp a, PTERO_MAX_SPAWN_CHANCE
-    ret c
+    jr c, .meteor
     ld a, PTERO_MAX_SPAWN_CHANCE
     ld [wPteroSpawnChance], a
 
+.meteor:
+    
     ret
 
 
 ; Try to spawn an enemy
 _SpawnEnemies:
+    ld a, [wPreviousState]
+    cp a, STATE_SECRET
+    jr z, .secret
+
     call _GetRandom
     and %00000111
     cp a, NUMBER_OF_OBJECTS
@@ -317,6 +325,28 @@ _SpawnEnemies:
     DW _SpawnCactus5
     DW _SpawnCactus6
     DW _SpawnPtero1
+    DW _SpawnPtero2
+    DW _NULL
+
+.secret:
+    call _GetRandom
+    and %00000111
+    cp a, NUMBER_OF_OBJECTS
+    jr c, .jump2
+    ld a, NUMBER_OF_OBJECTS
+    
+.jump2:
+    ld hl, .jumpTable2
+    jp _JumpTable
+
+.jumpTable2:
+    DW _SpawnMeteor1
+    DW _SpawnCactus2
+    DW _SpawnCactus3
+    DW _SpawnCactus4
+    DW _SpawnCactus5
+    DW _SpawnCactus6
+    DW _SpawnMeteor2
     DW _SpawnPtero2
     DW _NULL
 
@@ -353,6 +383,14 @@ _AnimateEnemies:
     ld a, [wPtero2IsSpawned]
     and a
     call nz, _AnimatePtero2
+    
+    ld a, [wMeteor1IsSpawned]
+    and a
+    call nz, _AnimateMeteor1
+
+    ld a, [wMeteor2IsSpawned]
+    and a
+    call nz, _AnimateMeteor2
 
     ret
 
@@ -420,33 +458,8 @@ ENDR
 **                                                                            **
 *******************************************************************************/
 
-_InitGameOverHUD:
-    ld hl, {GAME_OVER_SPRITE_0}
-    ld a, OFFSCREEN_SPRITE_Y_POS
-    ld [hl+], a
-    ld a, GAME_OVER_X_POS_0
-    ld [hl+], a
-    ld a, GAME_OVER_SPRITE_0_TILE
-    ld [hl], a
-
-    ld hl, {GAME_OVER_SPRITE_1}
-    ld a, OFFSCREEN_SPRITE_Y_POS
-    ld [hl+], a
-    ld a, GAME_OVER_X_POS_1
-    ld [hl+], a
-    ld a, GAME_OVER_SPRITE_1_TILE
-    ld [hl], a
-
-    ret
-
 _DrawGameOverHUD:
-    ld hl, {GAME_OVER_SPRITE_0}
-    ld a, GAME_OVER_Y_POS_0
-    ld [hl], a
-
-    ld hl, {GAME_OVER_SPRITE_1}
-    ld a, GAME_OVER_Y_POS_0
-    ld [hl], a
+    call _SpawnGameOver
 
     xor a
     ld hl, _GameOverString
@@ -786,6 +799,9 @@ wCactusSpawnChance::
     DB
 
 wPteroSpawnChance::
+    DB
+
+wMeteorSpawnChance::
     DB
 
 ENDSECTION

@@ -4,7 +4,6 @@ INCLUDE "includes/charmap.inc"
 
 SECTION FRAGMENT "Cactus Functions", ROM0
 
-; Initializes Cactus 6
 _InitCactus6::
     xor a
     ld [wCactus6IsSpawned], a

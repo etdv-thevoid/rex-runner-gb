@@ -52,6 +52,9 @@ DEF OBJECT_PTERO_1          RB 1 ; $06
 DEF OBJECT_PTERO_2          RB 1 ; $07
 DEF NUMBER_OF_OBJECTS       RB 0 ; $08
 
+DEF OBJECT_METEOR_1     EQU OBJECT_CACTUS_1
+DEF OBJECT_METEOR_2     EQU OBJECT_PTERO_1
+
 
 INCLUDE "includes/objects/cactus.inc"
 INCLUDE "includes/objects/ptero.inc"

@@ -4,7 +4,6 @@ INCLUDE "includes/charmap.inc"
 
 SECTION FRAGMENT "Cactus Functions", ROM0
 
-; Initializes Cactus 4
 _InitCactus4::
     xor a
     ld [wCactus4IsSpawned], a
@@ -17,13 +16,13 @@ _InitCactus4::
     ld a, CACTUS_TYPE_4_SPRITE_0_TILE
     ld [hl], a
     
-    ld hl, {CACTUS_TYPE_4_SPRITE_1}
-    ld a, OFFSCREEN_SPRITE_Y_POS + META_SPRITE_ROW_0_Y
-    ld [hl+], a
-    ld a, OFFSCREEN_SPRITE_X_POS + META_SPRITE_COL_1_X
-    ld [hl+], a
-    ld a, CACTUS_TYPE_4_SPRITE_1_TILE
-    ld [hl], a
+    ; ld hl, {CACTUS_TYPE_4_SPRITE_1}
+    ; ld a, OFFSCREEN_SPRITE_Y_POS + META_SPRITE_ROW_0_Y
+    ; ld [hl+], a
+    ; ld a, OFFSCREEN_SPRITE_X_POS + META_SPRITE_COL_1_X
+    ; ld [hl+], a
+    ; ld a, CACTUS_TYPE_4_SPRITE_1_TILE
+    ; ld [hl], a
     
     ld hl, {CACTUS_TYPE_4_SPRITE_2}
     ld a, OFFSCREEN_SPRITE_Y_POS + META_SPRITE_ROW_2_Y
@@ -66,9 +65,9 @@ _SpawnCactus4::
     ld a, GROUND_LEVEL_Y_POS_OFF
     ld [hl], a
     
-    ld hl, {CACTUS_TYPE_4_SPRITE_1} + OAMA_Y
-    ld a, GROUND_LEVEL_Y_POS_OFF
-    ld [hl], a
+    ; ld hl, {CACTUS_TYPE_4_SPRITE_1} + OAMA_Y
+    ; ld a, GROUND_LEVEL_Y_POS_OFF
+    ; ld [hl], a
     
     ld hl, {CACTUS_TYPE_4_SPRITE_2} + OAMA_Y
     ld a, GROUND_LEVEL_Y_POS_OFF + META_SPRITE_ROW_2_Y
@@ -100,10 +99,10 @@ _AnimateCactus4::
     sub a, b
     ld [hl], a
     
-    ld hl, {CACTUS_TYPE_4_SPRITE_1} + OAMA_X
-    ld a, [hl]
-    sub a, b
-    ld [hl], a
+    ; ld hl, {CACTUS_TYPE_4_SPRITE_1} + OAMA_X
+    ; ld a, [hl]
+    ; sub a, b
+    ; ld [hl], a
     
     ld hl, {CACTUS_TYPE_4_SPRITE_2} + OAMA_X
     ld a, [hl]

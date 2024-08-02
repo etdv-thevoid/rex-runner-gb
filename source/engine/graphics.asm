@@ -248,11 +248,11 @@ xMonochromeBGPaletteInverted:
 .end:
 
 xMonochromeOBJPalette:
-    rgb_palette #DFDFDF, #DFDFDF, #9F9F9F, #202020
+    rgb_palette #DFDFDF, #DFDFDF, #606060, #202020
 .end:
 
 xMonochromeOBJPaletteInverted:
-    rgb_palette #202020, #202020, #606060, #DFDFDF
+    rgb_palette #202020, #202020, #9F9F9F, #DFDFDF
 .end:
 
 /*******************************************************************************
