@@ -34,7 +34,7 @@ _Scoreboard::
     ldh [rIE], a
 
     ld a, WINDOW_OFF
-    call _ScreenOn
+    ldh [rLCDC], a
 
     ; fallthrough
     

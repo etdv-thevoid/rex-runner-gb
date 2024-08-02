@@ -34,7 +34,7 @@ _InitSound::
     ld bc, _UpdateSound
     rst _SetTIMHandler
 
-    ld a, $C4 ; 60 Hz
+    ld a, $C0 ; 64 Hz
     ldh [rTMA], a
     ld a, TACF_START|TACF_4KHZ
     ldh [rTAC], a

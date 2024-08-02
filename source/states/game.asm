@@ -76,7 +76,7 @@ _Game::
     ld bc, _VBlankHandler
     rst _SetVBLHandler
 
-    ld bc, _LCDStatHandler
+    ld bc, _LCDStatHandlerParallaxTop
     rst _SetLCDHandler
 
     ld a, LYC_PARALLAX_TOP_START_LINE
@@ -133,7 +133,7 @@ _Play:
     ld [wGameDelayFrameCounter], a
     
     ld a, WINDOW_ON
-    call _ScreenOn
+    ldh [rLCDC], a
 
     ; fallthrough
 
@@ -194,7 +194,7 @@ _Pause:
     ld [wGameDelayFrameCounter], a
     
     ld a, WINDOW_ON
-    call _ScreenOn
+    ldh [rLCDC], a
 
     ; fallthrough
 
@@ -595,7 +595,7 @@ _VBlankHandler:
     xor a
     ldh [rSCX], a
     ld a, WINDOW_ON
-    call _ScreenOn
+    ldh [rLCDC], a
 
     ld a, [wGameState]
     cp a, GAME_STATE_PAUSE
@@ -700,35 +700,37 @@ ENDR
 **                                                                            **
 *******************************************************************************/
 
-_LCDStatHandler:
-    ldh a, [rLYC]
-    cp a, LYC_PARALLAX_BOTTOM_START_LINE
-    jr z, .bottom
-    cp a, LYC_PARALLAX_MIDDLE_START_LINE
-    jr z, .middle
-    
-.top:
-    ld a, LYC_PARALLAX_MIDDLE_START_LINE
-    ldh [rLYC], a
+_LCDStatHandlerParallaxTop:
     ld a, [wBackgroundParallaxTop]
     ldh [rSCX], a
     ld a, WINDOW_OFF
-    jp _ScreenOn
-    ret
-
-.middle:
-    ld a, LYC_PARALLAX_BOTTOM_START_LINE
+    ldh [rLCDC], a
+    
+    ld a, LYC_PARALLAX_MIDDLE_START_LINE
     ldh [rLYC], a
+    
+    ld bc, _LCDStatHandlerParallaxMiddle
+    jp _SetLCDHandler
+
+_LCDStatHandlerParallaxMiddle:
     ld a, [wBackgroundParallaxMiddle]
     ldh [rSCX], a
-    ret
-
-.bottom:
-    ld a, LYC_PARALLAX_TOP_START_LINE
+    
+    ld a, LYC_PARALLAX_BOTTOM_START_LINE
     ldh [rLYC], a
+    
+    ld bc, _LCDStatHandlerParallaxBottom
+    jp _SetLCDHandler
+
+_LCDStatHandlerParallaxBottom:
     ld a, [wBackgroundParallaxBottom]
     ldh [rSCX], a
-    ret
+    
+    ld a, LYC_PARALLAX_TOP_START_LINE
+    ldh [rLYC], a
+    
+    ld bc, _LCDStatHandlerParallaxTop
+    jp _SetLCDHandler
 
 ENDSECTION
 
