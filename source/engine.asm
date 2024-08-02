@@ -204,35 +204,35 @@ _DrawScoreboard::
     ld hl, wHighScore0
     ld b, (wHighScore0.end - wHighScore0)
     ld c, "0"
-    ld de, vSCRN0.y5x7 + SCORE_DIGITS - 1
+    ld de, vSCRN0.y5x9 + SCORE_DIGITS - 1
     call _DrawBCDNumber
     
     xor a
     ld hl, wHighScore1
     ld b, (wHighScore1.end - wHighScore1)
     ld c, "0"
-    ld de, vSCRN0.y7x7 + SCORE_DIGITS - 1
+    ld de, vSCRN0.y7x9 + SCORE_DIGITS - 1
     call _DrawBCDNumber
     
     xor a
     ld hl, wHighScore2
     ld b, (wHighScore2.end - wHighScore2)
     ld c, "0"
-    ld de, vSCRN0.y9x7 + SCORE_DIGITS - 1
+    ld de, vSCRN0.y9x9 + SCORE_DIGITS - 1
     call _DrawBCDNumber
     
     xor a
     ld hl, wHighScore3
     ld b, (wHighScore3.end - wHighScore3)
     ld c, "0"
-    ld de, vSCRN0.y11x7 + SCORE_DIGITS - 1
+    ld de, vSCRN0.y11x9 + SCORE_DIGITS - 1
     call _DrawBCDNumber
     
     xor a
     ld hl, wHighScore4
     ld b, (wHighScore4.end - wHighScore4)
     ld c, "0"
-    ld de, vSCRN0.y13x7 + SCORE_DIGITS - 1
+    ld de, vSCRN0.y13x9 + SCORE_DIGITS - 1
     jp _DrawBCDNumber
 
 _ClearHUD::
