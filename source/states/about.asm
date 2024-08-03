@@ -7,14 +7,12 @@ SECTION "About State", ROM0
 _About::
     call _ResetScreen
     
-    call _LoadTilemapAbout
-
-    call _RexStand
-    
     ld hl, STARTOF("About State Variables")
     ld b, SIZEOF("About State Variables")
     xor a
     call _MemSetFast
+
+    call _LoadTilemapAbout
 
     ld bc, _AboutVBlankHandler
     rst _SetVBLHandler

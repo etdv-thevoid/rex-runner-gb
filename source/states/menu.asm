@@ -6,7 +6,12 @@ SECTION "Menu State", ROM0
 
 _Menu::
     call _ResetScreen
-
+    
+    ld hl, STARTOF("Menu State Variables")
+    ld b, SIZEOF("Menu State Variables")
+    xor a
+    call _MemSetFast
+    
     call _RexStand
 
     ld a, [wCurrentState]
@@ -25,11 +30,6 @@ _Menu::
     call _RexDead
 
 .continue:
-    ld hl, STARTOF("Menu State Variables")
-    ld b, SIZEOF("Menu State Variables")
-    xor a
-    call _MemSetFast
-
     ld bc, _MenuVBlankHandler
     rst _SetVBLHandler
 

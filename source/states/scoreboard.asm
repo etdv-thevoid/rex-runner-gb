@@ -7,6 +7,11 @@ SECTION "Scoreboard State", ROM0
 _Scoreboard::
     call _ResetScreen
     
+    ld hl, STARTOF("Scoreboard State Variables")
+    ld b, SIZEOF("Scoreboard State Variables")
+    xor a
+    call _MemSetFast
+    
     call _LoadTilemapScoreboard
 
     ld a, [wPreviousState]
@@ -14,19 +19,12 @@ _Scoreboard::
     jr z, .secret
 
     call _DrawScoreboard
-    jr .skip
+    jr .continue
 
 .secret:
     call _DrawScoreboardHard
 
-.skip:
-    call _RexStand
-    
-    ld hl, STARTOF("Scoreboard State Variables")
-    ld b, SIZEOF("Scoreboard State Variables")
-    xor a
-    call _MemSetFast
-
+.continue:
     ld bc, _ScoreboardVBlankHandler
     rst _SetVBLHandler
 

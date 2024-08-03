@@ -21,7 +21,7 @@ DEF NUMBER_OF_STATES        RB 0 ; $06
 *******************************************************************************/
 
 INCLUDE "includes/engine/graphics.inc"
-INCLUDE "includes/engine/score.inc"
+INCLUDE "includes/engine/save_data.inc"
 INCLUDE "includes/engine/sound.inc"
 
 
@@ -54,6 +54,7 @@ DEF NUMBER_OF_OBJECTS       RB 0 ; $08
 
 DEF OBJECT_METEOR_1     EQU OBJECT_CACTUS_1
 DEF OBJECT_METEOR_2     EQU OBJECT_PTERO_1
+DEF OBJECT_PTERO_3      EQU OBJECT_PTERO_2
 
 
 INCLUDE "includes/objects/cactus.inc"

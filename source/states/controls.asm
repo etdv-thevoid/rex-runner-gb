@@ -7,14 +7,12 @@ SECTION "Controls State", ROM0
 _Controls::
     call _ResetScreen
     
-    call _LoadTilemapControls
-
-    call _RexStand
-    
     ld hl, STARTOF("Controls State Variables")
     ld b, SIZEOF("Controls State Variables")
     xor a
     call _MemSetFast
+    
+    call _LoadTilemapControls
 
     ld bc, _ControlsVBlankHandler
     rst _SetVBLHandler

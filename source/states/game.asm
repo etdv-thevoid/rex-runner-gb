@@ -11,7 +11,8 @@ _Game::
     ld b, SIZEOF("Game State Variables")
     xor a
     call _MemSetFast
-    
+
+    call _RexJumpFull
     call _InitGameOver
 
     ld a, [wPreviousState]
@@ -64,7 +65,7 @@ _Game::
     ld a, PTERO_INIT_SPAWN_CHANCE_HARD
     ld [wPteroSpawnChance], a
 
-    call _InitPtero2
+    call _InitPtero3
     
     ld a, METEOR_INIT_SPAWN_CHANCE_HARD
     ld [wMeteorSpawnChance], a
@@ -73,8 +74,6 @@ _Game::
     call _InitMeteor2
 
 .continue:
-    call _RexJumpFull
-
     ld bc, _VBlankHandler
     rst _SetVBLHandler
 
@@ -297,6 +296,13 @@ _IncreaseSpawnChances:
     ld [wPteroSpawnChance], a
 
 .meteor:
+    ld a, [wMeteorSpawnChance]
+    add a, METEOR_SPAWN_INCREMENT
+    ld [wMeteorSpawnChance], a
+    cp a, METEOR_MAX_SPAWN_CHANCE
+    ret c
+    ld a, METEOR_MAX_SPAWN_CHANCE
+    ld [wMeteorSpawnChance], a
     
     ret
 
@@ -347,7 +353,7 @@ _SpawnEnemies:
     DW _SpawnCactus5
     DW _SpawnCactus6
     DW _SpawnMeteor2
-    DW _SpawnPtero2
+    DW _SpawnPtero3
     DW _NULL
 
 ; Animates all on-screen enemy objects
@@ -383,6 +389,10 @@ _AnimateEnemies:
     ld a, [wPtero2IsSpawned]
     and a
     call nz, _AnimatePtero2
+    
+    ld a, [wPtero3IsSpawned]
+    and a
+    call nz, _AnimatePtero3
     
     ld a, [wMeteor1IsSpawned]
     and a
@@ -468,7 +478,7 @@ _DrawGameOverHUD:
     jp _VideoMemCopyFast
 
 _GameOverString:
-    DB $18, $19, $1A, $1B, " ", $1C, $1D, $1E, $1F
+    DB $18, $19, $1A, $1B, " ", $1C, $1D, $1E, $1F, " "
 .end:
 
 _DrawPauseHUD:
@@ -479,7 +489,7 @@ _DrawPauseHUD:
     jp _VideoMemCopyFast
 
 _PausedString:
-    DB " ", $12, $13, $14, $15, $16, $17, " ", " "
+    DB " ", $12, $13, $14, $15, $16, $17, " ", " ", " "
 .end:
 
 _DrawGameHUD:
@@ -517,7 +527,7 @@ _UpdateGameHUD:
     jp _DrawBCDNumber
 
 _HighScoreTiles:
-    DB $10, $11, " ", $00, $00, $00, $00, $00, $00
+    DB $10, $11, " ", $00, $00, $00, $00, $00, $00, " "
 .end:
 
 _IncreaseScore:
@@ -643,6 +653,10 @@ _VBlankHandler:
     ld a, [wPtero2IsSpawned]
     and a
     call nz, _Ptero2IncFrameCounter
+    
+    ld a, [wPtero3IsSpawned]
+    and a
+    call nz, _Ptero3IncFrameCounter
 
     ld a, [wBaseDifficultySpeed]
     ld b, a
@@ -802,6 +816,39 @@ wPteroSpawnChance::
     DB
 
 wMeteorSpawnChance::
+    DB
+
+wCactus1IsSpawned::
+    DB
+
+wCactus2IsSpawned::
+    DB
+
+wCactus3IsSpawned::
+    DB
+
+wCactus4IsSpawned::
+    DB
+
+wCactus5IsSpawned::
+    DB
+
+wCactus6IsSpawned::
+    DB
+
+wPtero1IsSpawned::
+    DB
+
+wPtero2IsSpawned::
+    DB
+
+wPtero3IsSpawned::
+    DB
+
+wMeteor1IsSpawned::
+    DB
+
+wMeteor2IsSpawned::
     DB
 
 ENDSECTION

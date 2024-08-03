@@ -137,12 +137,11 @@ _ResetScreen::
     add WX_OFS
     ldh [rWX], a
     
-    ld hl, wShadowOAM
-    ld b, (wShadowOAM.end - wShadowOAM)
+    ; Clear every object except Rex
+    ld hl, {FIRST_NON_REX_SPRITE}
+    ld b, (wShadowOAM.end - {FIRST_NON_REX_SPRITE})
     ld a, $00
-    call _MemSetFast
-
-    jp _RefreshOAM
+    jp _MemSetFast
 
 /*******************************************************************************
 **                                                                            **

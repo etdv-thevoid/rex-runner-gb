@@ -52,6 +52,8 @@ _SpawnMeteor1::
     call _GetRandom
     and a, METEOR_RANDOM_X_MASK
     ld b, a
+    bit 7, c
+    jr nz, .left
 
     ld hl, {METEOR_1_SPRITE_0} + OAMA_X
     ld a, [hl]
@@ -68,6 +70,25 @@ _SpawnMeteor1::
     add a, b
     ld [hl], a
 
+    jr .continue
+
+.left:
+    ld hl, {METEOR_1_SPRITE_0} + OAMA_X
+    ld a, [hl]
+    sub a, b
+    ld [hl], a
+
+    ld hl, {METEOR_1_SPRITE_1} + OAMA_X
+    ld a, [hl]
+    sub a, b
+    ld [hl], a
+    
+    ld hl, {METEOR_1_SPRITE_2} + OAMA_X
+    ld a, [hl]
+    sub a, b
+    ld [hl], a
+
+.continue:
     ld a, [wMeteor1IsSpawned]
     ld a, TRUE
     ld [wMeteor1IsSpawned], a
@@ -119,14 +140,5 @@ _AnimateMeteor1::
     jp c, _InitMeteor1
 
     ret
-
-
-ENDSECTION
-
-
-SECTION FRAGMENT "Meteor Variables", WRAM0
-
-wMeteor1IsSpawned::
-    DB
 
 ENDSECTION
