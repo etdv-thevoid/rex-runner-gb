@@ -34,5 +34,4 @@ _SpawnGameOver::
 
     ret
 
-
 ENDSECTION

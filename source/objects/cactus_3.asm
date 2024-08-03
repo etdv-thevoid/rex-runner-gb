@@ -109,11 +109,3 @@ _AnimateCactus3::
     ret
 
 ENDSECTION
-
-
-SECTION FRAGMENT "Cactus Variables", WRAM0
-
-wCactus3IsSpawned::
-    DB
-
-ENDSECTION

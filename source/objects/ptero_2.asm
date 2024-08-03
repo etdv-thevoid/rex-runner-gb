@@ -184,9 +184,6 @@ ENDSECTION
 
 SECTION FRAGMENT "Ptero Variables", WRAM0
 
-wPtero2IsSpawned::
-    DB
-
 wPtero2AnimationFrameCounter:
     DB
 

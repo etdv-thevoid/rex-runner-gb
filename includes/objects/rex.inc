@@ -26,6 +26,8 @@ DEF REX_SPRITE_2                EQUS "wShadowOAM.2"
 DEF REX_SPRITE_3                EQUS "wShadowOAM.3"
 DEF NUMBER_OF_REX_SPRITES       EQU 4
 
+DEF FIRST_NON_REX_SPRITE        EQUS "wShadowOAM.4"
+
 /* Default Sprite
         2   
         2   3
