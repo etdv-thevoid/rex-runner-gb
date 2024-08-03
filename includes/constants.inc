@@ -21,7 +21,7 @@ DEF NUMBER_OF_STATES        RB 0 ; $06
 *******************************************************************************/
 
 INCLUDE "includes/engine/graphics.inc"
-INCLUDE "includes/engine/score.inc"
+INCLUDE "includes/engine/save_data.inc"
 INCLUDE "includes/engine/sound.inc"
 
 
