@@ -52,7 +52,7 @@ _SpawnMeteor1::
     call _GetRandom
     and a, METEOR_RANDOM_X_MASK
     ld b, a
-    bit 7, c
+    bit 1, c
     jr nz, .left
 
     ld hl, {METEOR_1_SPRITE_0} + OAMA_X
