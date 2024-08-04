@@ -7,8 +7,8 @@ SECTION "Menu State", ROM0
 _Menu::
     call _ResetScreen
     
-    ld hl, STARTOF("Menu State Variables")
-    ld b, SIZEOF("Menu State Variables")
+    ld hl, STARTOF("Menu State Variables") + 1 ; don't clear cursor position
+    ld b, SIZEOF("Menu State Variables") - 1
     xor a
     call _MemSetFast
     
@@ -143,6 +143,9 @@ _MenuDrawCursor:
 *******************************************************************************/
 
 _MenuSwitch:
+    xor a
+    ld [wMenuCursorSelection], a
+
     ld a, [wCurrentState]
     cp a, STATE_SECRET
     jr nz, .secret
@@ -207,6 +210,8 @@ SECTION "Menu State Variables", WRAM0
 
 wMenuCursorSelection:
     DB
+
+ASSERT wMenuCursorSelection == STARTOF("Menu State Variables")
 
 wMenuDelayFrameCounter:
     DB
