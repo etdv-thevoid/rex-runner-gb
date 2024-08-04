@@ -199,6 +199,62 @@ _LoadTilemapBackgroundNight::
     ld de, vSCRN0.y4x0
     jp _VideoMemCopyFast
 
+_LoadTilemapSun::
+    xor a
+    ld hl, xSunTilemapRow0
+    ld b, (xSunTilemapRow0.end - xSunTilemapRow0)
+    ld de, vSCRN1.y1x10
+    call _VideoMemCopyFast
+    
+    xor a
+    ld hl, xSunTilemapRow1
+    ld b, (xSunTilemapRow1.end - xSunTilemapRow1)
+    ld de, vSCRN1.y2x10
+    call _VideoMemCopyFast
+    
+    xor a
+    ld hl, xSunTilemapRow2
+    ld b, (xSunTilemapRow2.end - xSunTilemapRow2)
+    ld de, vSCRN1.y3x10
+    jp _VideoMemCopyFast
+
+_LoadTilemapMoon::
+    xor a
+    ld hl, xMoonTilemapRow0
+    ld b, (xMoonTilemapRow0.end - xMoonTilemapRow0)
+    ld de, vSCRN1.y1x10
+    call _VideoMemCopyFast
+    
+    xor a
+    ld hl, xMoonTilemapRow1
+    ld b, (xMoonTilemapRow1.end - xMoonTilemapRow1)
+    ld de, vSCRN1.y2x10
+    call _VideoMemCopyFast
+    
+    xor a
+    ld hl, xMoonTilemapRow2
+    ld b, (xMoonTilemapRow2.end - xMoonTilemapRow2)
+    ld de, vSCRN1.y3x10
+    jp _VideoMemCopyFast
+
+_ClearTilemapSunMoon::
+    ld d, " "
+
+    xor a
+    ld hl, vSCRN1.y1x10
+    ld b, (xSunTilemapRow0.end - xSunTilemapRow0)
+    call _VideoMemSetFast
+    
+    xor a
+    ld hl, vSCRN1.y2x10
+    ld b, (xSunTilemapRow1.end - xSunTilemapRow1)
+    call _VideoMemSetFast
+    
+    xor a
+    ld hl, vSCRN1.y3x10
+    ld b, (xSunTilemapRow2.end - xSunTilemapRow2)
+    jp _VideoMemSetFast
+
 ENDSECTION
 
 
@@ -290,6 +346,30 @@ xBackgroundDayTilemap:
 
 xBackgroundNightTilemap:
     INCBIN "assets/background_night.tilemap"
+.end:
+
+xSunTilemapRow0:
+    DB $A0, $A1, $A2
+.end:
+
+xSunTilemapRow1:
+    DB $B0, $B1, $B2
+.end:
+
+xSunTilemapRow2:
+    DB $C0, $C1, $C2
+.end:
+
+xMoonTilemapRow0:
+    DB $A3, $A4, $A5
+.end:
+
+xMoonTilemapRow1:
+    DB $B3, $B4, $B5
+.end:
+
+xMoonTilemapRow2:
+    DB $C3, $C4, $C5
 .end:
 
 ENDSECTION

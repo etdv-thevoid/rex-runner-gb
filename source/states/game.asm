@@ -22,6 +22,7 @@ _Game::
 .init:
     call _LoadTilemapBackground
     call _LoadTilemapBackgroundDay
+    call _ClearTilemapSunMoon
     call _LoadMonochromeColorPalette
     
     ld a, INITIAL_DIFFICULTY_SPEED
@@ -48,6 +49,7 @@ _Game::
 .secret:
     call _LoadTilemapBackground
     call _LoadTilemapBackgroundNight
+    call _LoadTilemapSun
     call _LoadMonochromeColorPaletteInverted
     
     ld a, INITIAL_DIFFICULTY_SPEED_HARD
@@ -637,11 +639,22 @@ _VBlankHandler:
     
     call _LoadMonochromeColorPalette
     call _LoadTilemapBackgroundDay
+    call _ClearTilemapSunMoon
     jr .noPaletteChange
 
 .invertedPalette:
     call _LoadMonochromeColorPaletteInverted
     call _LoadTilemapBackgroundNight
+
+    ld a, [wPreviousState]
+    cp a, STATE_SECRET
+    jr z, .secret
+
+    call _LoadTilemapMoon
+    jr .noPaletteChange
+
+.secret:
+    call _LoadTilemapSun
 
 .noPaletteChange:
     call _RexIncFrameCounter
