@@ -41,6 +41,9 @@ _ControlsLoop:
     check_keys_add hKeysReleased, PADF_DOWN
     call _RexDuckOff
 
+    check_keys_add hKeysPressed, PADF_A
+    call _RexPrimeJump
+
     check_keys_add hKeysHeld, PADF_A
     call _RexChargeJump
 

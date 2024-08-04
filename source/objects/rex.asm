@@ -147,6 +147,12 @@ _RexRun::
 
     jp _RexSetSpriteRunning
 
+; Make Rex prime a jump charge
+_RexPrimeJump::
+    xor a
+    ld [wRexJumpVelocityCharge], a
+    ret
+
 ; Make Rex charge up a jump. Releases after a set amount of frames
 _RexChargeJump::
     ld a, [wRexJumpVelocityCharge]
@@ -177,7 +183,7 @@ _RexJump::
     ld [wRexJumpVelocity], a
 
     xor a
-    ld a, [wRexJumpVelocityCharge]
+    ld [wRexJumpVelocityCharge], a
 
     ld a, REX_ANIM_JUMPING
     ld [wRexAnimationState], a
