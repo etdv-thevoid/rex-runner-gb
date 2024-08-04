@@ -6,25 +6,7 @@ SECTION "Rex Functions", ROM0
 
 ; Initializes Rex object
 _InitRex::
-; Makes Rex stand
-_RexStand::
-    ld hl, STARTOF("Rex Variables")
-    ld b, SIZEOF("Rex Variables")
-    xor a
-    call _MemSetFast
-
-    ld a, REX_ANIM_STANDING
-    ld [wRexAnimationState], a
-
-    call _RexSetSpriteDefault
-    ; fallthrough
-
-; Randomizes the frame delay for blinking
-_RexRandomBlinkDelay:
-    call _GetRandom
-    or a, REX_BLINK_DELAY_MASK
-    ld [wRexAnimationDelay], a
-    ret
+    jp _RexStand
 
 ; Increments Rex's internal animation frame counter
 _RexIncFrameCounter::
@@ -46,14 +28,17 @@ _RexIncFrameCounter::
     ret c
 
     cp a, REX_ANIM_FAST_FALLING
+    ld d, GRAVITY_VALUE_FAST_FALL
+    jr z, .falling
+    cp a, REX_ANIM_FALLING
+    ld d, GRAVITY_VALUE_FALL
+    jr z, .falling
     ld d, GRAVITY_VALUE
-    jr nz, .notFastFalling
-    ld d, GRAVITY_VALUE_FAST
 
-.notFastFalling:
+.falling:
     ld a, [wRexJumpVelocity]
     bit 7, a
-    jr z, .notFalling
+    jr z, .jumping
 
     ld a, [wRexJumpVelocity]
     sub a, d
@@ -66,7 +51,7 @@ _RexIncFrameCounter::
     ld [wRexJumpVelocity], a
     jr .complementAccel
 
-.notFalling:
+.jumping:
     ld a, [wRexJumpVelocity]
     sub a, d
     ld [wRexJumpVelocity], a
@@ -107,11 +92,6 @@ ENDR
 
     ret
 
-; Get Rex's current animation state
-_RexGetAnimationState::
-    ld a, [wRexAnimationState]
-    ret
-
 
 /*******************************************************************************
 **                                                                            **
@@ -131,14 +111,26 @@ _RexDead::
 
     jp _RexSetSpriteDead
 
-; Make Rex run
-_RexRun::
-    ld a, [wRexAnimationState]
-    cp a, REX_ANIM_RUNNING
-    ret z
-
+; Makes Rex stand
+_RexStand::
     ld hl, STARTOF("Rex Variables")
-    ld b, SIZEOF("Rex Variables") - 1 ; dont clear jump charge
+    ld b, SIZEOF("Rex Variables")
+    xor a
+    call _MemSetFast
+    
+    call _GetRandom
+    or a, REX_BLINK_DELAY_MASK
+    ld [wRexAnimationDelay], a
+    
+    ld a, REX_ANIM_STANDING
+    ld [wRexAnimationState], a
+
+    jp _RexSetSpriteDefault
+
+; Makes Rex run
+_RexRun::
+    ld hl, STARTOF("Rex Variables")
+    ld b, SIZEOF("Rex Variables")
     xor a
     call _MemSetFast
 
@@ -147,54 +139,12 @@ _RexRun::
 
     jp _RexSetSpriteRunning
 
-; Make Rex prime a jump charge
-_RexPrimeJump::
-    xor a
-    ld [wRexJumpVelocityCharge], a
-    ret
-
-; Make Rex charge up a jump. Releases after a set amount of frames
-_RexChargeJump::
-    ld a, [wRexJumpVelocityCharge]
-    add a, JUMP_VELOCITY_CHARGE
-    ld [wRexJumpVelocityCharge], a
-    cp a, MIN_JUMP_VELOCITY
-    ret c
-
+; Toggles Rex jumping on
+_RexJumpOn::
     ld a, [wRexAnimationState]
     cp a, REX_ANIM_DUCKING
     ret nc
 
-    jr _RexJumpFull
-
-; Make Rex jump
-_RexJump::
-    ld a, [wRexAnimationState]
-    cp a, REX_ANIM_DUCKING
-    ret nc
-
-    ld hl, STARTOF("Rex Variables")
-    ld b, SIZEOF("Rex Variables") - 2 ; dont clear jump charge or velocity
-    xor a
-    call _MemSetFast
-    
-    ld a, [wRexJumpVelocityCharge]
-    add a, MIN_MAX_JUMP_DIFFERENCE
-    ld [wRexJumpVelocity], a
-
-    xor a
-    ld [wRexJumpVelocityCharge], a
-
-    ld a, REX_ANIM_JUMPING
-    ld [wRexAnimationState], a
-
-    ld a, SFX_JUMP
-    call _PlaySound
-
-    jp _RexSetSpriteDefault
-
-; Makes Rex jump to full height
-_RexJumpFull::
     ld hl, STARTOF("Rex Variables")
     ld b, SIZEOF("Rex Variables")
     xor a
@@ -202,7 +152,7 @@ _RexJumpFull::
     
     ld a, MAX_JUMP_VELOCITY
     ld [wRexJumpVelocity], a
-    
+
     ld a, REX_ANIM_JUMPING
     ld [wRexAnimationState], a
 
@@ -211,13 +161,24 @@ _RexJumpFull::
 
     jp _RexSetSpriteDefault
 
+; Toggles Rex falling on
+_RexJumpOff::
+    ld a, [wRexAnimationState]
+    cp a, REX_ANIM_JUMPING
+    ret nz
+    
+    ld a, REX_ANIM_FALLING
+    ld [wRexAnimationState], a
+
+    ret
+
 ; Toggles Rex ducking on
 _RexDuckOn::
     ld a, [wRexAnimationState]
     cp a, REX_ANIM_RUNNING
     jr z, .running
     cp a, REX_ANIM_JUMPING
-    jr z, .jumping
+    jr nc, .jumping
     ret 
 
 .running:
@@ -440,6 +401,7 @@ _RexAnimate::
     DW _RexAnimateDucking
     DW _RexAnimateJumping
     DW _RexAnimateJumping
+    DW _RexAnimateJumping
     DW _NULL
     
 ; Animate dead Rex
@@ -474,7 +436,11 @@ _RexAnimateStanding:
     ld a, REX_DEFAULT_SPRITE_2
     ld [hl], a
 
-    jp _RexRandomBlinkDelay
+    call _GetRandom
+    or a, REX_BLINK_DELAY_MASK
+    ld [wRexAnimationDelay], a
+
+    ret
 
 ; Animate running Rex
 _RexAnimateRunning:
@@ -616,13 +582,5 @@ wRexJumpSpeedFrameDifferential:
 ; Jump velocity (increases with input time and decreases with gravity)
 wRexJumpVelocity:
     DB
-
-ASSERT wRexJumpVelocity == (STARTOF("Rex Variables") + SIZEOF("Rex Variables") - 2)
-
-; Jump velocity charge
-wRexJumpVelocityCharge:
-    DB
-
-ASSERT wRexJumpVelocityCharge == (STARTOF("Rex Variables") + SIZEOF("Rex Variables") - 1)
 
 ENDSECTION

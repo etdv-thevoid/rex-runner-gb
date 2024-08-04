@@ -41,14 +41,11 @@ _ControlsLoop:
     check_keys_add hKeysReleased, PADF_DOWN
     call _RexDuckOff
 
-    check_keys_add hKeysPressed, PADF_A
-    call _RexPrimeJump
-
     check_keys_add hKeysHeld, PADF_A
-    call _RexChargeJump
+    call _RexJumpOn
 
     check_keys_add hKeysReleased, PADF_A
-    call _RexJump
+    call _RexJumpOff
 
     check_keys_add hKeysPressed, PADF_B
     ld a, SFX_MENU_B
