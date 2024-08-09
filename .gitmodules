@@ -1,12 +1,6 @@
-[submodule "libraries/gbc-engine-core"]
-	path = libraries/gbc-engine-core
-	url = https://github.com/etdv-thevoid/gbc-engine-core.git
 [submodule "libraries/hardware.inc"]
 	path = libraries/hardware.inc
 	url = https://github.com/gbdev/hardware.inc.git
-[submodule "libraries/rgbds-structs"]
-	path = libraries/rgbds-structs
-	url = https://github.com/ISSOtm/rgbds-structs.git
-[submodule "libraries/gbc-engine-utils"]
-	path = libraries/gbc-engine-utils
-	url = https://github.com/etdv-thevoid/gbc-engine-utils.git
+[submodule "libraries/gbc-engine-core"]
+	path = libraries/gbc-engine-core
+	url = https://github.com/etdv-thevoid/gbc-engine-core.git

@@ -30,19 +30,12 @@ _Menu::
     call _RexDead
 
 .continue:
-    ld bc, _MenuVBlankHandler
-    rst _SetVBLHandler
-
-    ld a, IEF_VBLANK | IEF_TIMER
-    ldh [rIE], a
-
     ld a, WINDOW_OFF
     ldh [rLCDC], a
 
     ; fallthrough
     
 _MenuLoop:
-    ei
     call _WaitForVBLInterrupt
     
     call _MenuDrawCursor
@@ -66,14 +59,6 @@ _MenuLoop:
     jr _MenuSelectOption
 
     check_keys_end _MenuLoop
-
-_MenuVBlankHandler:
-    call _ScanKeys
-    call _RefreshOAM
-    
-    call _RexIncFrameCounter
-
-    ret
 
 
 /*******************************************************************************

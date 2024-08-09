@@ -25,19 +25,12 @@ _Scoreboard::
     call _DrawScoreboardHard
 
 .continue:
-    ld bc, _ScoreboardVBlankHandler
-    rst _SetVBLHandler
-
-    ld a, IEF_VBLANK | IEF_TIMER
-    ldh [rIE], a
-
     ld a, WINDOW_OFF
     ldh [rLCDC], a
 
     ; fallthrough
     
 _ScoreboardLoop:
-    ei
     call _WaitForVBLInterrupt
 
     call _RexAnimate
@@ -52,14 +45,6 @@ _ScoreboardLoop:
     jp _SwitchStateToPrevious
 
     check_keys_end _ScoreboardLoop
-
-_ScoreboardVBlankHandler:
-    call _ScanKeys
-    call _RefreshOAM
-    
-    call _RexIncFrameCounter
-
-    ret
 
 _DrawScoreboard:
     ld hl, wHighScore0

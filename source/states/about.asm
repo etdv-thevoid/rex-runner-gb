@@ -14,19 +14,12 @@ _About::
 
     call _LoadTilemapAbout
 
-    ld bc, _AboutVBlankHandler
-    rst _SetVBLHandler
-
-    ld a, IEF_VBLANK | IEF_TIMER
-    ldh [rIE], a
-
     ld a, WINDOW_OFF
     ldh [rLCDC], a
 
     ; fallthrough
     
 _AboutLoop:
-    ei
     call _WaitForVBLInterrupt
 
     call _RexAnimate
@@ -42,13 +35,6 @@ _AboutLoop:
 
     check_keys_end _AboutLoop
 
-_AboutVBlankHandler:
-    call _ScanKeys
-    call _RefreshOAM
-    
-    call _RexIncFrameCounter
-
-    ret
 
 ENDSECTION
 

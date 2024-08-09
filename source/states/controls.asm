@@ -14,19 +14,12 @@ _Controls::
     
     call _LoadTilemapControls
 
-    ld bc, _ControlsVBlankHandler
-    rst _SetVBLHandler
-
-    ld a, IEF_VBLANK | IEF_TIMER
-    ldh [rIE], a
-
     ld a, WINDOW_OFF
     ldh [rLCDC], a
 
     ; fallthrough
     
 _ControlsLoop:
-    ei
     call _WaitForVBLInterrupt
 
     call _RexAnimate
@@ -54,13 +47,6 @@ _ControlsLoop:
 
     check_keys_end _ControlsLoop
 
-_ControlsVBlankHandler:
-    call _ScanKeys
-    call _RefreshOAM
-    
-    call _RexIncFrameCounter
-
-    ret
 
 ENDSECTION
 

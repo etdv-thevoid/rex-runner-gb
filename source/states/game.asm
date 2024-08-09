@@ -76,7 +76,9 @@ _Game::
     call _InitMeteor2
 
 .continue:
-    ld bc, _VBlankHandler
+    di
+
+    ld bc, _GameVBlankHandler
     rst _SetVBLHandler
 
     ld bc, _LCDStatHandlerParallaxTop
@@ -85,11 +87,7 @@ _Game::
     ld a, LYC_PARALLAX_TOP_START_LINE
     ldh [rLYC], a
 
-    ld a, STATF_LYC
-    ldh [rSTAT], a
-
-    ld a, IEF_VBLANK | IEF_STAT | IEF_TIMER
-    ldh [rIE], a
+    ei
 
     ; fallthrough
 
@@ -141,7 +139,6 @@ _Play:
     ; fallthrough
 
 _PlayLoop:
-    ei
     call _WaitForVBLInterrupt
 
     call _IncreaseScore
@@ -202,7 +199,6 @@ _Pause:
     ; fallthrough
 
 _PauseLoop:
-    ei
     call _WaitForVBLInterrupt
     
     call _DrawPauseHUD
@@ -252,7 +248,6 @@ _Dead:
     ; fallthrough
 
 _DeadLoop:
-    ei
     call _WaitForVBLInterrupt
 
     call _DrawGameOverHUD
@@ -613,7 +608,7 @@ ENDR
 **                                                                            **
 *******************************************************************************/
 
-_VBlankHandler:
+_GameVBlankHandler:
     call _ScanKeys
     call _RefreshOAM
     

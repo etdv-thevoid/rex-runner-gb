@@ -36,6 +36,15 @@ _Main::
     xor a
     call _MemSetFast
 
+    ld bc, _DefaultTimerHandler
+    rst _SetTIMHandler
+    
+    ld a, STATF_LYC
+    ldh [rSTAT], a
+
+    ld a, IEF_VBLANK | IEF_STAT
+    ldh [rIE], a
+
     ld a, SFX_SCORE
     call _PlaySound
 
@@ -43,6 +52,18 @@ _Main::
 
 _MainLoop:
     di
+
+    xor a
+    ldh [rLYC], a
+
+    ; reset handlers to default
+    ld bc, _DefaultVBlankHandler
+    rst _SetVBLHandler
+    
+    ld bc, _DefaultLCDStatHandler
+    rst _SetLCDHandler
+
+    ei
 
     ld a, [wCurrentState]
     cp a, NUMBER_OF_STATES
@@ -80,6 +101,33 @@ _SwitchStateToNew::
     ld [wPreviousState], a
     pop af
     ld [wCurrentState], a
+    ret
+
+
+/*******************************************************************************
+**                                                                            **
+**      DEFAULT INTERRUPT FUNCTIONS                                           **
+**                                                                            **
+*******************************************************************************/
+
+_DefaultVBlankHandler:
+    call _ScanKeys
+    call _RefreshOAM
+    
+    call _RexIncFrameCounter
+
+    ret
+
+_DefaultLCDStatHandler:
+    ret
+
+_DefaultTimerHandler:
+    call _CheckForStackOverflow
+
+    call _UpdateSound
+
+    call _CheckForStackUnderflow
+
     ret
 
 ENDSECTION
